@@ -1,0 +1,11 @@
+qqUin:
+qqPasswd:
+tgToken:
+mongoDb:
+  connStr: mongodb://localhost
+  dbName: q2tg
+groups:
+  - qq:
+    tg:
+  - qq:
+    tg:
