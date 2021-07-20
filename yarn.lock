@@ -676,6 +676,11 @@ node-telegram-bot-api@^0.53.0:
     request "^2.83.0"
     request-promise "^4.2.2"
 
+nodejs-base64@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/nodejs-base64/-/nodejs-base64-2.0.0.tgz#6325842fef622c67d9203677dca29a73a893335a"
+  integrity sha512-rf83teAz8f251P+HQW0nZyIhIIKrTs8wz11n5+Dp1b+/oWCYSeCfNfbUqda5B0DhspBVXwJ7SPk8aghv/TFsjQ==
+
 oauth-sign@~0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"

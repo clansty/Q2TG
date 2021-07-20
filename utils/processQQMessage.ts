@@ -1,5 +1,6 @@
 import {MessageElem} from "oicq";
 import {getTgByQQ} from "./MsgIdStorage";
+import {base64decode} from 'nodejs-base64'
 
 interface QQMessage {
     content: string
@@ -50,6 +51,16 @@ export default async (oicqMessage: MessageElem[]) => {
                 break;
             case "json":
                 const json = m.data.data;
+                const jsonObj = JSON.parse(json)
+                if (jsonObj.app === 'com.tencent.mannounce') {
+                    try {
+                        const title = base64decode(jsonObj.meta.mannounce.title)
+                        const content = base64decode(jsonObj.meta.mannounce.text)
+                        message.content = title + '\n\n' + content
+                        break
+                    } catch (err) {
+                    }
+                }
                 const biliRegex = /(https?:\\?\/\\?\/b23\.tv\\?\/\w*)\??/;
                 const zhihuRegex = /(https?:\\?\/\\?\/\w*\.?zhihu\.com\\?\/[^?"=]*)\??/;
                 const biliRegex2 = /(https?:\\?\/\\?\/\w*\.?bilibili\.com\\?\/[^?"=]*)\??/;
