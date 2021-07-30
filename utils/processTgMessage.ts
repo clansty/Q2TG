@@ -5,6 +5,7 @@ import TelegramBot from 'node-telegram-bot-api'
 import {ForwardInfo} from './config'
 import {tg} from '../index'
 import getUserDisplayName from './getUserDisplayName'
+import silkEncode from './silkEncode'
 
 export default async (msg: TelegramBot.Message, fwd: ForwardInfo) => {
     const chain: MessageElem[] = [
@@ -137,6 +138,15 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo) => {
                 },
             })
         }
+    }
+    if (msg.voice) {
+        const ogg = tg.getFileStream(msg.voice.file_id)
+        chain.push({
+            type: 'record',
+            data: {
+                file: await silkEncode(ogg),
+            },
+        })
     }
     if (msg.caption) {
         chain.push({
