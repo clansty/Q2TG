@@ -1,5 +1,5 @@
 import {MessageElem} from 'oicq'
-import {getQQByTg} from './MsgIdStorage'
+import {getQQByTg} from './storage'
 import path from 'path'
 import TelegramBot from 'node-telegram-bot-api'
 import {ForwardInfo} from './config'

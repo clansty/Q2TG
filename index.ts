@@ -1,7 +1,7 @@
 import {createClient, MessageElem} from 'oicq'
-import TelegramBot from 'node-telegram-bot-api'
+import TelegramBot, {InlineKeyboardMarkup} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
-import {addLink, getQQByTg, getTgByQQ, init as storageInit} from './utils/MsgIdStorage'
+import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit} from './utils/storage'
 import config from './utils/config'
 import path from 'path'
 import MessageMirai from './types/MessageMirai'
@@ -24,6 +24,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
 ;(async () => {
     await storageInit()
     const forwardOff: { [tgGin: number]: boolean } = {}
+    const me = await tg.getMe()
 
     qq.login(config.qqPasswd)
 
@@ -31,7 +32,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
         try {
             const fwd = config.groups.find(e => e.qq === data.group_id)
             if (!fwd) return
-            const msg = await processQQMsg(data.message)
+            const msg = await processQQMsg(data.message, data.group_id)
             const nick = data.sender.card ? data.sender.card : data.sender.nickname
             let ret: TelegramBot.Message
             if (msg.image) {
@@ -81,8 +82,18 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                     reply_to_message_id: msg.replyTgId,
                 })
             } else {
+                let kbd: InlineKeyboardMarkup
+                if (msg.file) {
+                    kbd = {
+                        inline_keyboard: [[{
+                            text: '获取下载链接',
+                            url: 'https://t.me/' + me.username + '?start=' + msg.file,
+                        }]],
+                    }
+                }
                 ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content, {
                     reply_to_message_id: msg.replyTgId,
+                    reply_markup: kbd,
                 })
             }
             //保存 id 对应关系
@@ -107,9 +118,30 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
 
     tg.on('message', async msg => {
         try {
+            if (msg.chat.id > 0) {
+                if (msg.text && msg.text.startsWith('/start ')) {
+                    const oid = msg.text.substr('/start '.length)
+                    if (!oid) return
+                    const file = await getFile(oid)
+                    if (!file) {
+                        await tg.sendMessage(msg.from.id, '文件信息获取失败')
+                        return
+                    }
+                    const oicqFile = await qq.acquireGfs(file.gin).download(file.fid)
+                    await tg.sendMessage(msg.from.id, file.info + '\nmd5: ' + oicqFile.md5, {
+                        reply_markup: {
+                            inline_keyboard: [[{
+                                text: '下载',
+                                url: oicqFile.url,
+                            }]],
+                        },
+                    })
+                }
+                return
+            }
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
             if (!fwd) return
-            const {chain,cleanup} = await processTgMessage(msg, fwd)
+            const {chain, cleanup} = await processTgMessage(msg, fwd)
             const lastForwardOff = forwardOff[fwd.tg]
             if (msg.text && msg.text.startsWith('/forwardon')) {
                 forwardOff[fwd.tg] = false

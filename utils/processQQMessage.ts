@@ -1,9 +1,11 @@
 import {MessageElem} from 'oicq'
-import {getTgByQQ} from './MsgIdStorage'
+import {addFile, getTgByQQ} from './storage'
 import {base64decode} from 'nodejs-base64'
 import silkDecode from './silkDecode'
+import hSize from './hSize'
 
 interface QQMessage {
+    file?: string
     content: string
     image?: string
     video?: string
@@ -11,7 +13,7 @@ interface QQMessage {
     audio?: Buffer
 }
 
-export default async (oicqMessage: MessageElem[]) => {
+export default async (oicqMessage: MessageElem[], gin: number) => {
     const message: QQMessage = {
         content: '',
     }
@@ -43,7 +45,10 @@ export default async (oicqMessage: MessageElem[]) => {
                 message.image = url
                 break
             case 'file':
-                message.content += '文件: ' + m.data.name
+                message.content += '文件: ' + m.data.name + '\n' +
+                    '大小: ' + hSize(m.data.size)
+                const oid = await addFile(gin, m.data.fid, message.content)
+                message.file = oid
                 break
             case 'share':
                 message.content += m.data.url
