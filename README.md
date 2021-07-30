@@ -5,7 +5,7 @@ QQ 与 Telegram 群相互转发的 bot
 
 ## 安装方法
 
-1. 首先将用于机器人的帐号在 [oicq](https://github.com/Clansty/electron-qq) 框架上登录一次，通过设备验证
+1. 首先将用于机器人的帐号在 [oicq](https://github.com/takayama-lily/oicq) 框架上登录一次，通过设备验证
 
 2. 将 `config.example.yaml` 复制一份为 `config.yaml` ，并填入相关设置项
 
@@ -22,6 +22,8 @@ QQ 与 Telegram 群相互转发的 bot
 - [x] 文字
 
 - [x] 图片
+
+  - [x] GIF
 
 - [x] 图文混排消息
 
@@ -41,12 +43,16 @@ QQ 与 Telegram 群相互转发的 bot
 
 - [x] 群公告
 
+- [x] 回复
+
+  （双平台原生回复）
+
 - [ ] 文件（即将实现）
 
 - [ ] 转发多条消息记录
 
 ## 额外功能
 
-- 在 TG 中可以使用 `/forwardon` 和 `/forwardoff` 命令控制 TG 到 QQ 的单项开关
+- 在 TG 中可以使用 `/forwardon` 和 `/forwardoff` 命令控制 TG 到 QQ 的单向开关
 - 使用 [Electron QQ](https://github.com/Clansty/electron-qq) 时可以无缝显示 TG 中的头像和名称
 
