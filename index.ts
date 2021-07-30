@@ -5,7 +5,7 @@ import {addLink, getQQByTg, getTgByQQ, init as storageInit} from './utils/MsgIdS
 import config from './utils/config'
 import path from 'path'
 import MessageMirai from './types/MessageMirai'
-import {cacheTgAvatar, getCachedTgAvatarMd5} from './utils/tgAvatarCache'
+import {getAvatarMd5} from './utils/tgAvatarCache'
 import axios from 'axios'
 import fileType from 'file-type'
 import processTgMessage from './utils/processTgMessage'
@@ -135,27 +135,11 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                 })
             }
             if (!(lastForwardOff && forwardOff[fwd.tg])) {
-                let avatarMd5 = getCachedTgAvatarMd5(msg.from.id)
-                if (!avatarMd5) {
-                    try {
-                        const photos = await tg.getUserProfilePhotos(msg.from.id, {limit: 1})
-                        const photo = photos.photos[0]
-                        const fid = photo[photo.length - 1].file_id
-                        const url = await tg.getFileLink(fid)
-                        const uploadRet = await qq.preloadImages([url])
-                        if (uploadRet.data) {
-                            avatarMd5 = uploadRet.data[0].substr(0, 32)
-                            cacheTgAvatar(msg.from.id, avatarMd5)
-                        }
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
                 const mirai: MessageMirai = {
                     eqq: {
                         type: 'tg',
                         tgUid: msg.from.id,
-                        avatarMd5,
+                        avatarMd5: await getAvatarMd5(msg.from.id),
                     },
                 }
                 chain.push({
