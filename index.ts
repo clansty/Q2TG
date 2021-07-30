@@ -8,6 +8,7 @@ import MessageMirai from './types/MessageMirai'
 import {cacheTgAvatar, getCachedTgAvatarMd5} from './utils/tgAvatarCache'
 import axios from 'axios'
 import fileType from 'file-type'
+import processTgMessage from './utils/processTgMessage'
 
 (() => [
     '#5bcffa',
@@ -17,14 +18,14 @@ import fileType from 'file-type'
     '#5bcffa',
 ])()
 
+export const qq = createClient(config.qqUin)
+export const tg = new TelegramBot(config.tgToken, {polling: true})
+
 ;(async () => {
     await storageInit()
     const forwardOff: { [tgGin: number]: boolean } = {}
 
-    const qq = createClient(config.qqUin)
     qq.login(config.qqPasswd)
-
-    const tg = new TelegramBot(config.tgToken, {polling: true})
 
     qq.on('message.group', async data => {
         try {
@@ -108,82 +109,7 @@ import fileType from 'file-type'
         try {
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
             if (!fwd) return
-            const chain: MessageElem[] = [
-                {
-                    type: 'text',
-                    data: {
-                        text: msg.from.first_name +
-                            (msg.from.last_name ? ' ' + msg.from.last_name : '') +
-                            (msg.forward_from ? ' Forwarded from ' + msg.forward_from.first_name : '')
-                            + '：\n',
-                    },
-                },
-            ]
-            if (msg.reply_to_message) {
-                const replyQQId = await getQQByTg(msg.reply_to_message.message_id, fwd.tg)
-                if (replyQQId)
-                    chain.unshift({
-                        type: 'reply',
-                        data: {
-                            id: replyQQId,
-                        },
-                    })
-            }
-            if (msg.photo) {
-                const photoId = msg.photo[msg.photo.length - 1].file_id
-                const url = await tg.getFileLink(photoId)
-                chain.push({
-                    type: 'image',
-                    data: {
-                        file: url,
-                    },
-                })
-            }
-            if (msg.document) {
-                if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
-                    path.extname(msg.document.file_name))) {
-                    const photoId = msg.document.file_id
-                    const url = await tg.getFileLink(photoId)
-                    chain.push({
-                        type: 'image',
-                        data: {
-                            file: url,
-                        },
-                    })
-                } else
-                    chain.push({
-                        type: 'text',
-                        data: {
-                            text: '[文件：' + msg.document.file_name + ']',
-                        },
-                    })
-            }
-            if (msg.sticker) {
-                const photoId = msg.sticker.file_id
-                const url = await tg.getFileLink(photoId)
-                chain.push({
-                    type: 'image',
-                    data: {
-                        file: url,
-                    },
-                })
-            }
-            if (msg.caption) {
-                chain.push({
-                    type: 'text',
-                    data: {
-                        text: '\n' + msg.caption,
-                    },
-                })
-            }
-            if (msg.text) {
-                chain.push({
-                    type: 'text',
-                    data: {
-                        text: msg.text,
-                    },
-                })
-            }
+            const chain = await processTgMessage(msg, fwd)
             const lastForwardOff = forwardOff[fwd.tg]
             if (msg.text && msg.text.startsWith('/forwardon')) {
                 forwardOff[fwd.tg] = false

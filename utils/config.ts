@@ -1,7 +1,7 @@
 import fs from 'fs'
 import YAML from 'yaml'
 
-type ForwardInfo = {
+export type ForwardInfo = {
     qq: number,
     tg: number
 }
