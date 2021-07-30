@@ -1,56 +1,58 @@
-import {MessageElem} from "oicq";
-import {getTgByQQ} from "./MsgIdStorage";
+import {MessageElem} from 'oicq'
+import {getTgByQQ} from './MsgIdStorage'
 import {base64decode} from 'nodejs-base64'
+import silkDecode from './silkDecode'
 
 interface QQMessage {
     content: string
     image?: string
     video?: string
     replyTgId?: number
+    audio?: Buffer
 }
 
 export default async (oicqMessage: MessageElem[]) => {
     const message: QQMessage = {
-        content: ''
+        content: '',
     }
     let lastType, replyToQUin
     for (let i = 0; i < oicqMessage.length; i++) {
-        const m = oicqMessage[i];
+        const m = oicqMessage[i]
         let appurl, url
         switch (m.type) {
-            case "at":
+            case 'at':
                 if (lastType === 'reply') {
                     replyToQUin = m.data.qq
                     break
                 }
                 if (replyToQUin === m.data.qq)
                     break
-            case "text":
-                message.content += m.data.text;
-                break;
-            case "image":
-            case "flash":
-                url = m.data.url;
+            case 'text':
+                message.content += m.data.text
+                break
+            case 'image':
+            case 'flash':
+                url = m.data.url
                 message.image = url
-                break;
-            case "bface":
+                break
+            case 'bface':
                 url = `https://gxh.vip.qq.com/club/item/parcel/item/${m.data.file.substr(
                     0,
-                    2
-                )}/${m.data.file.substr(0, 32)}/300x300.png`;
+                    2,
+                )}/${m.data.file.substr(0, 32)}/300x300.png`
                 message.image = url
-                break;
-            case "file":
-                message.content += '文件: ' + m.data.name;
-                break;
-            case "share":
-                message.content += m.data.url;
-                break;
-            case "reply":
+                break
+            case 'file':
+                message.content += '文件: ' + m.data.name
+                break
+            case 'share':
+                message.content += m.data.url
+                break
+            case 'reply':
                 message.replyTgId = await getTgByQQ(m.data.id)
-                break;
-            case "json":
-                const json = m.data.data;
+                break
+            case 'json':
+                const json = m.data.data
                 const jsonObj = JSON.parse(json)
                 if (jsonObj.app === 'com.tencent.mannounce') {
                     try {
@@ -61,57 +63,60 @@ export default async (oicqMessage: MessageElem[]) => {
                     } catch (err) {
                     }
                 }
-                const biliRegex = /(https?:\\?\/\\?\/b23\.tv\\?\/\w*)\??/;
-                const zhihuRegex = /(https?:\\?\/\\?\/\w*\.?zhihu\.com\\?\/[^?"=]*)\??/;
-                const biliRegex2 = /(https?:\\?\/\\?\/\w*\.?bilibili\.com\\?\/[^?"=]*)\??/;
-                const jsonLinkRegex = /{.*"app":"com.tencent.structmsg".*"jumpUrl":"(https?:\\?\/\\?\/[^",]*)".*}/;
-                const jsonAppLinkRegex = /"contentJumpUrl": ?"(https?:\\?\/\\?\/[^",]*)"/;
+                const biliRegex = /(https?:\\?\/\\?\/b23\.tv\\?\/\w*)\??/
+                const zhihuRegex = /(https?:\\?\/\\?\/\w*\.?zhihu\.com\\?\/[^?"=]*)\??/
+                const biliRegex2 = /(https?:\\?\/\\?\/\w*\.?bilibili\.com\\?\/[^?"=]*)\??/
+                const jsonLinkRegex = /{.*"app":"com.tencent.structmsg".*"jumpUrl":"(https?:\\?\/\\?\/[^",]*)".*}/
+                const jsonAppLinkRegex = /"contentJumpUrl": ?"(https?:\\?\/\\?\/[^",]*)"/
                 if (biliRegex.test(json))
-                    appurl = json.match(biliRegex)[1].replace(/\\\//g, "/");
+                    appurl = json.match(biliRegex)[1].replace(/\\\//g, '/')
                 else if (biliRegex2.test(json))
-                    appurl = json.match(biliRegex2)[1].replace(/\\\//g, "/");
+                    appurl = json.match(biliRegex2)[1].replace(/\\\//g, '/')
                 else if (zhihuRegex.test(json))
-                    appurl = json.match(zhihuRegex)[1].replace(/\\\//g, "/");
+                    appurl = json.match(zhihuRegex)[1].replace(/\\\//g, '/')
                 else if (jsonLinkRegex.test(json))
-                    appurl = json.match(jsonLinkRegex)[1].replace(/\\\//g, "/");
+                    appurl = json.match(jsonLinkRegex)[1].replace(/\\\//g, '/')
                 else if (jsonAppLinkRegex.test(json))
-                    appurl = json.match(jsonAppLinkRegex)[1].replace(/\\\//g, "/");
+                    appurl = json.match(jsonAppLinkRegex)[1].replace(/\\\//g, '/')
                 if (appurl) {
-                    message.content = appurl;
+                    message.content = appurl
                 } else {
-                    message.content = "[JSON]";
+                    message.content = '[JSON]'
                 }
-                break;
-            case "xml":
-                const urlRegex = /url="([^"]+)"/;
+                break
+            case 'xml':
+                const urlRegex = /url="([^"]+)"/
                 if (urlRegex.test(m.data.data))
-                    appurl = m.data.data.match(urlRegex)[1].replace(/\\\//g, "/");
+                    appurl = m.data.data.match(urlRegex)[1].replace(/\\\//g, '/')
                 if (m.data.data.includes('action="viewMultiMsg"')) {
-                    message.content += "[Forward multiple messages]";
+                    message.content += '[Forward multiple messages]'
                 } else if (appurl) {
-                    appurl = appurl.replace(/&amp;/g, "&");
-                    message.content = appurl;
+                    appurl = appurl.replace(/&amp;/g, '&')
+                    message.content = appurl
                 } else {
-                    message.content += "[XML]";
+                    message.content += '[XML]'
                 }
-                break;
-            case "face":
+                break
+            case 'face':
                 if (m.data.text)
-                    message.content += m.data.text;
-                break;
-            case "video":
+                    message.content += m.data.text
+                break
+            case 'video':
                 // message.content = "[Video]";
                 message.video = m.data.url
                 if (/https?:\/\/[^,]*qqdownload[^,]*/.test(message.video))
                     message.video = /https?:\/\/[^,]*qqdownload[^,]*/.exec(message.video)[0]
-                break;
-            case "record":
-                message.content = "[Audio]";
-                //todo 这个等 electron-qq 支持之后再写了
-                break;
+                break
+            case 'record':
+                try {
+                    message.audio = await silkDecode(m.data.url)
+                } catch (e) {
+                    message.content = '[下载失败的语音]'
+                }
+                break
         }
         lastType = m.type
     }
     message.content = message.content.trim()
-    return message;
+    return message
 }

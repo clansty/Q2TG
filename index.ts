@@ -68,13 +68,17 @@ import fileType from 'file-type'
                         caption: nick + '：',
                         reply_to_message_id: msg.replyTgId,
                     })
-                }
-                catch (e){
+                } catch (e) {
                     ret = await tg.sendMessage(fwd.tg, nick + '：\n' + '[下载失败的视频]', {
                         reply_to_message_id: msg.replyTgId,
                     })
                     console.log(e)
                 }
+            } else if (msg.audio) {
+                ret = await tg.sendVoice(fwd.tg, msg.audio, {
+                    caption: nick + '：',
+                    reply_to_message_id: msg.replyTgId,
+                })
             } else {
                 ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content, {
                     reply_to_message_id: msg.replyTgId,
