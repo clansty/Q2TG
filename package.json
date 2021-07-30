@@ -6,7 +6,9 @@
   "author": "Clansty Icaria",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "console-read-write": "^0.1.1",
+    "file-type": "^16.5.2",
     "mongodb": "^3.6.9",
     "node-telegram-bot-api": "^0.53.0",
     "nodejs-base64": "^2.0.0",

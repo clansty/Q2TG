@@ -6,6 +6,8 @@ import config from './utils/config'
 import path from 'path'
 import MessageMirai from './types/MessageMirai'
 import {cacheTgAvatar, getCachedTgAvatarMd5} from './utils/tgAvatarCache'
+import axios from 'axios'
+import fileType from 'file-type'
 
 (() => [
     '#5bcffa',
@@ -32,12 +34,30 @@ import {cacheTgAvatar, getCachedTgAvatarMd5} from './utils/tgAvatarCache'
             const nick = data.sender.card ? data.sender.card : data.sender.nickname
             let ret: TelegramBot.Message
             if (msg.image) {
-                ret = await tg.sendPhoto(fwd.tg, msg.image, {
-                    caption: nick + '：' + (
-                        msg.content ? '\n' + msg.content : ''
-                    ),
-                    reply_to_message_id: msg.replyTgId,
-                })
+                try {
+                    const bufImg: Buffer = (await axios.get(msg.image, {
+                        responseType: 'arraybuffer',
+                    })).data
+                    const type = await fileType.fromBuffer(bufImg)
+                    if (type.ext === 'gif')
+                        ret = await tg.sendAnimation(fwd.tg, bufImg, {
+                            caption: nick + '：' + (
+                                msg.content ? '\n' + msg.content : ''
+                            ),
+                            reply_to_message_id: msg.replyTgId,
+                        })
+                    else
+                        ret = await tg.sendPhoto(fwd.tg, bufImg, {
+                            caption: nick + '：' + (
+                                msg.content ? '\n' + msg.content : ''
+                            ),
+                            reply_to_message_id: msg.replyTgId,
+                        })
+                } catch (e) {
+                    ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content + '\n[下载失败的图片]', {
+                        reply_to_message_id: msg.replyTgId,
+                    })
+                }
             } else if (msg.video) {
                 ret = await tg.sendVideo(fwd.tg, msg.video, {
                     caption: nick + '：',
