@@ -643,11 +643,6 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-jce@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/jce/-/jce-0.2.3.tgz#891b8f8c88642c328f2629a3a82c7a7d5de29e05"
-  integrity sha512-5Kjv9JHdWwji34bZ+oRtiytQytMfbRU9JpcFyYQlidiDfXp8OpuEp3L0jVZPAo+ktctMOQTCy6PfKi7uTO+Lmw==
-
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -829,12 +824,11 @@ object.assign@^4.1.2:
     has-symbols "^1.0.1"
     object-keys "^1.1.1"
 
-oicq@^1.17.3:
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/oicq/-/oicq-1.17.3.tgz#892e9d51313edc6cddabb223a24ded59c4d5ad4b"
-  integrity sha512-coL/nDq+xbBXN9QvCDHQP7vvZwhrzDt0ynU88ysR34LPaEhok6wDh8ImeMYm7fFKXgdb4v+NF0eZEoxqtH6RDw==
+oicq@^1.18.3:
+  version "1.18.3"
+  resolved "https://registry.yarnpkg.com/oicq/-/oicq-1.18.3.tgz#7797a8d9972015d384bc76b43d7d5e9ca1e1c997"
+  integrity sha512-IQW1B3phSW81R2khAnuOitJISViGEJvi/YiyUHGgncXkTM99DaIRneuR0CQ1yKpdl76GgPiFtFJrcmRrVcl6Fg==
   dependencies:
-    jce "^0.2.3"
     log4js "^6.3.0"
     long "^4.0.0"
     probe-image-size "^7.2.0"

@@ -109,7 +109,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
         try {
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
             if (!fwd) return
-            const chain = await processTgMessage(msg, fwd)
+            const {chain,cleanup} = await processTgMessage(msg, fwd)
             const lastForwardOff = forwardOff[fwd.tg]
             if (msg.text && msg.text.startsWith('/forwardon')) {
                 forwardOff[fwd.tg] = false
@@ -153,6 +153,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                     await addLink(ret.data.message_id, msg.message_id, fwd.tg)
                 else
                     console.log(ret.error)
+                await cleanup()
             }
         } catch (e) {
             console.log(e)

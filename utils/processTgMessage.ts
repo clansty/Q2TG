@@ -6,8 +6,16 @@ import {ForwardInfo} from './config'
 import {tg} from '../index'
 import getUserDisplayName from './getUserDisplayName'
 import silkEncode from './silkEncode'
+import {file} from 'tmp-promise'
+import pipeSaveStream from './pipeSaveStream'
 
-export default async (msg: TelegramBot.Message, fwd: ForwardInfo) => {
+type CleanUpFunction = () => Promise<void>
+export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
+    cleanup: CleanUpFunction,
+    chain: MessageElem[]
+}> => {
+    let cleanup: CleanUpFunction = async () => {
+    }
     const chain: MessageElem[] = [
         {
             type: 'text',
@@ -148,6 +156,18 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo) => {
             },
         })
     }
+    if (msg.video) {
+        const tmp = await file()
+        cleanup = tmp.cleanup
+        const stream = tg.getFileStream(msg.video.file_id)
+        await pipeSaveStream(stream, tmp.path)
+        chain.push({
+            type: 'video',
+            data: {
+                file: tmp.path,
+            },
+        })
+    }
     if (msg.caption) {
         chain.push({
             type: 'text',
@@ -164,5 +184,5 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo) => {
             },
         })
     }
-    return chain
+    return {chain, cleanup}
 }

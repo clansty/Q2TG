@@ -13,7 +13,7 @@
     "mongodb": "^3.6.9",
     "node-telegram-bot-api": "^0.53.0",
     "nodejs-base64": "^2.0.0",
-    "oicq": "^1.17.3",
+    "oicq": "^1.18.3",
     "silk-sdk": "^0.2.2",
     "tmp-promise": "^3.0.2",
     "ts-node": "^10.0.0",
