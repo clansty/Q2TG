@@ -168,6 +168,18 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             },
         })
     }
+    if (msg.video_note) {
+        const tmp = await file()
+        cleanup = tmp.cleanup
+        const stream = tg.getFileStream(msg.video_note.file_id)
+        await pipeSaveStream(stream, tmp.path)
+        chain.push({
+            type: 'video',
+            data: {
+                file: tmp.path,
+            },
+        })
+    }
     if (msg.caption) {
         chain.push({
             type: 'text',
