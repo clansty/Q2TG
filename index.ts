@@ -139,16 +139,24 @@ import fileType from 'file-type'
                     },
                 })
             }
-            if (msg.document && ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
-                path.extname(msg.document.file_name))) {
-                const photoId = msg.document.file_id
-                const url = await tg.getFileLink(photoId)
-                chain.push({
-                    type: 'image',
-                    data: {
-                        file: url,
-                    },
-                })
+            if (msg.document) {
+                if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
+                    path.extname(msg.document.file_name))) {
+                    const photoId = msg.document.file_id
+                    const url = await tg.getFileLink(photoId)
+                    chain.push({
+                        type: 'image',
+                        data: {
+                            file: url,
+                        },
+                    })
+                } else
+                    chain.push({
+                        type: 'text',
+                        data: {
+                            text: '[文件]：' + msg.document.file_name,
+                        },
+                    })
             }
             if (msg.sticker) {
                 const photoId = msg.sticker.file_id
