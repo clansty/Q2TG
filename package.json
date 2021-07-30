@@ -4,7 +4,7 @@
   "description": "nodejs q2tg bot",
   "main": "index.ts",
   "author": "Clansty Icaria",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "axios": "^0.21.1",
     "console-read-write": "^0.1.1",
