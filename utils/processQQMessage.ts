@@ -100,10 +100,10 @@ export default async (oicqMessage: MessageElem[]) => {
                     message.content += m.data.text;
                 break;
             case "video":
-                message.content = "[Video]";
-                // message.video = m.data.url
-                // if (/https?:\/\/[^,]*qqdownload[^,]*/.test(message.video))
-                //     message.video = /https?:\/\/[^,]*qqdownload[^,]*/.exec(message.video)[0]
+                // message.content = "[Video]";
+                message.video = m.data.url
+                if (/https?:\/\/[^,]*qqdownload[^,]*/.test(message.video))
+                    message.video = /https?:\/\/[^,]*qqdownload[^,]*/.exec(message.video)[0]
                 break;
             case "record":
                 message.content = "[Audio]";

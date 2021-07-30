@@ -57,12 +57,24 @@ import fileType from 'file-type'
                     ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content + '\n[下载失败的图片]', {
                         reply_to_message_id: msg.replyTgId,
                     })
+                    console.log(e)
                 }
             } else if (msg.video) {
-                ret = await tg.sendVideo(fwd.tg, msg.video, {
-                    caption: nick + '：',
-                    reply_to_message_id: msg.replyTgId,
-                })
+                try {
+                    const bufVid: Buffer = (await axios.get(msg.video, {
+                        responseType: 'arraybuffer',
+                    })).data
+                    ret = await tg.sendVideo(fwd.tg, bufVid, {
+                        caption: nick + '：',
+                        reply_to_message_id: msg.replyTgId,
+                    })
+                }
+                catch (e){
+                    ret = await tg.sendMessage(fwd.tg, nick + '：\n' + '[下载失败的视频]', {
+                        reply_to_message_id: msg.replyTgId,
+                    })
+                    console.log(e)
+                }
             } else {
                 ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content, {
                     reply_to_message_id: msg.replyTgId,
