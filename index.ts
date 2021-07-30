@@ -154,7 +154,7 @@ import fileType from 'file-type'
                     chain.push({
                         type: 'text',
                         data: {
-                            text: '[文件]：' + msg.document.file_name,
+                            text: '[文件：' + msg.document.file_name + ']',
                         },
                     })
             }
