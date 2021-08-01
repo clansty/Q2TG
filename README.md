@@ -12,6 +12,8 @@ QQ 与 Telegram 群相互转发的 bot
    需要 MongoDB 数据库来存储消息 ID 之间的对应关系
 
    （不要忘记 YAML 冒号后的空格（（
+   
+   以及 QQ 和 TG 的群号都不需要加引号
 
 3. 安装必要的依赖项 `yarn install`，以及 [FFmpeg](https://www.ffmpeg.org/)
 
