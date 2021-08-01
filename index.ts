@@ -142,7 +142,13 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                 return
             }
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
-            if (!fwd) return
+            if (!fwd) {
+                if (msg.text.toLowerCase().startsWith('/id'))
+                    await tg.sendMessage(fwd.tg, String(msg.chat.id), {
+                        reply_to_message_id: msg.message_id,
+                    })
+                return
+            }
             //如果是要撤回
             if (msg.text && msg.text.toLowerCase().startsWith('/rm')) {
                 if (msg.reply_to_message) {
