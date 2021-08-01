@@ -144,7 +144,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
             if (!fwd) {
                 if (msg.text.toLowerCase().startsWith('/id'))
-                    await tg.sendMessage(fwd.tg, String(msg.chat.id), {
+                    await tg.sendMessage(msg.chat.id, String(msg.chat.id), {
                         reply_to_message_id: msg.message_id,
                     })
                 return
