@@ -1,4 +1,5 @@
 import {qq, tg} from '../index'
+import {streamToBuffer} from './steamToBuffer'
 
 const cache = new Map<number, { md5: string, exp: Date }>()
 
@@ -9,8 +10,9 @@ export const getAvatarMd5 = async (uid: number) => {
             const photos = await tg.getUserProfilePhotos(uid, {limit: 1})
             const photo = photos.photos[0]
             const fid = photo[photo.length - 1].file_id
-            const url = await tg.getFileLink(fid)
-            const uploadRet = await qq.preloadImages([url])
+            const stream = await tg.getFileStream(fid)
+            const buf = await streamToBuffer(stream)
+            const uploadRet = await qq.preloadImages([buf])
             if (uploadRet.data) {
                 avatarMd5 = uploadRet.data[0].substr(0, 32)
                 cacheTgAvatar(uid, avatarMd5)

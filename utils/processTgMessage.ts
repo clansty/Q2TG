@@ -8,6 +8,7 @@ import getUserDisplayName from './getUserDisplayName'
 import silkEncode from './silkEncode'
 import {file} from 'tmp-promise'
 import pipeSaveStream from './pipeSaveStream'
+import {streamToBuffer} from './steamToBuffer'
 
 type CleanUpFunction = () => Promise<void>
 export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
@@ -38,11 +39,11 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
     }
     if (msg.photo) {
         const photoId = msg.photo[msg.photo.length - 1].file_id
-        const url = await tg.getFileLink(photoId)
+        const stream = await tg.getFileStream(photoId)
         chain.push({
             type: 'image',
             data: {
-                file: url,
+                file: await streamToBuffer(stream),
             },
         })
     }
@@ -50,11 +51,11 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
             path.extname(msg.document.file_name))) {
             const photoId = msg.document.file_id
-            const url = await tg.getFileLink(photoId)
+            const stream = await tg.getFileStream(photoId)
             chain.push({
                 type: 'image',
                 data: {
-                    file: url,
+                    file: await streamToBuffer(stream),
                 },
             })
         } else
@@ -67,11 +68,11 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
     }
     if (msg.sticker) {
         const photoId = msg.sticker.file_id
-        const url = await tg.getFileLink(photoId)
+        const stream = await tg.getFileStream(photoId)
         chain.push({
             type: 'image',
             data: {
-                file: url,
+                file: await streamToBuffer(stream),
             },
         })
     }
@@ -85,7 +86,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
     }
     if (msg.new_chat_photo) {
         const photoId = msg.new_chat_photo[msg.new_chat_photo.length - 1].file_id
-        const url = await tg.getFileLink(photoId)
+        const stream = await tg.getFileStream(photoId)
         chain.push({
                 type: 'text',
                 data: {
@@ -95,7 +96,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             {
                 type: 'image',
                 data: {
-                    file: url,
+                    file: await streamToBuffer(stream),
                 },
             })
     }
