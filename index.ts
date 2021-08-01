@@ -1,7 +1,7 @@
 import {createClient, MessageElem} from 'oicq'
 import TelegramBot, {InlineKeyboardMarkup} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
-import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit} from './utils/storage'
+import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit, rmLinkByQQMsgId} from './utils/storage'
 import config from './utils/config'
 import path from 'path'
 import MessageMirai from './types/MessageMirai'
@@ -19,7 +19,7 @@ import processTgMessage from './utils/processTgMessage'
 ])()
 
 export const qq = createClient(config.qqUin, {
-    platform: config.protocol
+    platform: config.protocol,
 })
 export const tg = new TelegramBot(config.tgToken, {polling: true})
 
@@ -118,7 +118,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
         }
     })
 
-    tg.on('message', async msg => {
+    const forwardTgMessage = async (msg: TelegramBot.Message) => {
         try {
             if (msg.chat.id > 0) {
                 if (msg.text && msg.text.startsWith('/start ')) {
@@ -192,5 +192,16 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
         } catch (e) {
             console.log(e)
         }
+    }
+
+    tg.on('message', forwardTgMessage)
+
+    tg.on('edited_message', async msg => {
+        const fwd = config.groups.find(e => e.tg === msg.chat.id)
+        if (!fwd) return
+        const qMsgId = await getQQByTg(msg.message_id, msg.chat.id)
+        await qq.deleteMsg(qMsgId)
+        await rmLinkByQQMsgId(qMsgId)
+        await forwardTgMessage(msg)
     })
 })()

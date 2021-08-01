@@ -40,6 +40,12 @@ export const addLink = (qqMsgId: string, tgMsgId: number, tgChatId: number): Pro
     })
 }
 
+export const rmLinkByQQMsgId = (qqMsgId: string): Promise<any> => {
+    return col.deleteOne({
+        qqMsgId
+    })
+}
+
 export const getTgByQQ = async (qqMsgId: string): Promise<number> => {
     const doc = await col.findOne({qqMsgId})
     return doc ? doc.tgMsgId : null
