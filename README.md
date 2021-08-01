@@ -55,6 +55,8 @@ QQ 与 Telegram 群相互转发的 bot
 
 - [ ] 转发多条消息记录
 
+- [x] TG 编辑消息（撤回再重发）
+
 ## 额外功能
 
 - 在 TG 中可以使用 `/forwardon` 和 `/forwardoff` 命令控制 TG 到 QQ 的单向开关

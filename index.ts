@@ -248,6 +248,7 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
             if (!fwd) return
             const qMsgId = await getQQByTg(msg.message_id, msg.chat.id)
             if (qMsgId) {
+                await rmLinkByQQMsgId(qMsgId)
                 if ((await qq.deleteMsg(qMsgId)).error) {
                     const tipMsg = await tg.sendMessage(msg.chat.id,
                         '撤回 QQ 中对应的消息失败，QQ Bot 需要是管理员', {
@@ -255,7 +256,6 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                         })
                     setTimeout(() => tg.deleteMessage(msg.chat.id, String(tipMsg.message_id)), 5000)
                 }
-                await rmLinkByQQMsgId(qMsgId)
             }
             await forwardTgMessage(msg)
         } catch (e) {
