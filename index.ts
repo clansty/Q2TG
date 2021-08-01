@@ -143,6 +143,46 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
             }
             const fwd = config.groups.find(e => e.tg === msg.chat.id)
             if (!fwd) return
+            //如果是要撤回
+            if (msg.text && msg.text.toLowerCase().startsWith('/rm')) {
+                if (msg.reply_to_message) {
+                    let hasPermission = msg.reply_to_message.from.id === msg.from.id
+                    if (!hasPermission) {
+                        //检查群主或者是有撤回消息权限的管理员
+                        const member = await tg.getChatMember(msg.chat.id, String(msg.from.id))
+                        hasPermission = member.status === 'creator' || member.can_delete_messages
+                    }
+                    if (hasPermission) { //双平台撤回被回复的消息
+                        const replyToQMsgId = await getQQByTg(msg.reply_to_message.message_id, msg.reply_to_message.chat.id)
+                        if (replyToQMsgId && (await qq.deleteMsg(replyToQMsgId)).error) {
+                            const tipMsg = await tg.sendMessage(msg.chat.id,
+                                '撤回 QQ 中对应的消息失败，QQ Bot 需要是管理员，而且无法撤回其他管理员的消息', {
+                                    disable_notification: true,
+                                })
+                            setTimeout(() => tg.deleteMessage(msg.chat.id, String(tipMsg.message_id)), 5000)
+                        }
+                        try {
+                            await tg.deleteMessage(msg.reply_to_message.chat.id, String(msg.reply_to_message.message_id))
+                        } catch (e) {
+                        }
+                    } else {
+                        const tipMsg = await tg.sendMessage(msg.chat.id, '不能撤回别人的消息', {
+                            disable_notification: true,
+                        })
+                        setTimeout(() => tg.deleteMessage(msg.chat.id, String(tipMsg.message_id)), 5000)
+                    }
+                }//撤回消息本身
+                try {
+                    await tg.deleteMessage(msg.chat.id, String(msg.message_id))
+                } catch (e) {
+                    const tipMsg = await tg.sendMessage(msg.chat.id,
+                        'Bot 目前无法撤回其他用户的消息，Bot 需要「删除消息」权限', {
+                            disable_notification: true,
+                        })
+                    setTimeout(() => tg.deleteMessage(msg.chat.id, String(tipMsg.message_id)), 5000)
+                }
+                return
+            }
             const {chain, cleanup} = await processTgMessage(msg, fwd)
             const lastForwardOff = forwardOff[fwd.tg]
             if (msg.text && msg.text.startsWith('/forwardon')) {
@@ -197,11 +237,23 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
     tg.on('message', forwardTgMessage)
 
     tg.on('edited_message', async msg => {
-        const fwd = config.groups.find(e => e.tg === msg.chat.id)
-        if (!fwd) return
-        const qMsgId = await getQQByTg(msg.message_id, msg.chat.id)
-        await qq.deleteMsg(qMsgId)
-        await rmLinkByQQMsgId(qMsgId)
-        await forwardTgMessage(msg)
+        try {
+            const fwd = config.groups.find(e => e.tg === msg.chat.id)
+            if (!fwd) return
+            const qMsgId = await getQQByTg(msg.message_id, msg.chat.id)
+            if (qMsgId) {
+                if ((await qq.deleteMsg(qMsgId)).error) {
+                    const tipMsg = await tg.sendMessage(msg.chat.id,
+                        '撤回 QQ 中对应的消息失败，QQ Bot 需要是管理员', {
+                            disable_notification: true,
+                        })
+                    setTimeout(() => tg.deleteMessage(msg.chat.id, String(tipMsg.message_id)), 5000)
+                }
+                await rmLinkByQQMsgId(qMsgId)
+            }
+            await forwardTgMessage(msg)
+        } catch (e) {
+            console.log(e)
+        }
     })
 })()
