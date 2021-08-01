@@ -10,6 +10,7 @@ interface Config {
     tgToken: string
     qqUin: number
     qqPasswd: string
+    protocol: 1 | 2 | 3 | 4 | 5
     mongoDb: {
         connStr: string
         dbName: string

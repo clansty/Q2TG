@@ -18,7 +18,9 @@ import processTgMessage from './utils/processTgMessage'
     '#5bcffa',
 ])()
 
-export const qq = createClient(config.qqUin)
+export const qq = createClient(config.qqUin, {
+    platform: config.protocol
+})
 export const tg = new TelegramBot(config.tgToken, {polling: true})
 
 ;(async () => {

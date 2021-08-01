@@ -1,5 +1,7 @@
 qqUin:
 qqPasswd:
+# 1:安卓手机(默认) 2:aPad 3:安卓手表 4:MacOS 5:iPad
+protocol: 1
 tgToken:
 mongoDb:
   connStr: mongodb://localhost
