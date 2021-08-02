@@ -1,8 +1,15 @@
-FROM node:16
-WORKDIR /usr/src/app
-COPY package*.json ./
+FROM jrottenberg/ffmpeg:4.1-alpine AS ffmpeg
+
+FROM node:16-alpine
+COPY --from=ffmpeg / /
+
+WORKDIR /app
+
+COPY package.json ./
 COPY yarn.lock ./
-RUN yarn install
-COPY * ./
-VOLUME /usr/src/app/config.yaml
-CMD [ "yarn", "start" ]
+RUN apk add --no-cache --virtual .build-deps alpine-sdk python2 &&\
+    yarn install --production &&\
+    apk del .build-deps
+
+COPY build/ ./
+CMD [ "node", "." ]

@@ -4,7 +4,8 @@
     "target": "ES2017",
     "esModuleInterop": true,
     "sourceMap": false,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "outDir": "build"
   },
   "exclude": [
     "node_modules"
