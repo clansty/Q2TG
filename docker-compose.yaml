@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  db:
+    image : mongo
+    container_name: mongodb_q2tg
+    volumes:
+      - mongodb_q2tg:/data/db
+    restart: unless-stopped
+  q2tg:
+    image: q2tg
+    container_name: main_q2tg
+    environment:
+      - |
+        Q2TG_CONFIG=
+        qqUin: 12345678
+        qqPasswd: P@ssw0rd
+        # 1:安卓手机(默认) 2:aPad 3:安卓手表 4:MacOS 5:iPad
+        protocol: 1
+        tgToken: 12345:xxxxxxxxxx
+        mongoDb:
+          connStr: mongodb://db
+          dbName: q2tg
+        groups:
+          - qq: 1234567
+            tg: -100123456789
+          - qq: 7654321
+            tg: -100987654321
+
+    restart: unless-stopped
+    depends_on:
+      - db
+
+volumes:
+  mongodb_q2tg:
