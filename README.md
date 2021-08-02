@@ -79,4 +79,5 @@ QQ 与 Telegram 群相互转发的 bot
 
 ## 运行演示
 
-![GIF](https://cdn.lwqwq.com/pic/8x.gif)
+![gif](https://user-images.githubusercontent.com/18461360/127771641-7195f752-52a9-49cd-98a0-80dc5f6bbe64.gif)
+
