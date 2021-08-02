@@ -7,7 +7,7 @@ services:
       - mongodb_q2tg:/data/db
     restart: unless-stopped
   q2tg:
-    image: q2tg
+    image: ghcr.io/clansty/q2tg
     container_name: main_q2tg
     environment:
       - |
