@@ -18,4 +18,5 @@ interface Config {
     groups: Array<ForwardInfo>
 }
 
-export default YAML.parse(fs.readFileSync('config.yaml', 'utf8')) as Config
+export default <Config>YAML.parse(fs.existsSync('config.yaml') ?
+    fs.readFileSync('config.yaml', 'utf8') : process.env.Q2TG_CONFIG)
