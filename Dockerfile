@@ -12,4 +12,4 @@ RUN apk add --no-cache --virtual .build-deps alpine-sdk python2 &&\
     apk del .build-deps
 
 COPY build/ ./
-CMD [ "node", "." ]
+CMD [ "node", "index.js" ]
