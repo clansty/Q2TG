@@ -19,6 +19,13 @@ QQ 与 Telegram 群相互转发的 bot
 
 4. 在能同时连接 QQ 和 Telegram 的服务器上启动服务 `yarn start`
 
+## 通过 Docker 部署
+
+首先需要安装有 `docker` 和 `docker-compose`，并且能同时连接 QQ 和 TG 的机器
+
+1. 下载 [docker-compose.yaml](./docker-compose.yaml)，填写相关参数。数据库部分无需改动
+2. 运行 `docker-compose up -d`
+
 ## 支持的消息类型
 
 - [x] 文字（双向）
