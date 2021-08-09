@@ -7,7 +7,7 @@ import hSize from './hSize'
 interface QQMessage {
     file?: string
     content: string
-    image?: string
+    image: string[]
     video?: string
     replyTgId?: number
     audio?: Buffer
@@ -16,11 +16,12 @@ interface QQMessage {
 export default async (oicqMessage: MessageElem[], gin: number) => {
     const message: QQMessage = {
         content: '',
+        image: []
     }
     let lastType, replyToQUin
     for (let i = 0; i < oicqMessage.length; i++) {
         const m = oicqMessage[i]
-        let appurl, url
+        let appurl
         switch (m.type) {
             case 'at':
                 if (lastType === 'reply') {
@@ -34,15 +35,14 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 break
             case 'image':
             case 'flash':
-                url = m.data.url
-                message.image = url
+                message.image.push(m.data.url)
                 break
             case 'bface':
-                url = `https://gxh.vip.qq.com/club/item/parcel/item/${m.data.file.substr(
+                const url = `https://gxh.vip.qq.com/club/item/parcel/item/${m.data.file.substr(
                     0,
                     2,
                 )}/${m.data.file.substr(0, 32)}/300x300.png`
-                message.image = url
+                message.image.push(url)
                 break
             case 'file':
                 message.content += '文件: ' + m.data.name + '\n' +

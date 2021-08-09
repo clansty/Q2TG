@@ -1,5 +1,5 @@
 import {createClient, MessageElem} from 'oicq'
-import TelegramBot, {InlineKeyboardMarkup} from 'node-telegram-bot-api'
+import TelegramBot, {InlineKeyboardMarkup, InputMediaPhoto} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
 import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit, rmLinkByQQMsgId} from './utils/storage'
 import config from './utils/config'
@@ -37,9 +37,9 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
             const msg = await processQQMsg(data.message, data.group_id)
             const nick = data.sender.card ? data.sender.card : data.sender.nickname
             let ret: TelegramBot.Message
-            if (msg.image) {
+            if (msg.image.length === 1) {
                 try {
-                    const bufImg: Buffer = (await axios.get(msg.image, {
+                    const bufImg: Buffer = (await axios.get(msg.image[0], {
                         responseType: 'arraybuffer',
                     })).data
                     const type = await fileType.fromBuffer(bufImg)
@@ -58,11 +58,31 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                             reply_to_message_id: msg.replyTgId,
                         })
                 } catch (e) {
-                    ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content + '\n[下载失败的图片]', {
+                    //alternative sending way
+                    ret = await tg.sendPhoto(fwd.tg, msg.image[0], {
+                        caption: nick + '：' + (
+                            msg.content ? '\n' + msg.content : ''
+                        ),
                         reply_to_message_id: msg.replyTgId,
                     })
                     console.log(e)
                 }
+            } else if (msg.image.length > 1) {
+                const group: InputMediaPhoto[] = []
+                let caption = nick + '：' + (
+                    msg.content ? '\n' + msg.content : ''
+                )
+                for (const media of msg.image) {
+                    group.push({
+                        media,
+                        type: 'photo',
+                        caption,
+                    })
+                    caption = undefined
+                }
+                ret = await tg.sendMediaGroup(fwd.tg, group, {
+                    reply_to_message_id: msg.replyTgId,
+                })
             } else if (msg.video) {
                 try {
                     const bufVid: Buffer = (await axios.get(msg.video, {
