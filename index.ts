@@ -3,7 +3,6 @@ import TelegramBot, {InlineKeyboardMarkup, InputMediaPhoto} from 'node-telegram-
 import processQQMsg from './utils/processQQMessage'
 import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit, rmLinkByQQMsgId} from './utils/storage'
 import config from './utils/config'
-import path from 'path'
 import MessageMirai from './types/MessageMirai'
 import {getAvatarMd5} from './utils/tgAvatarCache'
 import axios from 'axios'

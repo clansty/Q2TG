@@ -12,7 +12,7 @@
     "mongodb": "^3.6.9",
     "node-telegram-bot-api": "^0.53.0",
     "nodejs-base64": "^2.0.0",
-    "oicq": "^1.18.3",
+    "oicq": "^1.19.5",
     "silk-sdk": "^0.2.2",
     "tmp-promise": "^3.0.2",
     "yaml": "^1.10.2"
@@ -22,11 +22,11 @@
     "detach-start": "screen -U yarn start"
   },
   "devDependencies": {
-    "ts-node": "^10.0.0",
-    "typescript": "^4.3.2",
     "@types/fluent-ffmpeg": "^2.1.18",
     "@types/mongodb": "^3.6.18",
     "@types/node": "^15.12.2",
-    "@types/node-telegram-bot-api": "^0.51.1"
+    "@types/node-telegram-bot-api": "^0.51.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   }
 }
