@@ -1,4 +1,4 @@
-import {createClient, MessageElem} from 'oicq'
+import {createClient} from 'oicq'
 import TelegramBot, {InlineKeyboardMarkup, InputMediaPhoto} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
 import {addLink, getFile, getQQByTg, getTgByQQ, init as storageInit, rmLinkByQQMsgId} from './utils/storage'
@@ -8,6 +8,7 @@ import {getAvatarMd5} from './utils/tgAvatarCache'
 import axios from 'axios'
 import fileType from 'file-type'
 import processTgMessage from './utils/processTgMessage'
+import htmlEscape from './utils/htmlEscape'
 
 (() => [
     '#5bcffa',
@@ -44,38 +45,34 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                     const type = await fileType.fromBuffer(bufImg)
                     if (type.ext === 'gif')
                         ret = await tg.sendAnimation(fwd.tg, bufImg, {
-                            caption: nick + '：' + (
-                                msg.content ? '\n' + msg.content : ''
-                            ),
+                            caption: `<b>${htmlEscape(nick)}</b>：${msg.content ? '\n' + htmlEscape(msg.content) : ''}`,
                             reply_to_message_id: msg.replyTgId,
+                            parse_mode: 'HTML',
                         })
                     else
                         ret = await tg.sendPhoto(fwd.tg, bufImg, {
-                            caption: nick + '：' + (
-                                msg.content ? '\n' + msg.content : ''
-                            ),
+                            caption: `<b>${htmlEscape(nick)}</b>：${msg.content ? '\n' + htmlEscape(msg.content) : ''}`,
                             reply_to_message_id: msg.replyTgId,
+                            parse_mode: 'HTML',
                         })
                 } catch (e) {
                     //alternative sending way
                     ret = await tg.sendPhoto(fwd.tg, msg.image[0], {
-                        caption: nick + '：' + (
-                            msg.content ? '\n' + msg.content : ''
-                        ),
+                        caption: `<b>${htmlEscape(nick)}</b>：${msg.content ? '\n' + htmlEscape(msg.content) : ''}`,
                         reply_to_message_id: msg.replyTgId,
+                        parse_mode: 'HTML',
                     })
                     console.log(e)
                 }
             } else if (msg.image.length > 1) {
                 const group: InputMediaPhoto[] = []
-                let caption = nick + '：' + (
-                    msg.content ? '\n' + msg.content : ''
-                )
+                let caption = `<b>${htmlEscape(nick)}</b>：${msg.content ? '\n' + htmlEscape(msg.content) : ''}`
                 for (const media of msg.image) {
                     group.push({
                         media,
                         type: 'photo',
                         caption,
+                        parse_mode: caption ? 'HTML' : undefined,
                     })
                     caption = undefined
                 }
@@ -88,19 +85,22 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                         responseType: 'arraybuffer',
                     })).data
                     ret = await tg.sendVideo(fwd.tg, bufVid, {
-                        caption: nick + '：',
+                        caption: `<b>${htmlEscape(nick)}</b>：`,
                         reply_to_message_id: msg.replyTgId,
+                        parse_mode: 'HTML',
                     })
                 } catch (e) {
-                    ret = await tg.sendMessage(fwd.tg, nick + '：\n' + '[下载失败的视频]', {
+                    ret = await tg.sendMessage(fwd.tg, `<b>${htmlEscape(nick)}</b>：\n[下载失败的视频]`, {
                         reply_to_message_id: msg.replyTgId,
+                        parse_mode: 'HTML',
                     })
                     console.log(e)
                 }
             } else if (msg.audio) {
                 ret = await tg.sendVoice(fwd.tg, msg.audio, {
-                    caption: nick + '：',
+                    caption: `<b>${htmlEscape(nick)}</b>：`,
                     reply_to_message_id: msg.replyTgId,
+                    parse_mode: 'HTML',
                 })
             } else {
                 let kbd: InlineKeyboardMarkup
@@ -112,9 +112,10 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                         }]],
                     }
                 }
-                ret = await tg.sendMessage(fwd.tg, nick + '：\n' + msg.content, {
+                ret = await tg.sendMessage(fwd.tg, `<b>${htmlEscape(nick)}</b>：\n${htmlEscape(msg.content)}`, {
                     reply_to_message_id: msg.replyTgId,
                     reply_markup: kbd,
+                    parse_mode: 'HTML',
                 })
             }
             //保存 id 对应关系
