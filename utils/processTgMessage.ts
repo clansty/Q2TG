@@ -47,7 +47,18 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             },
         })
     }
-    if (msg.document) {
+    if (msg.animation) {
+        const tmp = await file()
+        cleanup = tmp.cleanup
+        const stream = tg.getFileStream(msg.animation.file_id)
+        await pipeSaveStream(stream, tmp.path)
+        chain.push({
+            type: 'video',
+            data: {
+                file: tmp.path,
+            },
+        })
+    } else if (msg.document) {
         if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
             path.extname(msg.document.file_name))) {
             const photoId = msg.document.file_id
