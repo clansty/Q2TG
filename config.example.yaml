@@ -6,6 +6,9 @@ tgToken:
 mongoDb:
   connStr: mongodb://localhost
   dbName: q2tg
+crv:
+  host:
+  token:
 groups:
   - qq:
     tg:

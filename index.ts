@@ -9,6 +9,7 @@ import axios from 'axios'
 import fileType from 'file-type'
 import processTgMessage from './utils/processTgMessage'
 import htmlEscape from './utils/htmlEscape'
+import createForwardSign from './utils/createForwardSign'
 
 (() => [
     '#5bcffa',
@@ -64,7 +65,8 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                     })
                     console.log(e)
                 }
-            } else if (msg.image.length > 1) {
+            }
+            else if (msg.image.length > 1) {
                 const group: InputMediaPhoto[] = []
                 let caption = `<b>${htmlEscape(nick)}</b>：${msg.content ? '\n' + htmlEscape(msg.content) : ''}`
                 for (const media of msg.image) {
@@ -79,7 +81,8 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                 ret = await tg.sendMediaGroup(fwd.tg, group, {
                     reply_to_message_id: msg.replyTgId,
                 })
-            } else if (msg.video) {
+            }
+            else if (msg.video) {
                 try {
                     const bufVid: Buffer = (await axios.get(msg.video, {
                         responseType: 'arraybuffer',
@@ -96,19 +99,29 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                     })
                     console.log(e)
                 }
-            } else if (msg.audio) {
+            }
+            else if (msg.audio) {
                 ret = await tg.sendVoice(fwd.tg, msg.audio, {
                     caption: `<b>${htmlEscape(nick)}</b>：`,
                     reply_to_message_id: msg.replyTgId,
                     parse_mode: 'HTML',
                 })
-            } else {
+            }
+            else {
                 let kbd: InlineKeyboardMarkup
                 if (msg.file) {
                     kbd = {
                         inline_keyboard: [[{
                             text: '获取下载链接',
                             url: 'https://t.me/' + me.username + '?start=' + msg.file,
+                        }]],
+                    }
+                }
+                if (msg.forward && config.crv.host) {
+                    kbd = {
+                        inline_keyboard: [[{
+                            text: '查看',
+                            url: `${config.crv.host}?res=${msg.forward}&sign=${createForwardSign(msg.forward)}`,
                         }]],
                     }
                 }
@@ -191,7 +204,8 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                             await tg.deleteMessage(msg.reply_to_message.chat.id, String(msg.reply_to_message.message_id))
                         } catch (e) {
                         }
-                    } else {
+                    }
+                    else {
                         const tipMsg = await tg.sendMessage(msg.chat.id, '不能撤回别人的消息', {
                             disable_notification: true,
                         })
@@ -222,7 +236,8 @@ export const tg = new TelegramBot(config.tgToken, {polling: true})
                 await tg.sendMessage(fwd.tg, 'TG -> QQ 消息转发已恢复', {
                     reply_to_message_id: msg.message_id,
                 })
-            } else if (msg.text && msg.text.startsWith('/forwardoff')) {
+            }
+            else if (msg.text && msg.text.startsWith('/forwardoff')) {
                 forwardOff[fwd.tg] = true
                 chain.push({
                     type: 'text',

@@ -15,6 +15,10 @@ interface Config {
         connStr: string
         dbName: string
     }
+    crv: {
+        host?: string
+        token?: string
+    }
     groups: Array<ForwardInfo>
 }
 

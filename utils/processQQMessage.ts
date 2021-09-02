@@ -3,8 +3,12 @@ import {addFile, getTgByQQ} from './storage'
 import {base64decode} from 'nodejs-base64'
 import silkDecode from './silkDecode'
 import hSize from './hSize'
+import BilibiliMiniApp from '../types/BilibiliMiniApp'
+import StructMessageCard from '../types/StructMessageCard'
+import getImageUrlByMd5 from './getImageUrlByMd5'
 
 interface QQMessage {
+    forward?: string
     file?: string
     content: string
     image: string[]
@@ -16,7 +20,7 @@ interface QQMessage {
 export default async (oicqMessage: MessageElem[], gin: number) => {
     const message: QQMessage = {
         content: '',
-        image: []
+        image: [],
     }
     let lastType, replyToQUin
     for (let i = 0; i < oicqMessage.length; i++) {
@@ -84,21 +88,48 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 else if (jsonAppLinkRegex.test(json))
                     appurl = json.match(jsonAppLinkRegex)[1].replace(/\\\//g, '/')
                 if (appurl) {
-                    message.content = appurl
-                } else {
+                    try {
+                        const meta = (<BilibiliMiniApp>jsonObj).meta.detail_1 || (<StructMessageCard>jsonObj).meta.news
+                        message.content = meta.desc + '\n\n'
+
+                        let previewUrl = meta.preview
+                        if (!previewUrl.toLowerCase().startsWith('http')) {
+                            previewUrl = 'https://' + previewUrl
+                        }
+                        message.image.push(previewUrl)
+                    } catch (e) {
+                    }
+
+                    message.content += appurl
+                }
+                else {
                     message.content = '[JSON]'
                 }
                 break
             case 'xml':
                 const urlRegex = /url="([^"]+)"/
+                const md5ImageRegex = /image md5="([A-F\d]{32})"/
                 if (urlRegex.test(m.data.data))
                     appurl = m.data.data.match(urlRegex)[1].replace(/\\\//g, '/')
                 if (m.data.data.includes('action="viewMultiMsg"')) {
                     message.content += '[Forward multiple messages]'
-                } else if (appurl) {
+                    const resIdRegex = /m_resid="([\w+=/]+)"/
+                    if (resIdRegex.test(m.data.data)) {
+                        const resId = m.data.data.match(resIdRegex)![1]
+                        console.log(resId)
+                        message.content = '[转发多条消息记录]'
+                        message.forward = resId
+                    }
+                }
+                else if (appurl) {
                     appurl = appurl.replace(/&amp;/g, '&')
                     message.content = appurl
-                } else {
+                }
+                else if (md5ImageRegex.test(m.data.data)) {
+                    const imgMd5 = appurl = m.data.data.match(md5ImageRegex)![1]
+                    message.image.push(getImageUrlByMd5(imgMd5))
+                }
+                else {
                     message.content += '[XML]'
                 }
                 break
