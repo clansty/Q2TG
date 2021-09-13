@@ -22,8 +22,9 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             type: 'text',
             data: {
                 text: getUserDisplayName(msg.from) +
-                    (msg.forward_from ? ' Forwarded from ' + getUserDisplayName(msg.forward_from) : '')
-                    + '：\n',
+                    (msg.forward_from ? ' Forwarded from ' + getUserDisplayName(msg.forward_from) : '') +
+                    (msg.forward_from_chat ? ' Forwarded from ' + msg.forward_from_chat.title : '') +
+                    '：\n',
             },
         },
     ]
