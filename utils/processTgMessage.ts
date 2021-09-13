@@ -58,7 +58,8 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
                 file: tmp.path,
             },
         })
-    } else if (msg.document) {
+    }
+    else if (msg.document) {
         if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
             path.extname(msg.document.file_name))) {
             const photoId = msg.document.file_id
@@ -69,7 +70,8 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
                     file: await streamToBuffer(stream),
                 },
             })
-        } else
+        }
+        else
             chain.push({
                 type: 'text',
                 data: {
@@ -84,6 +86,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             type: 'image',
             data: {
                 file: await streamToBuffer(stream),
+                type: 'face',
             },
         })
     }
