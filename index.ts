@@ -2,7 +2,7 @@ import {createClient} from 'oicq'
 import TelegramBot, {InlineKeyboardMarkup, InputMediaPhoto} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
 import {addLink, getTgByQQ, init as storageInit} from './utils/storage'
-import config from './providers/config'
+import config, {ForwardInfo} from './providers/config'
 import axios from 'axios'
 import fileType from 'file-type'
 import htmlEscape from './utils/htmlEscape'
@@ -10,6 +10,7 @@ import createForwardSign from './utils/createForwardSign'
 import handleTgMsgDelete from './handlers/handleTgMsgDelete'
 import forwardTgMessage from './handlers/forwardTgMessage'
 import {init as apiServerInit} from './providers/apiServer'
+import sleep from './utils/sleep'
 
 (() => [
     '#5bcffa',
@@ -143,10 +144,16 @@ export const forwardOff: { [tgGin: number]: boolean } = {}
         try {
             const fwd = config.groups.find(e => e.qq === data.group_id)
             if (!fwd) return
-            const tgMsgId = await getTgByQQ(data.message_id)
-            if (tgMsgId) {
-                await tg.deleteMessage(fwd.tg, String(tgMsgId))
+
+            let tgMsgId: number
+            let retries = 0
+            while (!tgMsgId) {
+                if (retries > 10) return
+                retries > 0 && await sleep(2000)
+                tgMsgId = await getTgByQQ(data.message_id)
+                retries++
             }
+            await tg.deleteMessage(fwd.tg, String(tgMsgId))
         } catch (e) {
             console.log(e)
         }
