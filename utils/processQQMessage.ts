@@ -135,7 +135,7 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 break
             case 'face':
                 if (m.data.text)
-                    message.content += m.data.text
+                    message.content += `[${m.data.text}]`
                 break
             case 'video':
                 // message.content = "[Video]";
