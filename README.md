@@ -60,7 +60,9 @@ QQ 与 Telegram 群相互转发的 bot
 
 - [x] 文件（单向 QQ -> TG，按需获取下载地址）
 
-- [ ] 转发多条消息记录
+- [x] 转发多条消息记录
+
+  （依赖 [chatrecord-viewer](https://github.com/Clansty/chatrecord-viewer) 服务）
 
 - [x] TG 编辑消息（撤回再重发）
 
