@@ -1,5 +1,5 @@
 import {qq, tg} from '../index'
-import {streamToBuffer} from './steamToBuffer'
+import {streamToBuffer} from './streamToBuffer'
 
 const cache = new Map<number, { md5: string, exp: Date }>()
 

@@ -8,7 +8,7 @@ import getUserDisplayName from './getUserDisplayName'
 import silkEncode from './silkEncode'
 import {file} from 'tmp-promise'
 import pipeSaveStream from './pipeSaveStream'
-import {streamToBuffer} from './steamToBuffer'
+import {streamToBuffer} from './streamToBuffer'
 
 type CleanUpFunction = () => Promise<void>
 export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
