@@ -20,6 +20,11 @@ interface Config {
         token?: string
     }
     groups: Array<ForwardInfo>
+    api: {
+        enabled: boolean
+        port: number
+        deleteNotifier: string
+    }
 }
 
 export default <Config>YAML.parse(fs.existsSync('config.yaml') ?

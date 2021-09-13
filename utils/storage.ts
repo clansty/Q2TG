@@ -1,5 +1,5 @@
 import {Collection, MongoClient, ObjectId} from 'mongodb'
-import config from './config'
+import config from '../providers/config'
 
 interface IdStorageSchema {
     qqMsgId: string

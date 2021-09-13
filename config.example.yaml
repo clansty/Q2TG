@@ -9,6 +9,10 @@ mongoDb:
 crv:
   host:
   token:
+api:
+  enabled: false
+  port: 8080
+  deleteNotifier: /deleteMessages
 groups:
   - qq:
     tg:
