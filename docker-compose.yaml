@@ -20,11 +20,25 @@ services:
         mongoDb:
           connStr: mongodb://db
           dbName: q2tg
+        crv:
+          host:
+          token:
+        api:
+          enabled: false
+          port: 8080
+          deleteNotifier: /deleteMessages
         groups:
           - qq: 1234567
             tg: -100123456789
           - qq: 7654321
             tg: -100987654321
+        cos:
+          enabled: false
+          secretId:
+          secretKey:
+          bucket: xxxxxx-1234567890
+          region: ap-xxxxxx
+          url: https://xxxxxx-1234567890.cos.ap-xxxxxx.myqcloud.com # 不要带末尾的 /
 
     restart: unless-stopped
     depends_on:
