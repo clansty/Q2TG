@@ -9,6 +9,7 @@ import silkEncode from './silkEncode'
 import {file} from 'tmp-promise'
 import pipeSaveStream from './pipeSaveStream'
 import {streamToBuffer} from './streamToBuffer'
+import {IMAGE_EXT} from '../constants'
 
 type CleanUpFunction = () => Promise<void>
 export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
@@ -61,8 +62,8 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         })
     }
     else if (msg.document) {
-        if (['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp'].includes(
-            path.extname(msg.document.file_name))) {
+        if (IMAGE_EXT.includes(
+            path.extname(msg.document.file_name).toLowerCase())) {
             const photoId = msg.document.file_id
             const stream = await tg.getFileStream(photoId)
             chain.push({

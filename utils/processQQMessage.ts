@@ -52,7 +52,7 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 break
             case 'file':
                 const extName = path.extname(m.data.name)
-                if (IMAGE_EXT.includes(extName)) {
+                if (IMAGE_EXT.includes(extName.toLowerCase())) {
                     message.image.push(m.data.url)
                 }
                 else {
