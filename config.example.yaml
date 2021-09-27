@@ -18,3 +18,10 @@ groups:
     tg:
   - qq:
     tg:
+cos:
+  enabled: false
+  secretId:
+  secretKey:
+  bucket: xxxxxx-1234567890
+  region: ap-xxxxxx
+  url: https://xxxxxx-1234567890.cos.ap-xxxxxx.myqcloud.com # 不要带末尾的 /

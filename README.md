@@ -5,7 +5,7 @@ QQ 与 Telegram 群相互转发的 bot
 
 ## 安装方法
 
-1. 首先将用于机器人的帐号在 [oicq](https://github.com/takayama-lily/oicq) 框架上登录一次，通过设备验证
+1. 首先将用于机器人的账号在 [oicq](https://github.com/takayama-lily/oicq) 框架上登录一次，通过设备验证
 
 2. 将 `config.example.yaml` 复制一份为 `config.yaml` ，并填入相关设置项
 
@@ -80,6 +80,38 @@ QQ 与 Telegram 群相互转发的 bot
 为了使撤回功能正常工作，TG 机器人需要具有「删除消息」权限，QQ 机器人需要为管理员或群主
 
 即使 QQ 机器人为管理员，也无法撤回其他管理员在 QQ 中发送的消息
+
+## 搭建 UserBot 实现监听原生撤回事件
+
+搭配 [KunoiSayami/delete-message-notifier](https://github.com/KunoiSayami/delete-message-notifier)，可以将 Telegram 中原生的撤回事件发送给 Q2TG
+
+1. 更改配置文件 `config.yaml`
+
+   ```yaml
+   api:
+       enabled: true
+       port: 8080
+       deleteNotifier: /deleteMessages
+   ```
+   
+2. 启动 `delete-message-notifier`，将上游地址设置为 `http://localhost:8080/deleteMessages`
+
+## 使用腾讯云 COS 存储头像数据
+
+默认 TG 消息发送者头像会预载到 QQ 消息图片存储中，将 MD5 附在消息里传递给 QQ 群，但是不知道什么原因时间长了会下载不了（显示为灰色，即使重新上传）。所以现在提供了将头像存储在腾讯云 COS 中的方案。
+
+此方案的客户端代码还未合并到发布分支，在不支持此方案的客户端中将不会显示头像（显示为转发 bot 的头像）
+
+修改配置文件：
+```yaml
+cos:
+  enabled: true
+  secretId: # 建议使用子账户
+  secretKey: # 需要 QcloudCOSDataWriteOnly 权限
+  bucket: xxxxxx-1234567890 # 用于存放头像的存储桶
+  region: ap-xxxxxx # 地域，比如 ap-shanghai
+  url: https://xxxxxx-1234567890.cos.ap-xxxxxx.myqcloud.com # 不要带末尾的 /
+```
 
 ## 额外功能
 

@@ -8,6 +8,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
+    "cos-nodejs-sdk-v5": "^2.10.3",
     "express": "^4.17.1",
     "file-type": "^16.5.2",
     "fluent-ffmpeg": "^2.1.2",

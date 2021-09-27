@@ -25,6 +25,14 @@ interface Config {
         port: number
         deleteNotifier: string
     }
+    cos:{
+        enabled: boolean
+        secretId: string
+        secretKey: string
+        bucket: string
+        region: string
+        url: string
+    }
 }
 
 export default <Config>YAML.parse(fs.existsSync('config.yaml') ?

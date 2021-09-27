@@ -3,7 +3,7 @@ import {addLink, getFile} from '../utils/storage'
 import config from '../providers/config'
 import processTgMessage from '../utils/processTgMessage'
 import MessageMirai from '../types/MessageMirai'
-import {getAvatarMd5} from '../utils/tgAvatarCache'
+import {getAvatarMd5OrUrl} from '../utils/tgAvatarCache'
 import {forwardOff, qq, tg} from '../index'
 import handleTgMsgDelete from './handleTgMsgDelete'
 
@@ -103,8 +103,13 @@ export default async (msg: TelegramBot.Message) => {
                 eqq: {
                     type: 'tg',
                     tgUid: msg.from.id,
-                    avatarMd5: await getAvatarMd5(msg.from.id),
                 },
+            }
+            if (config.cos?.enabled) {
+                mirai.eqq.avatarUrl = await getAvatarMd5OrUrl(msg.from.id)
+            }
+            else {
+                mirai.eqq.avatarMd5 = await getAvatarMd5OrUrl(msg.from.id)
             }
             chain.push({
                 type: 'mirai',
