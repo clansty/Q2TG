@@ -6,6 +6,8 @@ import hSize from './hSize'
 import BilibiliMiniApp from '../types/BilibiliMiniApp'
 import StructMessageCard from '../types/StructMessageCard'
 import getImageUrlByMd5 from './getImageUrlByMd5'
+import path from 'path'
+import {IMAGE_EXT} from '../constants'
 
 interface QQMessage {
     forward?: string
@@ -49,10 +51,16 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 message.image.push(url)
                 break
             case 'file':
-                message.content += '文件: ' + m.data.name + '\n' +
-                    '大小: ' + hSize(m.data.size)
-                const oid = await addFile(gin, m.data.fid, message.content)
-                message.file = oid
+                const extName = path.extname(m.data.name)
+                if (IMAGE_EXT.includes(extName)) {
+                    message.image.push(m.data.url)
+                }
+                else {
+                    message.content += '文件: ' + m.data.name + '\n' +
+                        '大小: ' + hSize(m.data.size)
+                    const oid = await addFile(gin, m.data.fid, message.content)
+                    message.file = oid
+                }
                 break
             case 'share':
                 message.content += m.data.url
