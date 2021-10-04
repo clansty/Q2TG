@@ -32,7 +32,7 @@ export default async (msg: TelegramBot.Message) => {
         }
         const fwd = config.groups.find(e => e.tg === msg.chat.id)
         if (!fwd) {
-            if (msg.text.toLowerCase().startsWith('/id'))
+            if (msg.text && msg.text.toLowerCase().startsWith('/id'))
                 await tg.sendMessage(msg.chat.id, String(msg.chat.id), {
                     reply_to_message_id: msg.message_id,
                 })
