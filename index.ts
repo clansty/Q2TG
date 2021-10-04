@@ -1,7 +1,7 @@
 import {createClient} from 'oicq'
 import TelegramBot, {InlineKeyboardMarkup, InputMediaPhoto} from 'node-telegram-bot-api'
 import processQQMsg from './utils/processQQMessage'
-import {addLink, getTgByQQ, init as storageInit} from './utils/storage'
+import {addLink, getTgByQQ, init as storageInit, rmLinkByQQMsgId} from './utils/storage'
 import config from './providers/config'
 import axios from 'axios'
 import fileType from 'file-type'
@@ -153,6 +153,7 @@ export const forwardOff: { [tgGin: number]: boolean } = {}
                 tgMsgId = await getTgByQQ(data.message_id)
                 retries++
             }
+            rmLinkByQQMsgId(data.message_id)
             await tg.deleteMessage(fwd.tg, String(tgMsgId))
         } catch (e) {
             console.log(e)
