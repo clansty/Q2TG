@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json ./
 COPY yarn.lock ./
 COPY bin ./bin
-RUN apk add --no-cache --virtual .build-deps alpine-sdk python2 &&\
+RUN apk add --no-cache --virtual .build-deps alpine-sdk python &&\
     yarn install --production &&\
     apk del .build-deps
 
