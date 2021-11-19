@@ -6,7 +6,7 @@ import {spawn} from 'child_process'
 export default (tgsStream: Readable) => new Promise<string>(async (resolve) => {
     const tmp = await file()
     await pipeSaveStream(tgsStream, tmp.path)
-    spawn('bin/tgs_to_gif', [tmp.path]).on('exit', () => {
+    spawn('tgs_to_gif', [tmp.path]).on('exit', () => {
         tmp.cleanup()
         resolve(tmp.path + '.gif')
     })
