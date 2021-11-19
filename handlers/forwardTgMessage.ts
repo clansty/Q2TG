@@ -8,7 +8,6 @@ import {forwardOff, qq, tg} from '../index'
 import handleTgMsgDelete from './handleTgMsgDelete'
 
 export default async (msg: TelegramBot.Message) => {
-    console.log(msg)
     try {
         if (msg.chat.id > 0) {
             if (msg.text && msg.text.startsWith('/start ')) {
