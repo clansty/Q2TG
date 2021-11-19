@@ -1,5 +1,5 @@
 # Q2TG
-QQ 与 Telegram 群相互转发的 bot
+QQ 群与 Telegram 群相互转发的 bot
 [![discord](https://img.shields.io/static/v1?label=chat&message=discord&color=7289da&logo=discord)](https://discord.gg/gKnU7BARzv)
 [![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/clansty/Q2TG/oicq)](https://github.com/takayama-lily/oicq)
 
@@ -15,11 +15,11 @@ QQ 与 Telegram 群相互转发的 bot
    
    以及 QQ 和 TG 的群号都不需要加引号
 
-3. 安装必要的依赖项 `yarn install`，以及 [FFmpeg](https://www.ffmpeg.org/)
+3. 安装必要的依赖项 `yarn install`，以及 [FFmpeg](https://www.ffmpeg.org/)，[tgs-to-gif](https://github.com/ed-asriyan/tgs-to-gif/tree/master-cpp)（需要安装到 `PATH` 中）
 
 4. 在能同时连接 QQ 和 Telegram 的服务器上启动服务 `yarn start`
 
-## 通过 Docker 部署
+## 通过 Docker 部署（推荐）
 
 首先需要安装有 `docker` 和 `docker-compose`，并且能同时连接 QQ 和 TG 的机器
 
@@ -34,11 +34,17 @@ QQ 与 Telegram 群相互转发的 bot
 
   - [x] GIF
 
+  - [x] 闪照
+
+    （目前会转换为普通图片）
+
 - [x] 图文混排消息（双向）
 
 - [x] 大表情（双向）
 
-  - [ ] TG 中的动态 Sticker
+  - [x] TG 中的动态 Sticker
+
+    目前是[转换成 GIF](https://github.com/ed-asriyan/tgs-to-gif) 发送的，并且可能有些[问题](https://github.com/ed-asriyan/tgs-to-gif/issues/13#issuecomment-633244547)
 
 - [x] 视频（双向）
 
@@ -98,9 +104,7 @@ QQ 与 Telegram 群相互转发的 bot
 
 ## 使用腾讯云 COS 存储头像数据
 
-默认 TG 消息发送者头像会预载到 QQ 消息图片存储中，将 MD5 附在消息里传递给 QQ 群，但是不知道什么原因时间长了会下载不了（显示为灰色，即使重新上传）。所以现在提供了将头像存储在腾讯云 COS 中的方案。
-
-此方案的客户端代码还未合并到发布分支，在不支持此方案的客户端中将不会显示头像（显示为转发 bot 的头像）
+以前 TG 消息发送者头像会预载到 QQ 消息图片存储中，将 MD5 附在消息里传递给 QQ 群，但是不知道什么原因时间长了会下载不了（显示为灰色，即使重新上传）。所以现在将头像存储在腾讯云 COS 中。
 
 修改配置文件：
 ```yaml
@@ -116,7 +120,7 @@ cos:
 ## 额外功能
 
 - 在 TG 中可以使用 `/forwardon` 和 `/forwardoff` 命令控制 TG 到 QQ 的单向开关
-- 使用 [Electron QQ](https://github.com/Clansty/electron-qq) 时可以无缝显示 TG 中的头像和名称
+- 使用 [Icalingua](https://github.com/Icalingua/Icalingua) 时可以无缝显示 TG 中的头像和名称
 
 ## 运行演示
 
