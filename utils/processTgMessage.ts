@@ -87,16 +87,26 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         const photoId = msg.sticker.file_id
         const stream = await tg.getFileStream(photoId)
         if (msg.sticker.is_animated) {
-            const gifPath = await convertTgsToGif(stream)
-            chain.push({
-                type: 'image',
-                data: {
-                    file: gifPath,
-                    type: 'face',
-                },
-            })
-            cleanup = async () => fs.unlink(gifPath, () => {
-            })
+            try {
+                const gifPath = await convertTgsToGif(stream)
+                chain.push({
+                    type: 'image',
+                    data: {
+                        file: gifPath,
+                        type: 'face',
+                    },
+                })
+                cleanup = async () => fs.unlink(gifPath, () => {
+                })
+            } catch (e) {
+                console.log(e)
+                chain.push({
+                    type: 'text',
+                    data: {
+                        text: '[转换动态 Sticker 时遇到问题]',
+                    },
+                })
+            }
         }
         else {
             chain.push({
