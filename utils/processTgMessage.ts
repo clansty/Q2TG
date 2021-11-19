@@ -82,7 +82,9 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             })
     }
     if (msg.sticker) {
-        const photoId = msg.sticker.file_id
+        const photoId = msg.sticker.is_animated ?
+            msg.sticker.thumb.file_id :
+            msg.sticker.file_id
         const stream = await tg.getFileStream(photoId)
         chain.push({
             type: 'image',
