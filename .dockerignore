@@ -742,4 +742,4 @@ src/
 ### LibreOffice template
 # LibreOffice locks
 .~lock.*#
-
+!bin

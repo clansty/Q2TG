@@ -1185,10 +1185,10 @@ object.assign@^4.1.2:
     has-symbols "^1.0.1"
     object-keys "^1.1.1"
 
-oicq@^1.20.2:
-  version "1.20.2"
-  resolved "https://registry.yarnpkg.com/oicq/-/oicq-1.20.2.tgz#663788f45c55670a9cceec073d4148f24c3a8ecb"
-  integrity sha512-OXYFbLnogA7WqRCoqaWNowBuMaKpaooHaxnNGgpXAH0ImZPDegoAx80MmrIY9tPIaxXSK4fcJhCtrisZSkG4DA==
+oicq@1.21.2:
+  version "1.21.2"
+  resolved "https://registry.yarnpkg.com/oicq/-/oicq-1.21.2.tgz#92bfc4031dc7a8bf4abe4500ff3d40512a36a5a3"
+  integrity sha512-dnVGCZ1geAviISijvWOVFk1oP7Y/bjcIm0uoxXm4UdP308UvquMoKu5un0iuzyMJVB1jjudrobClf5nF26/0Cg==
   dependencies:
     jsqr "^1.4.0"
     log4js "^6.3.0"
@@ -1196,7 +1196,7 @@ oicq@^1.20.2:
     pngjs "^6.0.0"
     probe-image-size "^7.2.1"
     qrcode-terminal "^0.12.0"
-    ws "^7.5.4"
+    ws "^7.5.5"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -1779,7 +1779,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-ws@^7.5.4:
+ws@^7.5.5:
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.5.tgz#8b4bc4af518cfabd0473ae4f99144287b33eb881"
   integrity sha512-BAkMFcAzl8as1G/hArkxOxq3G7pjUqQ3gzYbLL0/5zNkph70e+lCoxBGnm6AW1+/aiNeV4fnKqZ8m4GZewmH2w==

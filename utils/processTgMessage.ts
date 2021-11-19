@@ -10,6 +10,8 @@ import {file} from 'tmp-promise'
 import pipeSaveStream from './pipeSaveStream'
 import {streamToBuffer} from './streamToBuffer'
 import {IMAGE_EXT} from '../constants'
+import convertTgsToGif from './convertTgsToGif'
+import fs from 'fs'
 
 type CleanUpFunction = () => Promise<void>
 export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
@@ -82,17 +84,29 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             })
     }
     if (msg.sticker) {
-        const photoId = msg.sticker.is_animated ?
-            msg.sticker.thumb.file_id :
-            msg.sticker.file_id
+        const photoId = msg.sticker.file_id
         const stream = await tg.getFileStream(photoId)
-        chain.push({
-            type: 'image',
-            data: {
-                file: await streamToBuffer(stream),
-                type: 'face',
-            },
-        })
+        if (msg.sticker.is_animated) {
+            const gifPath = await convertTgsToGif(stream)
+            chain.push({
+                type: 'image',
+                data: {
+                    file: gifPath,
+                    type: 'face',
+                },
+            })
+            cleanup = async () => fs.unlink(gifPath, () => {
+            })
+        }
+        else {
+            chain.push({
+                type: 'image',
+                data: {
+                    file: await streamToBuffer(stream),
+                    type: 'face',
+                },
+            })
+        }
     }
     if (msg.new_chat_title) {
         chain.push({
