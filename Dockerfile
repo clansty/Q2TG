@@ -10,9 +10,11 @@ WORKDIR /app
 
 COPY package.json ./
 COPY yarn.lock ./
+COPY .yarn/ ./.yarn/
+COPY .yarnrc.yml ./
 RUN apk add --no-cache --virtual .build-deps alpine-sdk python3 &&\
-    yarn install --production &&\
+    yarn install &&\
     apk del .build-deps
 
 COPY build/ ./
-CMD [ "node", "index.js" ]
+CMD [ "yarn", "docker-start" ]

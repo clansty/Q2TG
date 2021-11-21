@@ -21,7 +21,7 @@ jobs:
 
       - run: yarn install
 
-      - run: npx tsc
+      - run: yarn compile
 
       - name: OCI meta
         id: meta

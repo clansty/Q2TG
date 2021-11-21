@@ -22,8 +22,9 @@
     "yaml": "^1.10.2"
   },
   "scripts": {
-    "start": "ts-node .",
-    "detach-start": "screen -U yarn start",
+    "dev": "ts-node .",
+    "start": "node build/index.js",
+    "docker-start": "node index.js",
     "compile": "tsc"
   },
   "devDependencies": {
