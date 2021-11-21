@@ -1,5 +1,6 @@
 import {Collection, MongoClient, ObjectId} from 'mongodb'
 import config from '../providers/config'
+import * as console from 'console'
 
 interface IdStorageSchema {
     qqMsgId: string
@@ -22,16 +23,28 @@ export const init = async () => {
     col = mdb.collection('msgIds')
     files = mdb.collection('files')
 
-    await col.createIndex('qqMsgId', {
-        background: true,
-        unique: true,
-    })
-    await col.createIndex('tgMsgId', {
-        background: true,
-    })
-    await col.createIndex('tgChatId', {
-        background: true,
-    })
+    try {
+        await col.createIndex('qqMsgId', {
+            background: true,
+            unique: true,
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    try {
+        await col.createIndex('tgMsgId', {
+            background: true,
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    try {
+        await col.createIndex('tgChatId', {
+            background: true,
+        })
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 export const addLink = (qqMsgId: string, tgMsgId: number, tgChatId: number): Promise<any> => {
@@ -42,7 +55,7 @@ export const addLink = (qqMsgId: string, tgMsgId: number, tgChatId: number): Pro
 
 export const rmLinkByQQMsgId = (qqMsgId: string): Promise<any> => {
     return col.deleteOne({
-        qqMsgId
+        qqMsgId,
     })
 }
 
