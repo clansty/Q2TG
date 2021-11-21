@@ -8,7 +8,7 @@ QQ 群与 Telegram 群相互转发的 bot
 1. 首先将用于机器人的账号在 [oicq](https://github.com/takayama-lily/oicq) 框架上登录一次，通过设备验证
 
 2. 将 `config.example.yaml` 复制一份为 `config.yaml` ，并填入相关设置项
-
+d
    需要 MongoDB 数据库来存储消息 ID 之间的对应关系
 
    （不要忘记 YAML 冒号后的空格（（
