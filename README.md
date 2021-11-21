@@ -24,54 +24,38 @@ d
 首先需要安装有 `docker` 和 `docker-compose`，并且能同时连接 QQ 和 TG 的机器
 
 1. 下载 [docker-compose.yaml](./docker-compose.yaml)，填写相关参数。数据库部分无需改动
-2. 运行 `docker-compose up -d`
+
+3. 运行 `docker-compose up -d`
 
 ## 支持的消息类型
 
 - [x] 文字（双向）
-
 - [x] 图片（双向）
-
   - [x] GIF
-
   - [x] 闪照
 
     （目前会转换为普通图片）
-
 - [x] 图文混排消息（双向）
-
 - [x] 大表情（双向）
-
   - [x] TG 中的动态 Sticker
 
     目前是[转换成 GIF](https://github.com/ed-asriyan/tgs-to-gif) 发送的，并且可能有些[问题](https://github.com/ed-asriyan/tgs-to-gif/issues/13#issuecomment-633244547)
-
 - [x] 视频（双向）
-
 - [x] 语音（双向）
-
 - [ ] 小表情
 
   （可显示为文字）
-
 - [x] 链接（双向）
-
 - [x] JSON/XML 卡片
 
   （包括部分转化为小程序的链接）
-
 - [x] 群公告
-
 - [x] 回复（双平台原生回复）
-
 - [x] 文件（单向 QQ -> TG，按需获取下载地址）
-
 - [x] 转发多条消息记录
 
   （依赖 [chatrecord-viewer](https://github.com/Clansty/chatrecord-viewer) 服务）
-
 - [x] TG 编辑消息（撤回再重发）
-
 - [x] 双向撤回消息
 
 ## 如何撤回消息
