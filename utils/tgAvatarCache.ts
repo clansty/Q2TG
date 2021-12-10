@@ -22,12 +22,12 @@ export const getAvatarMd5OrUrl = async (uid: number) => {
                 cacheTgAvatar(uid, avatar)
             }
             else {
-                const buf = await streamToBuffer(stream)
-                const uploadRet = await qq.preloadImages([buf])
-                if (uploadRet.data) {
-                    avatar = uploadRet.data[0].substr(0, 32)
-                    cacheTgAvatar(uid, avatar)
-                }
+                //const buf = await streamToBuffer(stream)
+                //const uploadRet = await qq.preloadImages([buf])
+                //if (uploadRet.data) {
+                //    avatar = uploadRet.data[0].substr(0, 32)
+                //    cacheTgAvatar(uid, avatar)
+                //}
             }
         } catch (e) {
             console.log(e)

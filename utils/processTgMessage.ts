@@ -23,12 +23,10 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
     const chain: MessageElem[] = [
         {
             type: 'text',
-            data: {
-                text: getUserDisplayName(msg.from) +
-                    (msg.forward_from ? ' Forwarded from ' + getUserDisplayName(msg.forward_from) : '') +
-                    (msg.forward_from_chat ? ' Forwarded from ' + msg.forward_from_chat.title : '') +
-                    '：\n',
-            },
+            text: getUserDisplayName(msg.from) +
+                (msg.forward_from ? ' Forwarded from ' + getUserDisplayName(msg.forward_from) : '') +
+                (msg.forward_from_chat ? ' Forwarded from ' + msg.forward_from_chat.title : '') +
+                '：\n',
         },
     ]
     if (msg.reply_to_message) {
@@ -36,9 +34,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         if (replyQQId)
             chain.unshift({
                 type: 'reply',
-                data: {
-                    id: replyQQId,
-                },
+                id: replyQQId,
             })
     }
     if (msg.photo) {
@@ -46,9 +42,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         const stream = await tg.getFileStream(photoId)
         chain.push({
             type: 'image',
-            data: {
-                file: await streamToBuffer(stream),
-            },
+            file: await streamToBuffer(stream),
         })
     }
     if (msg.animation) {
@@ -58,9 +52,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         await pipeSaveStream(stream, tmp.path)
         chain.push({
             type: 'video',
-            data: {
-                file: tmp.path,
-            },
+            file: tmp.path,
         })
     }
     else if (msg.document) {
@@ -70,17 +62,13 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
             const stream = await tg.getFileStream(photoId)
             chain.push({
                 type: 'image',
-                data: {
-                    file: await streamToBuffer(stream),
-                },
+                file: await streamToBuffer(stream),
             })
         }
         else
             chain.push({
                 type: 'text',
-                data: {
-                    text: '[文件：' + msg.document.file_name + ']',
-                },
+                text: '[文件：' + msg.document.file_name + ']',
             })
     }
     if (msg.sticker) {
@@ -91,10 +79,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
                 const gifPath = await convertTgsToGif(stream)
                 chain.push({
                     type: 'image',
-                    data: {
-                        file: gifPath,
-                        type: 'face',
-                    },
+                    file: gifPath,
                 })
                 cleanup = async () => fs.unlink(gifPath, () => {
                 })
@@ -102,28 +87,21 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
                 console.log(e)
                 chain.push({
                     type: 'text',
-                    data: {
-                        text: '[转换动态 Sticker 时遇到问题]',
-                    },
+                    text: '[转换动态 Sticker 时遇到问题]',
                 })
             }
         }
         else {
             chain.push({
                 type: 'image',
-                data: {
-                    file: await streamToBuffer(stream),
-                    type: 'face',
-                },
+                file: await streamToBuffer(stream),
             })
         }
     }
     if (msg.new_chat_title) {
         chain.push({
             type: 'text',
-            data: {
-                text: 'TG 群名称更改为：\n' + msg.new_chat_title,
-            },
+            text: 'TG 群名称更改为：\n' + msg.new_chat_title,
         })
     }
     if (msg.new_chat_photo) {
@@ -131,62 +109,46 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         const stream = await tg.getFileStream(photoId)
         chain.push({
                 type: 'text',
-                data: {
-                    text: '更改了 TG 群组头像：\n',
-                },
+                text: '更改了 TG 群组头像：\n',
             },
             {
                 type: 'image',
-                data: {
-                    file: await streamToBuffer(stream),
-                },
+                file: await streamToBuffer(stream),
             })
     }
     if (msg.pinned_message) {
         chain.push({
             type: 'text',
-            data: {
-                text: '置顶了消息：\n' + msg.pinned_message.text,
-            },
+            text: '置顶了消息：\n' + msg.pinned_message.text,
         })
     }
     if (msg.new_chat_members) {
         for (const newChatMember of msg.new_chat_members) {
             chain.push({
                 type: 'text',
-                data: {
-                    text: getUserDisplayName(newChatMember) + '\n',
-                },
+                text: getUserDisplayName(newChatMember) + '\n',
             })
         }
         chain.push({
             type: 'text',
-            data: {
-                text: '加入了群聊',
-            },
+            text: '加入了群聊',
         })
     }
     if (msg.left_chat_member) {
         chain.push({
             type: 'text',
-            data: {
-                text: getUserDisplayName(msg.left_chat_member) + '退群了',
-            },
+            text: getUserDisplayName(msg.left_chat_member) + '退群了',
         })
     }
     if (msg.poll) {
         chain.push({
             type: 'text',
-            data: {
-                text: '发起投票：\n' + msg.poll.question,
-            },
+            text: '发起投票：\n' + msg.poll.question,
         })
         for (const opt of msg.poll.options) {
             chain.push({
                 type: 'text',
-                data: {
-                    text: '\n - ' + opt.text,
-                },
+                text: '\n - ' + opt.text,
             })
         }
     }
@@ -194,9 +156,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         const ogg = tg.getFileStream(msg.voice.file_id)
         chain.push({
             type: 'record',
-            data: {
-                file: await silkEncode(ogg),
-            },
+            file: await silkEncode(ogg),
         })
     }
     if (msg.video) {
@@ -206,9 +166,7 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         await pipeSaveStream(stream, tmp.path)
         chain.push({
             type: 'video',
-            data: {
-                file: tmp.path,
-            },
+            file: tmp.path,
         })
     }
     if (msg.video_note) {
@@ -218,25 +176,19 @@ export default async (msg: TelegramBot.Message, fwd: ForwardInfo): Promise<{
         await pipeSaveStream(stream, tmp.path)
         chain.push({
             type: 'video',
-            data: {
-                file: tmp.path,
-            },
+            file: tmp.path,
         })
     }
     if (msg.caption) {
         chain.push({
             type: 'text',
-            data: {
-                text: '\n' + msg.caption,
-            },
+            text: '\n' + msg.caption,
         })
     }
     if (msg.text) {
         chain.push({
             type: 'text',
-            data: {
-                text: msg.text,
-            },
+            text: msg.text,
         })
     }
     return {chain, cleanup}

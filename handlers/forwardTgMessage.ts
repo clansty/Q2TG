@@ -78,9 +78,7 @@ export default async (msg: TelegramBot.Message) => {
             forwardOff[fwd.tg] = false
             chain.push({
                 type: 'text',
-                data: {
-                    text: '\n恢复了 TG -> QQ 消息转发',
-                },
+                text: '\n恢复了 TG -> QQ 消息转发',
             })
             await tg.sendMessage(fwd.tg, 'TG -> QQ 消息转发已恢复', {
                 reply_to_message_id: msg.message_id,
@@ -90,9 +88,7 @@ export default async (msg: TelegramBot.Message) => {
             forwardOff[fwd.tg] = true
             chain.push({
                 type: 'text',
-                data: {
-                    text: '\n暂停了 TG -> QQ 消息转发',
-                },
+                text: '\n暂停了 TG -> QQ 消息转发',
             })
             await tg.sendMessage(fwd.tg, 'TG -> QQ 消息转发已暂停', {
                 reply_to_message_id: msg.message_id,
@@ -113,15 +109,13 @@ export default async (msg: TelegramBot.Message) => {
             }
             chain.push({
                 type: 'mirai',
-                data: {
                     data: JSON.stringify(mirai, undefined, 0),
-                },
             })
             const ret = await qq.sendGroupMsg(fwd.qq, chain)
-            if (ret.data)
-                await addLink(ret.data.message_id, msg.message_id, fwd.tg)
+            if (ret)
+                await addLink(ret.message_id, msg.message_id, fwd.tg)
             else
-                console.log(ret.error)
+                console.log(ret)
             await cleanup()
         }
     } catch (e) {

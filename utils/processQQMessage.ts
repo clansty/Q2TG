@@ -31,45 +31,45 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
         switch (m.type) {
             case 'at':
                 if (lastType === 'reply') {
-                    replyToQUin = m.data.qq
+                    replyToQUin = m.qq
                     break
                 }
-                if (replyToQUin === m.data.qq)
+                if (replyToQUin === m.qq)
                     break
             case 'text':
-                message.content += m.data.text
+                message.content += m.text
                 break
             case 'image':
             case 'flash':
-                message.image.push(m.data.url)
+                message.image.push(m.url)
                 break
             case 'bface':
-                const url = `https://gxh.vip.qq.com/club/item/parcel/item/${m.data.file.substr(
+                const url = `https://gxh.vip.qq.com/club/item/parcel/item/${m.file.substr(
                     0,
                     2,
-                )}/${m.data.file.substr(0, 32)}/300x300.png`
+                )}/${m.file.substr(0, 32)}/300x300.png`
                 message.image.push(url)
                 break
             case 'file':
-                const extName = path.extname(m.data.name)
+                const extName = path.extname(m.name)
                 if (IMAGE_EXT.includes(extName.toLowerCase())) {
-                    message.image.push(m.data.url)
+                    message.image.push(m.fid)
                 }
                 else {
-                    message.content += '文件: ' + m.data.name + '\n' +
-                        '大小: ' + hSize(m.data.size)
-                    const oid = await addFile(gin, m.data.fid, message.content)
+                    message.content += '文件: ' + m.name + '\n' +
+                        '大小: ' + hSize(m.size)
+                    const oid = await addFile(gin, m.fid, message.content)
                     message.file = oid
                 }
                 break
             case 'share':
-                message.content += m.data.url
+                message.content += m.url
                 break
             case 'reply':
-                message.replyTgId = await getTgByQQ(m.data.id)
+                message.replyTgId = await getTgByQQ(m.id)
                 break
             case 'json':
-                const json = m.data.data
+                const json = m.data
                 const jsonObj = JSON.parse(json)
                 if (jsonObj.app === 'com.tencent.mannounce') {
                     try {
@@ -117,13 +117,13 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
             case 'xml':
                 const urlRegex = /url="([^"]+)"/
                 const md5ImageRegex = /image md5="([A-F\d]{32})"/
-                if (urlRegex.test(m.data.data))
-                    appurl = m.data.data.match(urlRegex)[1].replace(/\\\//g, '/')
-                if (m.data.data.includes('action="viewMultiMsg"')) {
+                if (urlRegex.test(m.data))
+                    appurl = m.data.match(urlRegex)[1].replace(/\\\//g, '/')
+                if (m.data.includes('action="viewMultiMsg"')) {
                     message.content += '[Forward multiple messages]'
                     const resIdRegex = /m_resid="([\w+=/]+)"/
-                    if (resIdRegex.test(m.data.data)) {
-                        const resId = m.data.data.match(resIdRegex)![1]
+                    if (resIdRegex.test(m.data)) {
+                        const resId = m.data.match(resIdRegex)![1]
                         console.log(resId)
                         message.content = '[转发多条消息记录]'
                         message.forward = resId
@@ -133,8 +133,8 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                     appurl = appurl.replace(/&amp;/g, '&')
                     message.content = appurl
                 }
-                else if (md5ImageRegex.test(m.data.data)) {
-                    const imgMd5 = appurl = m.data.data.match(md5ImageRegex)![1]
+                else if (md5ImageRegex.test(m.data)) {
+                    const imgMd5 = appurl = m.data.match(md5ImageRegex)![1]
                     message.image.push(getImageUrlByMd5(imgMd5))
                 }
                 else {
@@ -142,18 +142,18 @@ export default async (oicqMessage: MessageElem[], gin: number) => {
                 }
                 break
             case 'face':
-                if (m.data.text)
-                    message.content += `[${m.data.text}]`
+                if (m.text)
+                    message.content += `[${m.text}]`
                 break
             case 'video':
                 // message.content = "[Video]";
-                message.video = m.data.url
+                message.video = m.fid
                 if (/https?:\/\/[^,]*qqdownload[^,]*/.test(message.video))
                     message.video = /https?:\/\/[^,]*qqdownload[^,]*/.exec(message.video)[0]
                 break
             case 'record':
                 try {
-                    message.audio = await silkDecode(m.data.url)
+                    message.audio = await silkDecode(m.url)
                 } catch (e) {
                     message.content = '[下载失败的语音]'
                 }
