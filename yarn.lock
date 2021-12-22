@@ -2006,9 +2006,9 @@ __metadata:
     fluent-ffmpeg: ^2.1.2
     md5: ^2.3.0
     mongodb: ^3.6.9
-    node-telegram-bot-api: ^0.53.0
+    node-telegram-bot-api: ^0.54.0
     nodejs-base64: ^2.0.0
-    oicq: 1.21.2
+    oicq: 1.21.3
     silk-sdk: ^0.2.2
     tmp-promise: ^3.0.2
     ts-node: ^10.0.0
@@ -2017,9 +2017,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"node-telegram-bot-api@npm:^0.53.0":
-  version: 0.53.0
-  resolution: "node-telegram-bot-api@npm:0.53.0"
+"node-telegram-bot-api@npm:^0.54.0":
+  version: 0.54.0
+  resolution: "node-telegram-bot-api@npm:0.54.0"
   dependencies:
     array.prototype.findindex: ^2.0.2
     bl: ^1.2.3
@@ -2032,7 +2032,7 @@ __metadata:
     pump: ^2.0.0
     request: ^2.83.0
     request-promise: ^4.2.2
-  checksum: dca2ed06b2ac6b0fb94984c1232a16258258c8cc21f8512418fe66a73537e5281451032dfbfddee43e6499abf35fe223a407092058606f4d33c257f18e5cff3b
+  checksum: 929f6bf684d1d99638e42f59d2ef9d7df02ecf6f418670c03a8979f7ced52d345a5d9c4521c475c46840abd7228f51c88c191ad7dde08b899bf3646b14c7eef3
   languageName: node
   linkType: hard
 
@@ -2113,9 +2113,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@npm:1.21.2":
-  version: 1.21.2
-  resolution: "oicq@npm:1.21.2"
+"oicq@npm:1.21.3":
+  version: 1.21.3
+  resolution: "oicq@npm:1.21.3"
   dependencies:
     jsqr: ^1.4.0
     log4js: ^6.3.0
@@ -2126,7 +2126,7 @@ __metadata:
     ws: ^7.5.5
   bin:
     oicq: bin/oicq
-  checksum: ebd684585a90dbb1d57f5c16d5466402ae5be2a58725d1d9cbaac8e0d31c47ef7f08ddfb2308fb122f198842a0e30e87c9dd2672f550804237372ab200bc9353
+  checksum: eda3da9a10fd798da197890b095d7d7bc95a6134837da361c5437e5e535535edbcf3d89db22fe64ab6e5f5c98e74d6dc6cd2a478242053c940c42cc8c02de2fe
   languageName: node
   linkType: hard
 

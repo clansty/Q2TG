@@ -14,9 +14,9 @@
     "fluent-ffmpeg": "^2.1.2",
     "md5": "^2.3.0",
     "mongodb": "^3.6.9",
-    "node-telegram-bot-api": "^0.53.0",
+    "node-telegram-bot-api": "^0.54.0",
     "nodejs-base64": "^2.0.0",
-    "oicq": "1.21.2",
+    "oicq": "1.21.3",
     "silk-sdk": "^0.2.2",
     "tmp-promise": "^3.0.2",
     "yaml": "^1.10.2"
