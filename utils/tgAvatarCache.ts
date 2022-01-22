@@ -1,7 +1,10 @@
 import {qq, tg} from '../index'
 import {streamToBuffer} from './streamToBuffer'
 import config from '../providers/config'
-import cosUploadFile from './cosUploadFile'
+import cosUploadFile from './picBeds/cosUploadFile'
+import smmsUpload from './picBeds/smmsUpload'
+import biliPicUpload from './picBeds/biliPicUpload'
+import getImageUrlByMd5 from './getImageUrlByMd5'
 
 const cache = new Map<number, { md5: string, exp: Date }>()
 
@@ -9,28 +12,51 @@ const cache = new Map<number, { md5: string, exp: Date }>()
 export const getAvatarMd5OrUrl = async (uid: number) => {
     let avatar = getCachedTgAvatar(uid)
     if (!avatar) {
+        let buffer: Buffer
         try {
             const photos = await tg.getUserProfilePhotos(uid, {limit: 1})
             const photo = photos.photos[0]
             const fid = photo[photo.length - 1].file_id
             const stream = await tg.getFileStream(fid)
-            if (config.cos?.enabled) {
-                avatar = `${uid}-${new Date().getTime()}.jpg`
-                cosUploadFile(avatar, stream)
-                //可以不需要等待
-                avatar=`${config.cos.url}/${avatar}`
-                cacheTgAvatar(uid, avatar)
-            }
-            else {
-                const buf = await streamToBuffer(stream)
-                const uploadRet = await qq.preloadImages([buf])
-                if (uploadRet.data) {
-                    avatar = uploadRet.data[0].substr(0, 32)
-                    cacheTgAvatar(uid, avatar)
-                }
-            }
+            buffer = await streamToBuffer(stream)
         } catch (e) {
-            console.log(e)
+            console.error('无法获取头像', e)
+            return null
+        }
+        if (config.smms?.enabled) {
+            try {
+                avatar = await smmsUpload(buffer)
+                cacheTgAvatar(uid, avatar)
+                return avatar
+            } catch (e) {
+                console.error('sm.ms 上传失败', e)
+            }
+        }
+        if (config.biliPic?.enabled) {
+            try {
+                avatar = await biliPicUpload(buffer)
+                cacheTgAvatar(uid, avatar)
+                return avatar
+            } catch (e) {
+                console.error('哔哩图床上传失败', e)
+            }
+        }
+        if (config.cos?.enabled) {
+            try {
+                avatar = `${uid}-${new Date().getTime()}.jpg`
+                await cosUploadFile(avatar, buffer)
+                avatar = `${config.cos.url}/${avatar}`
+                cacheTgAvatar(uid, avatar)
+                return avatar
+            } catch (e) {
+                console.log('COS 上传失败', e)
+            }
+        }
+        const uploadRet = await qq.preloadImages([buffer])
+        if (uploadRet.data) {
+            avatar = uploadRet.data[0].substr(0, 32)
+            avatar = getImageUrlByMd5(avatar)
+            cacheTgAvatar(uid, avatar)
         }
     }
     return avatar

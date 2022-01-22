@@ -25,13 +25,21 @@ interface Config {
         port: number
         deleteNotifier: string
     }
-    cos:{
+    cos: {
         enabled: boolean
         secretId: string
         secretKey: string
         bucket: string
         region: string
         url: string
+    }
+    smms: {
+        enabled: boolean
+        token: string
+    }
+    biliPic: {
+        enabled: boolean
+        sessData: string
     }
 }
 

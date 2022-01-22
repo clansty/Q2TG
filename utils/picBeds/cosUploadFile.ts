@@ -1,5 +1,5 @@
 import COS from 'cos-nodejs-sdk-v5'
-import config from '../providers/config'
+import config from '../../providers/config'
 import {Stream} from 'stream'
 
 let cos: COS

@@ -105,12 +105,7 @@ export default async (msg: TelegramBot.Message) => {
                     tgUid: msg.from.id,
                 },
             }
-            if (config.cos?.enabled) {
-                mirai.eqq.avatarUrl = await getAvatarMd5OrUrl(msg.from.id)
-            }
-            else {
-                mirai.eqq.avatarMd5 = await getAvatarMd5OrUrl(msg.from.id)
-            }
+            mirai.eqq.avatarUrl = await getAvatarMd5OrUrl(msg.from.id)
             chain.push({
                 type: 'mirai',
                 data: {

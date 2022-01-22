@@ -12,6 +12,7 @@
     "express": "^4.17.1",
     "file-type": "^16.5.2",
     "fluent-ffmpeg": "^2.1.2",
+    "form-data": "^4.0.0",
     "md5": "^2.3.0",
     "mongodb": "^3.6.9",
     "node-telegram-bot-api": "^0.54.0",

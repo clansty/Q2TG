@@ -92,21 +92,11 @@ PS. TG 群组可以分为 Group 和 SuperGroup。在比较旧的版本中群主�
 
 2. 启动 `delete-message-notifier`，将上游地址设置为 `http://localhost:8080/deleteMessages`
 
-## 使用腾讯云 COS 存储头像数据
+## 使用图床存储头像数据
 
-以前 TG 消息发送者头像会预载到 QQ 消息图片存储中，将 MD5 附在消息里传递给 QQ 群，但是不知道什么原因时间长了会下载不了（显示为灰色，即使重新上传）。所以现在将头像存储在腾讯云 COS 中。
+以前 TG 消息发送者头像会预载到 QQ 消息图片存储中，将 MD5 附在消息里传递给 QQ 群，但是不知道什么原因时间长了会下载不了（显示为灰色，即使重新上传）。
 
-修改配置文件：
-
-```yaml
-cos:
-  enabled: true
-  secretId: # 建议使用子账户
-  secretKey: # 需要 QcloudCOSDataWriteOnly 权限
-  bucket: xxxxxx-1234567890 # 用于存放头像的存储桶
-  region: ap-xxxxxx # 地域，比如 ap-shanghai
-  url: https://xxxxxx-1234567890.cos.ap-xxxxxx.myqcloud.com # 不要带末尾的 /
-```
+所以现在支持了哔哩图床、sm.ms 图床和腾讯云 COS 三种图床，可以同时开启，按照前文的顺序使用，一个失败的话尝试下一个。需要在配置文件中开启并设置相应 token。
 
 ## 额外功能
 
