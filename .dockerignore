@@ -1,0 +1,6 @@
+*.log
+.idea
+.directory
+.yarn/*
+!.yarn/cache
+!.yarn/releases

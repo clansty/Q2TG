@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/data.db"
+}
+
+model Message {
+  id              Int          @id @default(autoincrement())
+  roomId          Int
+  senderId        Int
+  time            DateTime
+  brief           String
+  seq             Int
+  rand            Int
+  pktnum          Int
+}
+
