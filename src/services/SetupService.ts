@@ -73,8 +73,8 @@ export default class SetupService {
     config.userBotSession = session;
   }
 
-  public async finishConfig(){
-    config.isSetup= true;
+  public async finishConfig() {
+    config.isSetup = true;
     await saveConfig();
   }
 }
