@@ -10,7 +10,7 @@ export default class SetupController {
   // 创建的 UserBot
   private tgUser: Telegram;
 
-  constructor(tgBot: Telegram) {
+  constructor(private readonly tgBot: Telegram) {
     this.setupService = new SetupService(tgBot);
     tgBot.addNewMessageEventHandler(this.handleMessage);
   }
@@ -35,6 +35,8 @@ export default class SetupController {
         await this.setupService.informOwner('正在登录，请稍候…');
         this.tgUser = await this.setupService.createUserBot(phoneNumber);
         await this.setupService.informOwner(`登录成功`);
+        await this.setupService.saveUserBotSession(this.tgUser.getStringSession());
+        this.log.debug('StringSession 保存成功')
       }
       catch (e) {
         this.log.error('创建 UserBot 失败', e);

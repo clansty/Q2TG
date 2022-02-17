@@ -77,6 +77,11 @@ export class Telegram {
   public async getChat(entity: EntityLike) {
     return new TelegramChat(this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
   }
+
+  public getStringSession() {
+    // 上有定义不好好写
+    return this.client.session.save() as any as string;
+  }
 }
 
 export class TelegramChat {

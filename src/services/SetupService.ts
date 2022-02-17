@@ -19,7 +19,6 @@ export default class SetupService {
     userId = Number(userId);
     if (!this.owner) {
       config.owner = userId;
-      await saveConfig();
       await this.setupOwner();
       this.log.info(`用户 ID: ${userId} 成为了 Bot 主人`);
       return true;
@@ -52,7 +51,7 @@ export default class SetupService {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
-    const bot = await Telegram.create({
+    return await Telegram.create({
       phoneNumber,
       password: async (hint?: string) => {
         await this.owner.sendMessage({
@@ -68,6 +67,14 @@ export default class SetupService {
       },
       onError: (err) => this.log.error(err),
     });
-    return bot;
+  }
+
+  public async saveUserBotSession(session: string) {
+    config.userBotSession = session;
+  }
+
+  public async finishConfig(){
+    config.isSetup= true;
+    await saveConfig();
   }
 }
