@@ -8,6 +8,7 @@ import createOicq from '../client/oicq';
 import { Button } from 'telegram/tl/custom/button';
 import { Api } from 'telegram';
 import phone = Api.phone;
+import { CustomFile } from 'telegram/client/uploads';
 
 export default class SetupService {
   private owner: TelegramChat;
@@ -80,7 +81,7 @@ export default class SetupService {
       onQrCode: async (file) => {
         await this.owner.sendMessage({
           message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
-          file,
+          file: new CustomFile('qrcode.png', file.length, '', file),
           buttons: Button.text('我已扫码', true, true),
         });
         await this.waitForOwnerInput();
