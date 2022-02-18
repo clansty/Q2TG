@@ -6,6 +6,7 @@ type UserConfig = {
   userBotSession: string;
   qqUin: number;
   qqPassword: string;
+  qqPlatform: number
   isSetup: boolean;
 }
 
@@ -16,6 +17,7 @@ const defaultConfig: UserConfig = {
   userBotSession: '',
   qqUin: 0,
   qqPassword: '',
+  qqPlatform: 0,
   isSetup: false,
 };
 

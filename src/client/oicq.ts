@@ -57,5 +57,6 @@ export default function createOicq(params: CreateOicqParams) {
       .on('system.login.qrcode', loginQrCodeHandler)
       .on('system.login.error', loginErrorHandler)
       .on('system.online', successLoginHandler);
+    client.login(params.password);
   });
 }
