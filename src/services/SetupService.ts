@@ -6,8 +6,6 @@ import { Platform } from 'oicq';
 import { MarkupLike } from 'telegram/define';
 import createOicq from '../client/oicq';
 import { Button } from 'telegram/tl/custom/button';
-import { Api } from 'telegram';
-import phone = Api.phone;
 import { CustomFile } from 'telegram/client/uploads';
 
 export default class SetupService {
@@ -15,6 +13,10 @@ export default class SetupService {
   private log = getLogger('SetupService');
 
   constructor(private readonly tgBot: Telegram) {
+  }
+
+  public setWorkMode(mode: 'group' | 'personal') {
+    config.workMode = mode;
   }
 
   /**

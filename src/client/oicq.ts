@@ -51,6 +51,7 @@ export default function createOicq(params: CreateOicqParams) {
 
     const client = createClient(params.uin, {
       platform: params.platform,
+      data_dir: '../data'
     })
       .on('system.login.device', loginDeviceHandler)
       .on('system.login.slider', loginSliderHandler)

@@ -45,6 +45,24 @@ export default class SetupController {
       this.isInProgress = false;
       throw e;
     }
+    // 设置工作模式
+    let workMode: 'personal' | 'group' | '' = '';
+    try {
+      while (!workMode) {
+        const workModeText = await this.setupService.waitForOwnerInput('欢迎使用 Q2TG v2\n' +
+          '请选择工作模式，关于工作模式的区别请查看[这里](https://github.com)', [
+          [Button.text('个人模式', true, true)],
+          [Button.text('群组模式', true, true)],
+        ]);
+        workMode = setupHelper.convertTextToWorkMode(workModeText);
+      }
+      this.setupService.setWorkMode(workMode);
+    }
+    catch (e) {
+      this.log.error('设置工作模式失败', e);
+      this.isInProgress = false;
+      throw e;
+    }
     // 登录 oicq
     try {
       let uin = NaN;
@@ -76,7 +94,23 @@ export default class SetupController {
       this.isInProgress = false;
       throw e;
     }
+    let createUserBot: boolean;
+    if (workMode === 'group') {
+      const createUserBotChoice = await this.setupService.waitForOwnerInput('是否创建一个 Telegram UserBot\n' +
+        '将 UserBot 加入转发 Bot 所在的群可以监控原生的【删除消息】操作，方便用户直接删除消息', [
+        [Button.text('是', true, true)],
+        [Button.text('否', true, true)],
+      ]);
+      createUserBot = createUserBotChoice === '是';
+    }
+    else {
+      createUserBot = true;
+    }
     // 登录 tg UserBot
+    if (!createUserBot) {
+      this.setupService.saveUserBotSession('');
+      return;
+    }
     try {
       const phoneNumber = await this.setupService.waitForOwnerInput('创建 Telegram UserBot，请输入你的手机号码（需要带国家区号，例如：+86）');
       await this.setupService.informOwner('正在登录，请稍候…');

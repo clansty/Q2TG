@@ -1,5 +1,5 @@
 import fs from 'fs';
-import fsP from 'fs/promises'
+import fsP from 'fs/promises';
 
 type UserConfig = {
   owner: number
@@ -8,6 +8,7 @@ type UserConfig = {
   qqPassword: string;
   qqPlatform: number
   isSetup: boolean;
+  workMode: 'personal' | 'group' | ''
 }
 
 const CONFIG_PATH = './data/config.json';
@@ -19,6 +20,7 @@ const defaultConfig: UserConfig = {
   qqPassword: '',
   qqPlatform: 0,
   isSetup: false,
+  workMode: '',
 };
 
 export const config: UserConfig = fs.existsSync(CONFIG_PATH) ?
