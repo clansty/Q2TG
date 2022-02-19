@@ -52,7 +52,7 @@ export default class SetupService {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
-    message && await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), parseMode: 'md' });
+    message && await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
     const { message: reply } = await this.owner.waitForInput();
     return reply;
   }
@@ -92,8 +92,8 @@ export default class SetupService {
         return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
       },
       onVerifySlider: async (url) => {
-        const res = await this.waitForOwnerInput(`收到滑块验证码 \`${url}\`\n` +
-          '请使用[此软件](https://github.com/mzdluo123/TxCaptchaHelper/releases)验证并输入 Ticket\n' +
+        const res = await this.waitForOwnerInput(`收到滑块验证码 <code>${url}</code>\n` +
+          '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket\n' +
           '或者点击下方的按钮切换到扫码登录', [
           Button.text('切换到扫码登录', true, true),
         ]);

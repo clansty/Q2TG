@@ -35,6 +35,7 @@ export class Telegram {
   public static async create(startArgs: UserAuthParams | BotAuthParams, stringSession = '') {
     const bot = new this(stringSession);
     await bot.client.start(startArgs);
+    bot.client.setParseMode('html');
     bot.waitForMessageHelper = new WaitForMessageHelper(bot);
     bot.client.addEventHandler(bot.onMessage, new NewMessage({}));
     return bot;
@@ -81,6 +82,16 @@ export class Telegram {
   public getStringSession() {
     // 上游定义不好好写
     return this.client.session.save() as any as string;
+  }
+
+  public async setCommands(commands: Api.BotCommand[], scope: Api.TypeBotCommandScope) {
+    return await this.client.invoke(
+      new Api.bots.SetBotCommands({
+        commands,
+        langCode: 'zh',
+        scope,
+      }),
+    );
   }
 }
 

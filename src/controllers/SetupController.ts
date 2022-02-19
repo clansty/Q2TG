@@ -5,12 +5,13 @@ import { getLogger } from 'log4js';
 import { Button } from 'telegram/tl/custom/button';
 import setupHelper from '../helpers/setupHelper';
 import { Client as OicqClient } from 'oicq';
+import commands from '../constants/commands';
 
 export default class SetupController {
   private readonly setupService: SetupService;
   private log = getLogger('SetupController');
   private isInProgress = false;
-  private waitForFinishCallbacks: Array<(ret: { tgUser: Telegram }) => unknown> = [];
+  private waitForFinishCallbacks: Array<(ret: { tgUser: Telegram, oicq: OicqClient }) => unknown> = [];
   // 创建的 UserBot
   private tgUser: Telegram;
   private oicq: OicqClient;
@@ -18,6 +19,7 @@ export default class SetupController {
   constructor(private readonly tgBot: Telegram) {
     this.setupService = new SetupService(tgBot);
     tgBot.addNewMessageEventHandler(this.handleMessage);
+    tgBot.setCommands(commands.preSetupCommands, new Api.BotCommandScopeUsers());
   }
 
   private handleMessage = async (message: Api.Message) => {
@@ -50,7 +52,7 @@ export default class SetupController {
     try {
       while (!workMode) {
         const workModeText = await this.setupService.waitForOwnerInput('欢迎使用 Q2TG v2\n' +
-          '请选择工作模式，关于工作模式的区别请查看[这里](https://github.com)', [
+          '请选择工作模式，关于工作模式的区别请查看<a href="https://github.com">这里</a>', [
           [Button.text('个人模式', true, true)],
           [Button.text('群组模式', true, true)],
         ]);
@@ -132,11 +134,12 @@ export default class SetupController {
     await this.setupService.finishConfig();
     this.waitForFinishCallbacks.forEach(e => e({
       tgUser: this.tgUser,
+      oicq: this.oicq,
     }));
   }
 
   public waitForFinish() {
-    return new Promise<{ tgUser: Telegram }>(resolve => {
+    return new Promise<{ tgUser: Telegram, oicq: OicqClient }>(resolve => {
       this.waitForFinishCallbacks.push(resolve);
     });
   }

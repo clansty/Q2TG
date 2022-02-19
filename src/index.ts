@@ -2,6 +2,8 @@ import { Telegram } from './client/Telegram';
 import { config } from './providers/userConfig';
 import { getLogger, configure } from 'log4js';
 import SetupController from './controllers/SetupController';
+import { Client as OicqClient } from 'oicq';
+import createOicq from './client/oicq';
 
 (async () => {
   configure({
@@ -17,14 +19,22 @@ import SetupController from './controllers/SetupController';
   const tgBot = await Telegram.create({
     botAuthToken: process.env.TG_BOT_TOKEN,
   });
-  let tgUser: Telegram;
+  let tgUser: Telegram, oicq: OicqClient;
   log.debug('TG Bot 登录完成');
   if (!config.isSetup) {
     log.info('当前服务器未配置，请向 Bot 发送 /setup 来设置');
     const setupController = new SetupController(tgBot);
-    ({ tgUser } = await setupController.waitForFinish());
+    ({ tgUser, oicq } = await setupController.waitForFinish());
   }
   else {
-    tgUser = await Telegram.connect(config.userBotSession);
+    config.userBotSession && (tgUser = await Telegram.connect(config.userBotSession));
+    oicq = await createOicq({
+      uin: config.qqUin,
+      password: config.qqPassword,
+      platform: config.qqPlatform,
+      onVerifyDevice: () => null,
+      onVerifySlider: () => null,
+      onQrCode: () => null,
+    });
   }
 })();
