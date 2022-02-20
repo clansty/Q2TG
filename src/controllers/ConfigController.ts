@@ -3,6 +3,7 @@ import { Telegram } from '../client/Telegram';
 import { Client as OicqClient } from 'oicq';
 import ConfigService from '../services/ConfigService';
 import { config } from '../providers/userConfig';
+import regExps from '../constants/regExps';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
@@ -16,13 +17,24 @@ export default class ConfigController {
   }
 
   private handleMessage = async (message: Api.Message) => {
-    if (!message.chat.id.eq(config.owner)) {
+    if (!message.sender.id.eq(config.owner)) {
       return false;
     }
-    switch (message.message){
-      case '/add':
-        this.configService.add()
-        return true
+    const messageSplit = message.message.split(' ');
+    if (message.isGroup) {
+
+    }
+    else if (message.isPrivate) {
+      switch (messageSplit[0]) {
+        case '/add':
+          if (messageSplit[1] && regExps.qq.test(messageSplit[1])) {
+            await this.configService.addExact(Number(messageSplit[1]));
+          }
+          else {
+            await this.configService.add();
+          }
+          return true;
+      }
     }
   };
 }

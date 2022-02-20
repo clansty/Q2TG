@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@prisma/client": "^3.9.2",
+    "axios": "^0.26.0",
     "log4js": "^6.4.1",
     "oicq": "^2.2.0",
     "telegram": "^2.5.0"
