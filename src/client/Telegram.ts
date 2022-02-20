@@ -4,17 +4,22 @@ import { BotAuthParams, UserAuthParams } from 'telegram/client/auth';
 import { NewMessage, NewMessageEvent } from 'telegram/events';
 import { EditedMessage, EditedMessageEvent } from 'telegram/events/EditedMessage';
 import { DeletedMessage, DeletedMessageEvent } from 'telegram/events/DeletedMessage';
-import { Entity, EntityLike } from 'telegram/define';
+import { ButtonLike, Entity, EntityLike } from 'telegram/define';
 import { SendMessageParams } from 'telegram/client/messages';
 import { CustomFile } from 'telegram/client/uploads';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
+import createPaginatedInlineSelector from '../utils/paginatedInlineSelector';
+import CallbackQueryHelper from '../helpers/CallbackQueryHelper';
+import { CallbackQuery } from 'telegram/events/CallbackQuery';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean>;
 
 export class Telegram {
   private readonly client: TelegramClient;
   private waitForMessageHelper: WaitForMessageHelper;
+  private callbackQueryHelper: CallbackQueryHelper = new CallbackQueryHelper();
   private readonly onMessageHandlers: Array<MessageHandler> = [];
+  public me: Api.User;
 
   private constructor(stringSession = '') {
     this.client = new TelegramClient(
@@ -35,16 +40,23 @@ export class Telegram {
   public static async create(startArgs: UserAuthParams | BotAuthParams, stringSession = '') {
     const bot = new this(stringSession);
     await bot.client.start(startArgs);
-    bot.client.setParseMode('html');
-    bot.waitForMessageHelper = new WaitForMessageHelper(bot);
-    bot.client.addEventHandler(bot.onMessage, new NewMessage({}));
+    await bot.config();
     return bot;
   }
 
   public static async connect(stringSession: string) {
     const bot = new this(stringSession);
     await bot.client.connect();
+    await bot.config();
     return bot;
+  }
+
+  private async config() {
+    this.client.setParseMode('html');
+    this.waitForMessageHelper = new WaitForMessageHelper(this);
+    this.client.addEventHandler(this.onMessage, new NewMessage({}));
+    this.client.addEventHandler(this.callbackQueryHelper.onCallbackQuery, new CallbackQuery());
+    this.me = await this.client.getMe() as Api.User;
   }
 
   private onMessage = async (event: NewMessageEvent) => {
@@ -76,7 +88,7 @@ export class Telegram {
   }
 
   public async getChat(entity: EntityLike) {
-    return new TelegramChat(this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
+    return new TelegramChat(this, this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
   }
 
   public getStringSession() {
@@ -93,10 +105,15 @@ export class Telegram {
       }),
     );
   }
+
+  public registerCallback(cb: () => any) {
+    return this.callbackQueryHelper.registerCallback(cb);
+  }
 }
 
 export class TelegramChat {
-  constructor(private readonly client: TelegramClient,
+  constructor(public readonly parent: Telegram,
+              private readonly client: TelegramClient,
               private readonly entity: Entity,
               private readonly waitForInputHelper: WaitForMessageHelper) {
   }
@@ -119,5 +136,13 @@ export class TelegramChat {
 
   public async waitForInput() {
     return this.waitForInputHelper.waitForMessage(this.entity.id);
+  }
+
+  public cancelWait() {
+    this.waitForInputHelper.cancel(this.entity.id);
+  }
+
+  public createPaginatedInlineSelector(message: string, choices: ButtonLike[][]) {
+    return createPaginatedInlineSelector(this, message, choices);
   }
 }

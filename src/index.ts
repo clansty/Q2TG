@@ -4,6 +4,7 @@ import { getLogger, configure } from 'log4js';
 import SetupController from './controllers/SetupController';
 import { Client as OicqClient } from 'oicq';
 import createOicq from './client/oicq';
+import ConfigController from './controllers/ConfigController';
 
 (async () => {
   configure({
@@ -27,7 +28,12 @@ import createOicq from './client/oicq';
     ({ tgUser, oicq } = await setupController.waitForFinish());
   }
   else {
-    config.userBotSession && (tgUser = await Telegram.connect(config.userBotSession));
+    if (config.userBotSession) {
+      log.debug('正在登录 TG UserBot');
+      tgUser = await Telegram.connect(config.userBotSession);
+      log.debug('TG UserBot 登录完成');
+    }
+    log.debug('正在登录 OICQ');
     oicq = await createOicq({
       uin: config.qqUin,
       password: config.qqPassword,
@@ -36,5 +42,7 @@ import createOicq from './client/oicq';
       onVerifySlider: () => null,
       onQrCode: () => null,
     });
+    log.debug('OICQ 登录完成');
   }
+  new ConfigController(tgBot, tgUser, oicq);
 })();

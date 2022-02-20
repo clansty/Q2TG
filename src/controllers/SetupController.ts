@@ -23,8 +23,8 @@ export default class SetupController {
   }
 
   private handleMessage = async (message: Api.Message) => {
-    if (this.isInProgress) {
-      return true;
+    if (this.isInProgress || !message.isPrivate) {
+      return false;
     }
 
     if (message.text === '/setup') {
