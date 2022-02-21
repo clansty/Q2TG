@@ -22,12 +22,21 @@ export default class ConfigController {
     }
     const messageSplit = message.message.split(' ');
     if (message.isGroup) {
-
+      if (messageSplit.length === 2 && messageSplit[0].startsWith('/start') && regExps.roomId.test(messageSplit[1])) {
+        await this.configService.createLinkGroup(Number(messageSplit[1]), Number(message.chat.id));
+        return true;
+      }
+      else
+        return false;
     }
     else if (message.isPrivate) {
       switch (messageSplit[0]) {
         case '/add':
-          if (messageSplit[1] && regExps.qq.test(messageSplit[1])) {
+          // 加的参数永远是正的群号
+          if (messageSplit.length === 3 && regExps.qq.test(messageSplit[1]) && !isNaN(Number(messageSplit[2]))) {
+            await this.configService.createLinkGroup(-Number(messageSplit[1]), Number(messageSplit[2]));
+          }
+          else if (messageSplit[1] && regExps.qq.test(messageSplit[1])) {
             await this.configService.addExact(Number(messageSplit[1]));
           }
           else {

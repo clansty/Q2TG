@@ -28,6 +28,7 @@ export class Telegram {
       process.env.TG_API_HASH,
       {
         connectionRetries: 5,
+        langCode: 'zh',
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
           ip: process.env.PROXY_IP,
@@ -114,7 +115,7 @@ export class Telegram {
 export class TelegramChat {
   constructor(public readonly parent: Telegram,
               private readonly client: TelegramClient,
-              private readonly entity: Entity,
+              public readonly entity: Entity,
               private readonly waitForInputHelper: WaitForMessageHelper) {
   }
 

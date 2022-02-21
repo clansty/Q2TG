@@ -6,6 +6,8 @@ import { getLogger } from 'log4js';
 import axios from 'axios';
 import { getAvatarUrl } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
+import db from '../providers/db';
+import { Api } from 'telegram';
 
 export default class ConfigService {
   private owner: TelegramChat;
@@ -17,8 +19,8 @@ export default class ConfigService {
     tgBot.getChat(config.owner).then(e => this.owner = e);
   }
 
-  private getAssociateLink(gin: number) {
-    return `https://t.me/${this.tgBot.me.username}?startgroup=${gin}`;
+  private getAssociateLink(roomId: number) {
+    return `https://t.me/${this.tgBot.me.username}?startgroup=${roomId}`;
   }
 
   // 开始添加转发群组流程
@@ -27,7 +29,7 @@ export default class ConfigService {
     await this.owner.createPaginatedInlineSelector('选择 QQ 群组\n然后选择在 TG 中的群组',
       qGroups.map(e => [Button.url(
         `${e.group_name} (${e.group_id})`,
-        this.getAssociateLink(e.group_id),
+        this.getAssociateLink(-e.group_id),
       )]));
   }
 
@@ -48,7 +50,23 @@ export default class ConfigService {
     await this.owner.sendMessage({
       message,
       file: avatar ? new CustomFile('avatar.png', avatar.length, '', avatar) : undefined,
-      buttons: Button.url('关联 Telegram 群组', this.getAssociateLink(group.group_id)),
+      buttons: Button.url('关联 Telegram 群组', this.getAssociateLink(-group.group_id)),
     });
+  }
+
+  public async createLinkGroup(qqRoomId: number, tgChatId: number) {
+    let message: string;
+    try {
+      const qGroup = this.oicq.gl.get(-qqRoomId);
+      const tgChat = (await this.tgBot.getChat(tgChatId)).entity as Api.Chat;
+      message = `QQ群：${qGroup.group_name} (<code>${qGroup.group_id}</code>)已与 Telegram 群 ${tgChat.title} (<code>${tgChatId})关联</code>`;
+      await db.forwardPair.create({
+        data: { qqRoomId, tgChatId },
+      });
+    }
+    catch (e) {
+      message = `错误：<code>${e}</code>`;
+    }
+    await this.owner.sendMessage({ message });
   }
 }

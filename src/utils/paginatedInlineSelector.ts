@@ -9,16 +9,15 @@ export default async function createPaginatedInlineSelector(chat: TelegramChat, 
   let currentPage = 0;
   const totalPages = Math.ceil(choices.length / PAGE_SIZE);
   let sentMessage: Api.Message;
-  const buttonPageUp = Button.inline('⏪ 上一页', chat.parent.registerCallback(() => {
+  const buttonPageUp = Button.inline('⬅︎ 上一页', chat.parent.registerCallback(() => {
     currentPage = Math.max(0, currentPage - 1);
     sentMessage.edit({
       text: message + `\n\n第 ${currentPage + 1} 页，共 ${totalPages} 页`,
       buttons: getButtons(),
     });
   }));
-  const buttonPageDown = Button.inline('下一页 ⏩', chat.parent.registerCallback(() => {
+  const buttonPageDown = Button.inline('下一页 ➡︎', chat.parent.registerCallback(() => {
     currentPage = Math.min(totalPages - 1, currentPage + 1);
-    console.log(currentPage);
     sentMessage.edit({
       text: message + `\n\n第 ${currentPage + 1} 页，共 ${totalPages} 页`,
       buttons: getButtons(),
