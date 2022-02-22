@@ -4,6 +4,7 @@ import { execSync } from 'child_process';
 import random from '../utils/random';
 import fs from 'fs';
 import fsP from 'fs/promises';
+import path from 'path';
 
 interface CreateOicqParams {
   uin: number;
@@ -79,7 +80,7 @@ export default function createOicq(params: CreateOicqParams) {
 
     const client = createClient(params.uin, {
       platform: params.platform,
-      data_dir: './data',
+      data_dir: path.resolve('./data'),
     })
       .on('system.login.device', loginDeviceHandler)
       .on('system.login.slider', loginSliderHandler)
