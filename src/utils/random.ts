@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 const random = {
   int(min: number, max: number) {
     min = Math.ceil(min);
@@ -5,11 +7,7 @@ const random = {
     return Math.floor(Math.random() * (max - min + 1)) + min; //含最大值，含最小值
   },
   hex(length: number) {
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += random.int(0, 15).toString(16);
-    }
-    return result;
+    return crypto.randomBytes(length / 2).toString('hex');
   },
   pick<T>(...array: T[]) {
     const index = random.int(0, array.length - 1);

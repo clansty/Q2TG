@@ -7,7 +7,8 @@ import axios from 'axios';
 import { getAvatarUrl } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import db from '../providers/db';
-import { Api } from 'telegram';
+import { Api, utils } from 'telegram';
+import commands from '../constants/commands';
 
 export default class ConfigService {
   private owner: TelegramChat;
@@ -21,6 +22,17 @@ export default class ConfigService {
 
   private getAssociateLink(roomId: number) {
     return `https://t.me/${this.tgBot.me.username}?startgroup=${roomId}`;
+  }
+
+  public async configCommands() {
+    // 这个在一初始化好就要调用，所以不能直接用 this.owner
+    await this.tgBot.setCommands([], new Api.BotCommandScopeUsers());
+    await this.tgBot.setCommands(
+      config.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
+      new Api.BotCommandScopePeer({
+        peer: utils.getInputPeer((await this.tgBot.getChat(config.owner)).entity),
+      }),
+    );
   }
 
   // 开始添加转发群组流程

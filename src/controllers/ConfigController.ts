@@ -13,7 +13,7 @@ export default class ConfigController {
               private readonly oicq: OicqClient) {
     this.configService = new ConfigService(tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
-    tgBot.setCommands([], new Api.BotCommandScopeUsers());
+    this.configService.configCommands();
   }
 
   private handleMessage = async (message: Api.Message) => {
@@ -30,19 +30,29 @@ export default class ConfigController {
         return false;
     }
     else if (message.isPrivate) {
-      switch (messageSplit[0]) {
-        case '/add':
-          // 加的参数永远是正的群号
-          if (messageSplit.length === 3 && regExps.qq.test(messageSplit[1]) && !isNaN(Number(messageSplit[2]))) {
-            await this.configService.createLinkGroup(-Number(messageSplit[1]), Number(messageSplit[2]));
-          }
-          else if (messageSplit[1] && regExps.qq.test(messageSplit[1])) {
-            await this.configService.addExact(Number(messageSplit[1]));
-          }
-          else {
-            await this.configService.add();
-          }
-          return true;
+      if (config.workMode === 'personal') {
+        switch (messageSplit[0]) {
+          case '/addfriend':
+            return true;
+          case '/addgroup':
+            return true;
+        }
+      }
+      else {
+        switch (messageSplit[0]) {
+          case '/add':
+            // 加的参数永远是正的群号
+            if (messageSplit.length === 3 && regExps.qq.test(messageSplit[1]) && !isNaN(Number(messageSplit[2]))) {
+              await this.configService.createLinkGroup(-Number(messageSplit[1]), Number(messageSplit[2]));
+            }
+            else if (messageSplit[1] && regExps.qq.test(messageSplit[1])) {
+              await this.configService.addExact(Number(messageSplit[1]));
+            }
+            else {
+              await this.configService.add();
+            }
+            return true;
+        }
       }
     }
   };
