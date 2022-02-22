@@ -5,7 +5,7 @@ import { TelegramChat } from '../client/Telegram';
 import { Api } from 'telegram';
 
 export default async function createPaginatedInlineSelector(chat: TelegramChat, message: string, choices: ButtonLike[][]) {
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 12;
   let currentPage = 0;
   const totalPages = Math.ceil(choices.length / PAGE_SIZE);
   let sentMessage: Api.Message;
@@ -35,4 +35,5 @@ export default async function createPaginatedInlineSelector(chat: TelegramChat, 
     message: message + `\n\n第 ${currentPage + 1} 页，共 ${totalPages} 页`,
     buttons: getButtons(),
   });
+  return sentMessage;
 }

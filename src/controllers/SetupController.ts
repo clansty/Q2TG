@@ -6,6 +6,7 @@ import { Button } from 'telegram/tl/custom/button';
 import setupHelper from '../helpers/setupHelper';
 import { Client as OicqClient, Platform } from 'oicq';
 import commands from '../constants/commands';
+import { WorkMode } from '../types/definitions';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -48,7 +49,7 @@ export default class SetupController {
       throw e;
     }
     // 设置工作模式
-    let workMode: 'personal' | 'group' | '' = '';
+    let workMode: WorkMode | '' = '';
     try {
       while (!workMode) {
         const workModeText = await this.setupService.waitForOwnerInput('欢迎使用 Q2TG v2\n' +

@@ -29,6 +29,7 @@ export class Telegram {
       {
         connectionRetries: 5,
         langCode: 'zh',
+        appVersion: 'raincandy',
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
           ip: process.env.PROXY_IP,

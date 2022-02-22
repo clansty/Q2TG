@@ -7,6 +7,7 @@ import { MarkupLike } from 'telegram/define';
 import createOicq from '../client/oicq';
 import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
+import { WorkMode } from '../types/definitions';
 
 export default class SetupService {
   private owner: TelegramChat;
@@ -15,7 +16,7 @@ export default class SetupService {
   constructor(private readonly tgBot: Telegram) {
   }
 
-  public setWorkMode(mode: 'group' | 'personal') {
+  public setWorkMode(mode: WorkMode) {
     config.workMode = mode;
   }
 

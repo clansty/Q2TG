@@ -16,6 +16,9 @@ import ConfigController from './controllers/ConfigController';
     },
   });
   const log = getLogger('Main');
+  process.on('unhandledRejection', error => {
+    log.error('UnhandledException: ', error);
+  });
   log.debug('正在登录 TG Bot');
   const tgBot = await Telegram.create({
     botAuthToken: process.env.TG_BOT_TOKEN,

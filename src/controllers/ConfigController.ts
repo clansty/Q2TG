@@ -33,8 +33,10 @@ export default class ConfigController {
       if (config.workMode === 'personal') {
         switch (messageSplit[0]) {
           case '/addfriend':
+            await this.configService.addFriend();
             return true;
           case '/addgroup':
+            await this.configService.addGroup();
             return true;
         }
       }
@@ -49,7 +51,7 @@ export default class ConfigController {
               await this.configService.addExact(Number(messageSplit[1]));
             }
             else {
-              await this.configService.add();
+              await this.configService.addGroup();
             }
             return true;
         }
