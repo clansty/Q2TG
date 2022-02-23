@@ -14,6 +14,7 @@ export default class ConfigController {
     this.configService = new ConfigService(tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     this.configService.configCommands();
+    config.workMode === 'personal' && this.configService.setupFilter();
   }
 
   private handleMessage = async (message: Api.Message) => {

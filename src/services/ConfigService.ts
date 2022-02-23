@@ -10,9 +10,12 @@ import db from '../providers/db';
 import { Api, utils } from 'telegram';
 import commands from '../constants/commands';
 
+const DEFAULT_FILTER_ID = 114; // 514
+
 export default class ConfigService {
   private owner: TelegramChat;
   private log = getLogger('ConfigService');
+  private filter;
 
   constructor(private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
@@ -121,5 +124,47 @@ export default class ConfigService {
       message = `错误：<code>${e}</code>`;
     }
     await this.owner.sendMessage({ message });
+  }
+
+  // 创建 QQ 群组的文件夹
+  public async setupFilter() {
+    const result = await this.tgUser.invoke(new Api.messages.GetDialogFilters());
+    this.filter = result.find(e => e.id === DEFAULT_FILTER_ID);
+    this.log.debug(this.filter);
+    if (!this.filter) {
+      this.log.info('创建 TG 文件夹');
+      // 要自己计算新的 id，随意 id 也是可以的
+      // https://github.com/morethanwords/tweb/blob/7d646bc9a87d943426d831f30b69d61b743f51e0/src/lib/storages/filters.ts#L251
+      // 创建
+      this.filter = new Api.DialogFilter({
+        id: DEFAULT_FILTER_ID,
+        title: 'QQ',
+        pinnedPeers: [
+          utils.getInputPeer((await this.tgUser.getChat(this.tgBot.me.username)).entity),
+        ],
+        includePeers: [],
+        excludePeers: [],
+        emoticon: '🐧',
+      });
+      let errorText = '设置文件夹失败';
+      try {
+        const isSuccess = await this.tgUser.invoke(
+          new Api.messages.UpdateDialogFilter({
+            id: DEFAULT_FILTER_ID,
+            filter: this.filter,
+          }),
+        );
+        if (!isSuccess) {
+          this.filter = null;
+          this.log.error(errorText);
+          await this.owner.sendMessage(errorText);
+        }
+      }
+      catch (e) {
+        this.filter = null;
+        this.log.error(errorText, e);
+        await this.owner.sendMessage(errorText + `\n<code>${e}</code>`);
+      }
+    }
   }
 }

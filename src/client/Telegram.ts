@@ -111,6 +111,10 @@ export class Telegram {
   public registerCallback(cb: () => any) {
     return this.callbackQueryHelper.registerCallback(cb);
   }
+
+  public invoke<R extends Api.AnyRequest>(req: R) {
+    return this.client.invoke(req);
+  }
 }
 
 export class TelegramChat {
@@ -120,7 +124,10 @@ export class TelegramChat {
               private readonly waitForInputHelper: WaitForMessageHelper) {
   }
 
-  public async sendMessage(params: SendMessageParams) {
+  public async sendMessage(params: SendMessageParams | string) {
+    if (typeof params === 'string') {
+      params = { message: params };
+    }
     return await this.client.sendMessage(this.entity, params);
   }
 
