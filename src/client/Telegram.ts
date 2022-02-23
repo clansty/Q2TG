@@ -112,8 +112,12 @@ export class Telegram {
     return this.callbackQueryHelper.registerCallback(cb);
   }
 
-  public invoke<R extends Api.AnyRequest>(req: R) {
-    return this.client.invoke(req);
+  public async getDialogFilters() {
+    return await this.client.invoke(new Api.messages.GetDialogFilters());
+  }
+
+  public async updateDialogFilter(params: Partial<Partial<{ id: number; filter?: Api.DialogFilter; }>>) {
+    return await this.client.invoke(new Api.messages.UpdateDialogFilter(params));
   }
 }
 

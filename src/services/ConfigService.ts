@@ -38,6 +38,8 @@ export default class ConfigService {
     );
   }
 
+  // region 打开添加关联的菜单
+
   // 开始添加转发群组流程
   public async addGroup() {
     const qGroups = Array.from(this.oicq.gl).map(e => e[1]);
@@ -106,6 +108,8 @@ export default class ConfigService {
     });
   }
 
+  // endregion
+
   private async createGroupAndLink(roomId: number) {
     this.log.info(`创建群组并关联：${roomId}`);
   }
@@ -115,7 +119,7 @@ export default class ConfigService {
     try {
       const qGroup = this.oicq.gl.get(-qqRoomId);
       const tgChat = (await this.tgBot.getChat(tgChatId)).entity as Api.Chat;
-      message = `QQ群：${qGroup.group_name} (<code>${qGroup.group_id}</code>)已与 Telegram 群 ${tgChat.title} (<code>${tgChatId})关联</code>`;
+      message = `QQ群：${qGroup.group_name} (<code>${qGroup.group_id}</code>)已与 Telegram 群 ${tgChat.title} (<code>${tgChatId}</code>)关联`;
       await db.forwardPair.create({
         data: { qqRoomId, tgChatId },
       });
@@ -128,7 +132,7 @@ export default class ConfigService {
 
   // 创建 QQ 群组的文件夹
   public async setupFilter() {
-    const result = await this.tgUser.invoke(new Api.messages.GetDialogFilters());
+    const result = await this.tgUser.getDialogFilters();
     this.filter = result.find(e => e.id === DEFAULT_FILTER_ID);
     this.log.debug(this.filter);
     if (!this.filter) {
@@ -148,12 +152,10 @@ export default class ConfigService {
       });
       let errorText = '设置文件夹失败';
       try {
-        const isSuccess = await this.tgUser.invoke(
-          new Api.messages.UpdateDialogFilter({
-            id: DEFAULT_FILTER_ID,
-            filter: this.filter,
-          }),
-        );
+        const isSuccess = await this.tgUser.updateDialogFilter({
+          id: DEFAULT_FILTER_ID,
+          filter: this.filter,
+        });
         if (!isSuccess) {
           this.filter = null;
           this.log.error(errorText);
