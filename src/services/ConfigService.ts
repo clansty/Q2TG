@@ -11,6 +11,7 @@ import commands from '../constants/commands';
 import OicqClient from '../client/OicqClient';
 import { md5B64 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
+import forwardPairs from '../providers/forwardPairs';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
@@ -111,7 +112,7 @@ export default class ConfigService {
 
   private async createGroupAndLink(roomId: number, title?: string) {
     this.log.info(`创建群组并关联：${roomId}`);
-    const qEntity = this.oicq.getEntity(roomId);
+    const qEntity = this.oicq.getChat(roomId);
     if (!title) {
       // TS 这边不太智能
       if (qEntity instanceof Friend) {
@@ -139,9 +140,7 @@ export default class ConfigService {
 
       // 关联写入数据库
       await status.edit({ text: '正在写数据库…' });
-      const dbPair = await db.forwardPair.create({
-        data: { qqRoomId: roomId, tgChatId: Number(chat.id) },
-      });
+      const dbPair = await forwardPairs.add(qEntity, chatForBot);
       isFinish = true;
 
       // 更新头像
@@ -182,12 +181,11 @@ export default class ConfigService {
   public async createLinkGroup(qqRoomId: number, tgChatId: number) {
     let message: string;
     try {
-      const qGroup = this.oicq.gl.get(-qqRoomId);
-      const tgChat = (await this.tgBot.getChat(tgChatId)).entity as Api.Chat;
-      message = `QQ群：${qGroup.group_name} (<code>${qGroup.group_id}</code>)已与 Telegram 群 ${tgChat.title} (<code>${tgChatId}</code>)关联`;
-      await db.forwardPair.create({
-        data: { qqRoomId, tgChatId },
-      });
+      const qGroup = this.oicq.getChat(qqRoomId) as Group;
+      const tgChat = await this.tgBot.getChat(tgChatId);
+      message = `QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
+        `Telegram 群 ${(tgChat.entity as Api.Chat).title} (<code>${tgChatId}</code>)关联`;
+      await forwardPairs.add(qGroup, tgChat);
     }
     catch (e) {
       message = `错误：<code>${e}</code>`;

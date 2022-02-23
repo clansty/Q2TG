@@ -99,7 +99,7 @@ export default class OicqClient extends Client {
     });
   }
 
-  public getEntity(roomId: number) {
+  public getChat(roomId: number) {
     if (roomId > 0) {
       return this.pickFriend(roomId);
     }
