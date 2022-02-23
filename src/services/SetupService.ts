@@ -4,7 +4,7 @@ import { getLogger } from 'log4js';
 import { BigInteger } from 'big-integer';
 import { Platform } from 'oicq';
 import { MarkupLike } from 'telegram/define';
-import createOicq from '../client/oicq';
+import OicqClient from '../client/OicqClient';
 import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
 import { WorkMode } from '../types/definitions';
@@ -79,7 +79,7 @@ export default class SetupService {
   }
 
   public async createOicq(uin: number, password: string, platform: Platform) {
-    return await createOicq({
+    return await OicqClient.create({
       uin, password, platform,
       onQrCode: async (file) => {
         await this.owner.sendMessage({

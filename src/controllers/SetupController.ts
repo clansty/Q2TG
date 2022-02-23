@@ -4,9 +4,10 @@ import { Api } from 'telegram';
 import { getLogger } from 'log4js';
 import { Button } from 'telegram/tl/custom/button';
 import setupHelper from '../helpers/setupHelper';
-import { Client as OicqClient, Platform } from 'oicq';
+import { Platform } from 'oicq';
 import commands from '../constants/commands';
 import { WorkMode } from '../types/definitions';
+import OicqClient from '../client/OicqClient';
 
 export default class SetupController {
   private readonly setupService: SetupService;

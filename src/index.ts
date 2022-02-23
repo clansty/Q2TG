@@ -2,8 +2,7 @@ import { Telegram } from './client/Telegram';
 import { config } from './providers/userConfig';
 import { getLogger, configure } from 'log4js';
 import SetupController from './controllers/SetupController';
-import { Client as OicqClient } from 'oicq';
-import createOicq from './client/oicq';
+import OicqClient from './client/OicqClient';
 import ConfigController from './controllers/ConfigController';
 
 (async () => {
@@ -19,10 +18,12 @@ import ConfigController from './controllers/ConfigController';
   process.on('unhandledRejection', error => {
     log.error('UnhandledException: ', error);
   });
+
   log.debug('正在登录 TG Bot');
   const tgBot = await Telegram.create({
     botAuthToken: process.env.TG_BOT_TOKEN,
   });
+
   let tgUser: Telegram, oicq: OicqClient;
   log.debug('TG Bot 登录完成');
   if (!config.isSetup) {
@@ -37,7 +38,7 @@ import ConfigController from './controllers/ConfigController';
       log.debug('TG UserBot 登录完成');
     }
     log.debug('正在登录 OICQ');
-    oicq = await createOicq({
+    oicq = await OicqClient.create({
       uin: config.qqUin,
       password: config.qqPassword,
       platform: config.qqPlatform,
