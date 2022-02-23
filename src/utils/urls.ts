@@ -1,8 +1,10 @@
-export function getAvatarUrl(roomId: number, large = false): string {
+import axios from 'axios';
+
+export function getAvatarUrl(roomId: number): string {
   if (!roomId) return '';
   return roomId < 0 ?
     `https://p.qlogo.cn/gh/${-roomId}/${-roomId}/0` :
-    `https://q1.qlogo.cn/g?b=qq&nk=${roomId}&s=${large ? 0 : 140}`;
+    `https://q1.qlogo.cn/g?b=qq&nk=${roomId}&s=0`;
 }
 
 export function getImageUrlByMd5(md5: string) {
@@ -14,4 +16,11 @@ export function getBigFaceUrl(file: string) {
     0,
     2,
   )}/${file.substring(0, 32)}/300x300.png`;
+}
+
+export async function getAvatar(roomId: number): Promise<Buffer> {
+  const res = await axios.get(getAvatarUrl(roomId), {
+    responseType: 'arraybuffer',
+  });
+  return res.data;
 }

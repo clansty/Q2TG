@@ -1,4 +1,4 @@
-import { Telegram, TelegramChat } from '../client/Telegram';
+import Telegram from '../client/Telegram';
 import { config, saveConfig } from '../providers/userConfig';
 import { getLogger } from 'log4js';
 import { BigInteger } from 'big-integer';
@@ -8,6 +8,7 @@ import OicqClient from '../client/OicqClient';
 import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
 import { WorkMode } from '../types/definitions';
+import TelegramChat from '../client/TelegramChat';
 
 export default class SetupService {
   private owner: TelegramChat;

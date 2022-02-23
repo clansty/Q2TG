@@ -1,21 +1,23 @@
-import { Telegram, TelegramChat } from '../client/Telegram';
-import { Client as OicqClient, FriendInfo } from 'oicq';
+import Telegram from '../client/Telegram';
+import { Friend, FriendInfo, Group } from 'oicq';
 import { config } from '../providers/userConfig';
 import { Button } from 'telegram/tl/custom/button';
 import { getLogger } from 'log4js';
-import axios from 'axios';
-import { getAvatarUrl } from '../utils/urls';
+import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import db from '../providers/db';
 import { Api, utils } from 'telegram';
 import commands from '../constants/commands';
+import OicqClient from '../client/OicqClient';
+import { md5B64 } from '../utils/hashing';
+import TelegramChat from '../client/TelegramChat';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
 export default class ConfigService {
   private owner: TelegramChat;
   private log = getLogger('ConfigService');
-  private filter;
+  private filter: Api.DialogFilter;
 
   constructor(private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
@@ -33,7 +35,7 @@ export default class ConfigService {
     await this.tgBot.setCommands(
       config.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
       new Api.BotCommandScopePeer({
-        peer: utils.getInputPeer((await this.tgBot.getChat(config.owner)).entity),
+        peer: (await this.tgBot.getChat(config.owner)).inputPeer,
       }),
     );
   }
@@ -47,7 +49,7 @@ export default class ConfigService {
       config.workMode === 'personal' ?
         [Button.inline(
           `${e.group_name} (${e.group_id})`,
-          this.tgBot.registerCallback(() => this.createGroupAndLink(-e.group_id)),
+          this.tgBot.registerCallback(() => this.createGroupAndLink(-e.group_id, e.group_name)),
         )] :
         [Button.url(
           `${e.group_name} (${e.group_id})`,
@@ -82,7 +84,7 @@ export default class ConfigService {
   private async openFriendSelection(clazz: FriendInfo[], name: string) {
     await this.owner.createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
       Button.inline(`${e.remark || e.nickname} (${e.user_id})`, this.tgBot.registerCallback(
-        () => this.createGroupAndLink(e.user_id),
+        () => this.createGroupAndLink(e.user_id, e.remark || e.nickname),
       )),
     ]));
   }
@@ -91,10 +93,7 @@ export default class ConfigService {
     const group = this.oicq.gl.get(gin);
     let avatar: Buffer;
     try {
-      const res = await axios.get(getAvatarUrl(-group.group_id), {
-        responseType: 'arraybuffer',
-      });
-      avatar = res.data;
+      avatar = await getAvatar(-group.group_id);
     }
     catch (e) {
       avatar = null;
@@ -110,8 +109,74 @@ export default class ConfigService {
 
   // endregion
 
-  private async createGroupAndLink(roomId: number) {
+  private async createGroupAndLink(roomId: number, title?: string) {
     this.log.info(`创建群组并关联：${roomId}`);
+    const qEntity = this.oicq.getEntity(roomId);
+    if (!title) {
+      // TS 这边不太智能
+      if (qEntity instanceof Friend) {
+        title = qEntity.remark || qEntity.nickname;
+      }
+      else {
+        title = qEntity.name;
+      }
+    }
+    let isFinish = false;
+    try {
+      // 状态信息
+      const status = await this.owner.sendMessage('正在创建 Telegram 群…');
+
+      // 创建群聊，拿到的是 user 的 chat
+      const chat = await this.tgUser.createChat({
+        title,
+        users: [this.tgBot.me.id],
+      });
+      const chatForBot = await this.tgBot.getChat(chat.id);
+
+      // 设置管理员
+      await status.edit({ text: '正在设置管理员…' });
+      await chat.editAdmin(this.tgBot.me.username, true);
+
+      // 关联写入数据库
+      await status.edit({ text: '正在写数据库…' });
+      const dbPair = await db.forwardPair.create({
+        data: { qqRoomId: roomId, tgChatId: Number(chat.id) },
+      });
+      isFinish = true;
+
+      // 更新头像
+      await status.edit({ text: '正在更新头像…' });
+      const avatar = await getAvatar(roomId);
+      const avatarHash = md5B64(avatar);
+      await chatForBot.setProfilePhoto(avatar);
+      await db.avatarCache.create({
+        data: { forwardPairId: dbPair.id, hash: avatarHash },
+      });
+
+      // 添加到 Filter
+      await status.edit({ text: '正在将群添加到文件夹…' });
+      this.filter.includePeers.push(utils.getInputPeer(chat));
+      await this.tgUser.updateDialogFilter({
+        id: this.filter.id,
+        filter: this.filter,
+      });
+
+      // 更新关于文本
+      await status.edit({ text: '正在更新关于文本…' });
+      await chatForBot.editAbout(await this.getAboutText(qEntity));
+
+      // 完成
+      await status.edit({ text: '正在获取链接…' });
+      const { link } = await chat.getInviteLink();
+      await status.edit({
+        text: '创建完成！',
+        buttons: Button.url('打开', link),
+      });
+    }
+    catch (e) {
+      this.log.error('创建群组并关联失败', e);
+      await this.owner.sendMessage(`创建群组并关联${isFinish ? '成功了但没完全成功' : '失败'}\n<code>${e}</code>`);
+    }
   }
 
   public async createLinkGroup(qqRoomId: number, tgChatId: number) {
@@ -144,7 +209,7 @@ export default class ConfigService {
         id: DEFAULT_FILTER_ID,
         title: 'QQ',
         pinnedPeers: [
-          utils.getInputPeer((await this.tgUser.getChat(this.tgBot.me.username)).entity),
+          (await this.tgUser.getChat(this.tgBot.me.username)).inputPeer,
         ],
         includePeers: [],
         excludePeers: [],
@@ -168,5 +233,28 @@ export default class ConfigService {
         await this.owner.sendMessage(errorText + `\n<code>${e}</code>`);
       }
     }
+  }
+
+  private async getAboutText(entity: Friend | Group) {
+    let text = '';
+    if (entity instanceof Friend) {
+      text = `备注：${entity.remark}\n` +
+        `昵称：${entity.nickname}\n` +
+        `账号：${entity.user_id}`;
+    }
+    else {
+      const owner = entity.pickMember(entity.info.owner_id);
+      await owner.renew();
+      const self = entity.pickMember(this.oicq.uin);
+      await self.renew();
+      text = `群名称：${entity.name}\n` +
+        `${entity.info.member_count} 名成员\n` +
+        `群号：${entity.group_id}\n` +
+        (self ? `我的群名片：${self.title ? `【${self.title}】` : ''}${self.card}\n` : '') +
+        (owner ? `群主：${owner.title ? `【${owner.title}】` : ''}${owner.card || owner.info.nickname} (${owner.user_id})` : '') +
+        ((entity.is_admin || entity.is_owner) ? '\n可管理' : '');
+    }
+
+    return text + `\n\n由 @${this.tgBot.me.username} 管理`;
   }
 }

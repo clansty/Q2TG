@@ -4,17 +4,16 @@ import { BotAuthParams, UserAuthParams } from 'telegram/client/auth';
 import { NewMessage, NewMessageEvent } from 'telegram/events';
 import { EditedMessage, EditedMessageEvent } from 'telegram/events/EditedMessage';
 import { DeletedMessage, DeletedMessageEvent } from 'telegram/events/DeletedMessage';
-import { ButtonLike, Entity, EntityLike } from 'telegram/define';
-import { SendMessageParams } from 'telegram/client/messages';
-import { CustomFile } from 'telegram/client/uploads';
+import { EntityLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
-import createPaginatedInlineSelector from '../utils/paginatedInlineSelector';
 import CallbackQueryHelper from '../helpers/CallbackQueryHelper';
 import { CallbackQuery } from 'telegram/events/CallbackQuery';
+import os from 'os';
+import TelegramChat from './TelegramChat';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean>;
 
-export class Telegram {
+export default class Telegram {
   private readonly client: TelegramClient;
   private waitForMessageHelper: WaitForMessageHelper;
   private callbackQueryHelper: CallbackQueryHelper = new CallbackQueryHelper();
@@ -29,6 +28,7 @@ export class Telegram {
       {
         connectionRetries: 5,
         langCode: 'zh',
+        deviceModel: `Q2TG On ${os.hostname()}`,
         appVersion: 'raincandy',
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
@@ -95,7 +95,7 @@ export class Telegram {
 
   public getStringSession() {
     // 上游定义不好好写
-    return this.client.session.save() as any as string;
+    return (this.client.session as StringSession).save();
   }
 
   public async setCommands(commands: Api.BotCommand[], scope: Api.TypeBotCommandScope) {
@@ -119,43 +119,10 @@ export class Telegram {
   public async updateDialogFilter(params: Partial<Partial<{ id: number; filter?: Api.DialogFilter; }>>) {
     return await this.client.invoke(new Api.messages.UpdateDialogFilter(params));
   }
-}
 
-export class TelegramChat {
-  constructor(public readonly parent: Telegram,
-              private readonly client: TelegramClient,
-              public readonly entity: Entity,
-              private readonly waitForInputHelper: WaitForMessageHelper) {
-  }
-
-  public async sendMessage(params: SendMessageParams | string) {
-    if (typeof params === 'string') {
-      params = { message: params };
-    }
-    return await this.client.sendMessage(this.entity, params);
-  }
-
-  public async sendSelfDestructingPhoto(params: SendMessageParams, photo: CustomFile, ttlSeconds: number) {
-    // @ts-ignore 定义不好好写的？你家 `FileLike` 明明可以是 `TypeInputMedia`
-    params.file = new Api.InputMediaUploadedPhoto({
-      file: await this.client.uploadFile({
-        file: photo,
-        workers: 1,
-      }),
-      ttlSeconds,
-    });
-    return await this.client.sendMessage(this.entity, params);
-  }
-
-  public async waitForInput() {
-    return this.waitForInputHelper.waitForMessage(this.entity.id);
-  }
-
-  public cancelWait() {
-    this.waitForInputHelper.cancel(this.entity.id);
-  }
-
-  public createPaginatedInlineSelector(message: string, choices: ButtonLike[][]) {
-    return createPaginatedInlineSelector(this, message, choices);
+  public async createChat(params: Partial<Partial<{ users: EntityLike[]; title: string; }>>) {
+    const updates = await this.client.invoke(new Api.messages.CreateChat(params)) as Api.Updates;
+    const newChat = updates.chats[0];
+    return new TelegramChat(this, this.client, newChat, this.waitForMessageHelper);
   }
 }

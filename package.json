@@ -9,13 +9,13 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.18",
-    "prisma": "^3.9.2",
+    "prisma": "latest",
     "ts-node": "^10.5.0",
     "tsc": "^2.0.4",
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@prisma/client": "^3.9.2",
+    "@prisma/client": "latest",
     "axios": "^0.26.0",
     "log4js": "^6.4.1",
     "oicq": "^2.2.0",

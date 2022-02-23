@@ -1,8 +1,8 @@
 import { ButtonLike } from 'telegram/define';
 import arrays from './arrays';
 import { Button } from 'telegram/tl/custom/button';
-import { TelegramChat } from '../client/Telegram';
 import { Api } from 'telegram';
+import TelegramChat from '../client/TelegramChat';
 
 export default async function createPaginatedInlineSelector(chat: TelegramChat, message: string, choices: ButtonLike[][]) {
   const PAGE_SIZE = 12;

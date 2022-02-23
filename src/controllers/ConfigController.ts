@@ -1,6 +1,6 @@
 import { Api } from 'telegram';
-import { Telegram } from '../client/Telegram';
-import { Client as OicqClient } from 'oicq';
+import Telegram from '../client/Telegram';
+import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
 import { config } from '../providers/userConfig';
 import regExps from '../constants/regExps';

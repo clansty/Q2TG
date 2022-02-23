@@ -1,4 +1,4 @@
-import { Telegram } from '../client/Telegram';
+import Telegram from '../client/Telegram';
 import { BigInteger } from 'big-integer';
 import { Api } from 'telegram';
 
@@ -8,6 +8,7 @@ export default class WaitForMessageHelper {
 
   constructor(private tg: Telegram) {
     tg.addNewMessageEventHandler(async e => {
+      if (!e.chat || e.chat.id) return false;
       const handler = this.map.get(Number(e.chat.id));
       if (handler) {
         this.map.delete(Number(e.chat.id));

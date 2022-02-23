@@ -1,4 +1,4 @@
-import { Telegram } from '../client/Telegram';
+import Telegram from '../client/Telegram';
 import SetupService from '../services/SetupService';
 import { Api } from 'telegram';
 import { getLogger } from 'log4js';

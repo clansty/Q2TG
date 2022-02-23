@@ -11,45 +11,53 @@ datasource db {
 }
 
 model Message {
-  id              Int         @id @default(autoincrement())
-  qqRoomId        Int
-  qqSenderId      Int
-  time            DateTime
-  brief           String
-  seq             Int
-  rand            Int
-  pktnum          Int
-  tgChatId        Int
-  tgMsgId         Int
+  id         Int      @id @default(autoincrement())
+  qqRoomId   Int
+  qqSenderId Int
+  time       DateTime
+  brief      String
+  seq        Int
+  rand       Int
+  pktnum     Int
+  tgChatId   Int
+  tgMsgId    Int
 
   @@unique([qqRoomId, qqSenderId, seq, rand, pktnum])
   @@unique([tgChatId, tgMsgId])
 }
 
 model ForwardPair {
-  id              Int         @id @default(autoincrement())
-  qqRoomId        Int         @unique
-  tgChatId        Int         @unique
+  id          Int           @id @default(autoincrement())
+  qqRoomId    Int           @unique
+  tgChatId    Int           @unique
+  AvatarCache AvatarCache[]
 }
 
 model File {
-  id              Int         @id @default(autoincrement())
-  groupId         Int
-  fileId          String
-  info            String
+  id      Int    @id @default(autoincrement())
+  groupId Int
+  fileId  String
+  info    String
 
   @@unique([groupId, fileId])
 }
 
 model FlashPhoto {
-  id              Int         @id @default(autoincrement())
-  photoMd5        String
+  id       Int    @id @default(autoincrement())
+  photoMd5 String
 }
 
 model FlashPhotoView {
-  id              Int         @id @default(autoincrement())
-  flashPhotoId    Int
-  viewerId        Int
+  id           Int @id @default(autoincrement())
+  flashPhotoId Int
+  viewerId     Int
 
   @@unique([flashPhotoId, viewerId])
+}
+
+model AvatarCache {
+  id            Int         @id @default(autoincrement())
+  forwardPair   ForwardPair @relation(fields: [forwardPairId], references: [id])
+  forwardPairId Int         @unique
+  hash          String
 }

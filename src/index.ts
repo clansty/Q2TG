@@ -1,4 +1,4 @@
-import { Telegram } from './client/Telegram';
+import Telegram from './client/Telegram';
 import { config } from './providers/userConfig';
 import { getLogger, configure } from 'log4js';
 import SetupController from './controllers/SetupController';

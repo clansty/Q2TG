@@ -88,6 +88,7 @@ export default class OicqClient extends Client {
       const client = new this(params.uin, {
         platform: params.platform,
         data_dir: path.resolve('./data'),
+        log_level: 'warn',
       })
         .on('system.login.device', loginDeviceHandler)
         .on('system.login.slider', loginSliderHandler)
