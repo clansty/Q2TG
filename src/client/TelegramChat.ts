@@ -103,4 +103,12 @@ export default class TelegramChat {
     console.log(links);
     return links.invites[0];
   }
+
+  public async hidePeerSettingsBar() {
+    return await this.client.invoke(
+      new Api.messages.HidePeerSettingsBar({
+        peer: this.entity,
+      }),
+    );
+  }
 }

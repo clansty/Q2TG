@@ -137,6 +137,18 @@ export default class ConfigService {
       await chat.editAdmin(this.tgBot.me.username, true);
       const chatForBot = await this.tgBot.getChat(chat.id);
 
+      // 添加到 Filter
+      await status.edit({ text: '正在将群添加到文件夹…' });
+      this.filter.includePeers.push(utils.getInputPeer(chat));
+      await this.tgUser.updateDialogFilter({
+        id: this.filter.id,
+        filter: this.filter,
+      });
+
+      // 关闭【添加成员】快捷条
+      await status.edit({ text: '正在关闭【添加成员】快捷条…' });
+      await chat.hidePeerSettingsBar();
+
       // 关联写入数据库
       await status.edit({ text: '正在写数据库…' });
       const dbPair = await forwardPairs.add(qEntity, chatForBot);
@@ -149,14 +161,6 @@ export default class ConfigService {
       await chatForBot.setProfilePhoto(avatar);
       await db.avatarCache.create({
         data: { forwardPairId: dbPair.id, hash: avatarHash },
-      });
-
-      // 添加到 Filter
-      await status.edit({ text: '正在将群添加到文件夹…' });
-      this.filter.includePeers.push(utils.getInputPeer(chat));
-      await this.tgUser.updateDialogFilter({
-        id: this.filter.id,
-        filter: this.filter,
       });
 
       // 更新关于文本
