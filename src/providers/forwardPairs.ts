@@ -5,7 +5,7 @@ import OicqClient from '../client/OicqClient';
 import Telegram from '../client/Telegram';
 import db from './db';
 
-type Pair = {
+export type Pair = {
   qq: Friend | Group;
   tg: TelegramChat;
 }
@@ -34,12 +34,16 @@ class ForwardPairsInternal {
     });
   }
 
-  public find(target: Friend | Group | TelegramChat | Api.Chat) {
+  public find(target: Friend | Group | TelegramChat | Api.Chat | number) {
     if (target instanceof Friend) {
       return this.pairs.find(e => e.qq instanceof Friend && e.qq.user_id === target.user_id);
     }
     else if (target instanceof Group) {
       return this.pairs.find(e => e.qq instanceof Group && e.qq.group_id === target.group_id);
+    }
+    else if (typeof target === 'number') {
+      return this.pairs.find(e => e.qq instanceof Friend && e.qq.user_id === target ||
+        e.qq instanceof Group && e.qq.group_id === -target);
     }
     else {
       return this.pairs.find(e => e.tg.id.eq(target.id));

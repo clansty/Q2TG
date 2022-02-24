@@ -1,9 +1,10 @@
 import Telegram from './client/Telegram';
 import { config } from './providers/userConfig';
-import { getLogger, configure } from 'log4js';
+import { configure, getLogger } from 'log4js';
 import SetupController from './controllers/SetupController';
 import OicqClient from './client/OicqClient';
 import ConfigController from './controllers/ConfigController';
+import ForwardController from './controllers/ForwardController';
 
 (async () => {
   configure({
@@ -49,4 +50,5 @@ import ConfigController from './controllers/ConfigController';
     log.debug('OICQ 登录完成');
   }
   new ConfigController(tgBot, tgUser, oicq);
+  new ForwardController(tgBot, tgUser, oicq);
 })();

@@ -14,7 +14,7 @@ model Message {
   id         Int      @id @default(autoincrement())
   qqRoomId   Int
   qqSenderId Int
-  time       DateTime
+  time       Int
   brief      String
   seq        Int
   rand       Int
@@ -22,7 +22,7 @@ model Message {
   tgChatId   Int
   tgMsgId    Int
 
-  @@unique([qqRoomId, qqSenderId, seq, rand, pktnum])
+  @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time])
   @@unique([tgChatId, tgMsgId])
 }
 
@@ -35,11 +35,11 @@ model ForwardPair {
 
 model File {
   id      Int    @id @default(autoincrement())
-  groupId Int
+  roomId  Int
   fileId  String
   info    String
 
-  @@unique([groupId, fileId])
+  @@unique([roomId, fileId])
 }
 
 model FlashPhoto {

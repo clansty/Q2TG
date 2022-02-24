@@ -17,8 +17,13 @@
   "dependencies": {
     "@prisma/client": "latest",
     "axios": "^0.26.0",
+    "file-type": "^17.1.1",
     "log4js": "^6.4.1",
+    "nodejs-base64": "^2.0.0",
     "oicq": "^2.2.0",
     "telegram": "^2.5.0"
+  },
+  "engines": {
+    "node": "^14.13.1 || >=16.0.0"
   }
 }

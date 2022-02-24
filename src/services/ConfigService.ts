@@ -16,14 +16,14 @@ import forwardPairs from '../providers/forwardPairs';
 const DEFAULT_FILTER_ID = 114; // 514
 
 export default class ConfigService {
-  private owner: TelegramChat;
+  private owner: Promise<TelegramChat>;
   private log = getLogger('ConfigService');
   private filter: Api.DialogFilter;
 
   constructor(private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    tgBot.getChat(config.owner).then(e => this.owner = e);
+    this.owner = tgBot.getChat(config.owner);
   }
 
   private getAssociateLink(roomId: number) {
@@ -31,12 +31,11 @@ export default class ConfigService {
   }
 
   public async configCommands() {
-    // 这个在一初始化好就要调用，所以不能直接用 this.owner
     await this.tgBot.setCommands([], new Api.BotCommandScopeUsers());
     await this.tgBot.setCommands(
       config.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
       new Api.BotCommandScopePeer({
-        peer: (await this.tgBot.getChat(config.owner)).inputPeer,
+        peer: (await this.owner).inputPeer,
       }),
     );
   }
@@ -56,7 +55,7 @@ export default class ConfigService {
           `${e.group_name} (${e.group_id})`,
           this.getAssociateLink(-e.group_id),
         )]);
-    await this.owner.createPaginatedInlineSelector(
+    await (await this.owner).createPaginatedInlineSelector(
       '选择 QQ 群组' + (config.workMode === 'group' ? '\n然后选择在 TG 中的群组' : ''), buttons);
   }
 
@@ -75,7 +74,7 @@ export default class ConfigService {
         return 1;
       }
     });
-    await this.owner.createPaginatedInlineSelector('选择分组', classes.map(e => [
+    await (await this.owner).createPaginatedInlineSelector('选择分组', classes.map(e => [
       Button.inline(e[1], this.tgBot.registerCallback(
         () => this.openFriendSelection(friends.filter(f => f.class_id === e[0]), e[1]),
       )),
@@ -83,7 +82,7 @@ export default class ConfigService {
   }
 
   private async openFriendSelection(clazz: FriendInfo[], name: string) {
-    await this.owner.createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
+    await (await this.owner).createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
       Button.inline(`${e.remark || e.nickname} (${e.user_id})`, this.tgBot.registerCallback(
         () => this.createGroupAndLink(e.user_id, e.remark || e.nickname),
       )),
@@ -101,7 +100,7 @@ export default class ConfigService {
       this.log.error(`加载 ${group.group_name} (${gin}) 的头像失败`, e);
     }
     const message = `${group.group_name}\n${group.group_id}\n${group.member_count} 名成员`;
-    await this.owner.sendMessage({
+    await (await this.owner).sendMessage({
       message,
       file: avatar ? new CustomFile('avatar.png', avatar.length, '', avatar) : undefined,
       buttons: Button.url('关联 Telegram 群组', this.getAssociateLink(-group.group_id)),
@@ -125,18 +124,18 @@ export default class ConfigService {
     let isFinish = false;
     try {
       // 状态信息
-      const status = await this.owner.sendMessage('正在创建 Telegram 群…');
+      const status = await (await this.owner).sendMessage('正在创建 Telegram 群…');
 
       // 创建群聊，拿到的是 user 的 chat
       const chat = await this.tgUser.createChat({
         title,
-        users: [this.tgBot.me.id],
+        users: [this.tgBot.me.username],
       });
-      const chatForBot = await this.tgBot.getChat(chat.id);
 
       // 设置管理员
       await status.edit({ text: '正在设置管理员…' });
       await chat.editAdmin(this.tgBot.me.username, true);
+      const chatForBot = await this.tgBot.getChat(chat.id);
 
       // 关联写入数据库
       await status.edit({ text: '正在写数据库…' });
@@ -174,7 +173,7 @@ export default class ConfigService {
     }
     catch (e) {
       this.log.error('创建群组并关联失败', e);
-      await this.owner.sendMessage(`创建群组并关联${isFinish ? '成功了但没完全成功' : '失败'}\n<code>${e}</code>`);
+      await (await this.owner).sendMessage(`创建群组并关联${isFinish ? '成功了但没完全成功' : '失败'}\n<code>${e}</code>`);
     }
   }
 
@@ -190,14 +189,13 @@ export default class ConfigService {
     catch (e) {
       message = `错误：<code>${e}</code>`;
     }
-    await this.owner.sendMessage({ message });
+    await (await this.owner).sendMessage({ message });
   }
 
   // 创建 QQ 群组的文件夹
   public async setupFilter() {
     const result = await this.tgUser.getDialogFilters();
     this.filter = result.find(e => e.id === DEFAULT_FILTER_ID);
-    this.log.debug(this.filter);
     if (!this.filter) {
       this.log.info('创建 TG 文件夹');
       // 要自己计算新的 id，随意 id 也是可以的
@@ -222,13 +220,13 @@ export default class ConfigService {
         if (!isSuccess) {
           this.filter = null;
           this.log.error(errorText);
-          await this.owner.sendMessage(errorText);
+          await (await this.owner).sendMessage(errorText);
         }
       }
       catch (e) {
         this.filter = null;
         this.log.error(errorText, e);
-        await this.owner.sendMessage(errorText + `\n<code>${e}</code>`);
+        await (await this.owner).sendMessage(errorText + `\n<code>${e}</code>`);
       }
     }
   }

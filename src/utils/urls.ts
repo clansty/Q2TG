@@ -12,15 +12,16 @@ export function getImageUrlByMd5(md5: string) {
 }
 
 export function getBigFaceUrl(file: string) {
-  return `https://gxh.vip.qq.com/club/item/parcel/item/${file.substring(
-    0,
-    2,
-  )}/${file.substring(0, 32)}/300x300.png`;
+  return `https://gxh.vip.qq.com/club/item/parcel/item/${file.substring(0, 2)}/${file.substring(0, 32)}/300x300.png`;
 }
 
-export async function getAvatar(roomId: number): Promise<Buffer> {
-  const res = await axios.get(getAvatarUrl(roomId), {
+export async function fetchFile(url: string): Promise<Buffer> {
+  const res = await axios.get(url, {
     responseType: 'arraybuffer',
   });
   return res.data;
+}
+
+export function getAvatar(roomId: number) {
+  return fetchFile(getAvatarUrl(roomId));
 }

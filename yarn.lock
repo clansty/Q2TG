@@ -83,6 +83,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tokenizer/token@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@tokenizer/token@npm:0.3.0"
+  checksum: 1d575d02d2a9f0c5a4ca5180635ebd2ad59e0f18b42a65f3d04844148b49b3db35cf00b6012a1af2d59c2ab3caca59451c5689f747ba8667ee586ad717ee58e1
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -610,6 +617,17 @@ __metadata:
   dependencies:
     type: ^2.5.0
   checksum: ca3ef4619e838f441a92238a98b77ac873da2175ace746c64303ffe2c3208e79a3acf3bf7004e40b720f3c2a83bf0143e6dd4a7cdfae6e73f54a3bfc7a14b5c2
+  languageName: node
+  linkType: hard
+
+"file-type@npm:^17.1.1":
+  version: 17.1.1
+  resolution: "file-type@npm:17.1.1"
+  dependencies:
+    readable-web-to-node-stream: ^3.0.2
+    strtok3: ^7.0.0-alpha.7
+    token-types: ^5.0.0-alpha.2
+  checksum: fb52169bbb8f4d179ee372f8a8792880c8702f96cf2f9e55094baa6c7e81bed0be347a9f3dd849632597fe0e4c9bd6cc8d60b68292730dc52919844bbb3f2dab
   languageName: node
   linkType: hard
 
@@ -1343,6 +1361,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nodejs-base64@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "nodejs-base64@npm:2.0.0"
+  checksum: 1e9fc06396bd77caba14f93eec40751f00c4570346ebbaf9ded746f8309d0adc8a18bf62c55a9e0288854df7eb61ee9942b316548fd1e185de59213ce4f0fbde
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^5.0.0":
   version: 5.0.0
   resolution: "nopt@npm:5.0.0"
@@ -1453,6 +1478,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"peek-readable@npm:^5.0.0-alpha.5":
+  version: 5.0.0-alpha.5
+  resolution: "peek-readable@npm:5.0.0-alpha.5"
+  checksum: cab949ed457dac95ae191dd412c6a0ba05e8db4842fd51704ccf2c8c16d6f3ceeefc997e8caea584a0395f229e468c0203a38a8d0ec68cfef8bacc157a006dcb
+  languageName: node
+  linkType: hard
+
 "pngjs@npm:^6.0.0":
   version: 6.0.0
   resolution: "pngjs@npm:6.0.0"
@@ -1514,7 +1546,9 @@ __metadata:
     "@prisma/client": latest
     "@types/node": ^17.0.18
     axios: ^0.26.0
+    file-type: ^17.1.1
     log4js: ^6.4.1
+    nodejs-base64: ^2.0.0
     oicq: ^2.2.0
     prisma: latest
     telegram: ^2.5.0
@@ -1541,6 +1575,15 @@ __metadata:
     string_decoder: ^1.1.1
     util-deprecate: ^1.0.1
   checksum: d4ea81502d3799439bb955a3a5d1d808592cf3133350ed352aeaa499647858b27b1c4013984900238b0873ec8d0d8defce72469fb7a83e61d53f5ad61cb80dc8
+  languageName: node
+  linkType: hard
+
+"readable-web-to-node-stream@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "readable-web-to-node-stream@npm:3.0.2"
+  dependencies:
+    readable-stream: ^3.6.0
+  checksum: 8c56cc62c68513425ddfa721954875b382768f83fa20e6b31e365ee00cbe7a3d6296f66f7f1107b16cd3416d33aa9f1680475376400d62a081a88f81f0ea7f9c
   languageName: node
   linkType: hard
 
@@ -1746,6 +1789,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strtok3@npm:^7.0.0-alpha.7":
+  version: 7.0.0-alpha.8
+  resolution: "strtok3@npm:7.0.0-alpha.8"
+  dependencies:
+    "@tokenizer/token": ^0.3.0
+    peek-readable: ^5.0.0-alpha.5
+  checksum: 00e5c9ed0c5de537839cf443d5628f0ae88d2956ca1fdcbd45cd97372045d7179a40ec99f6d06b02c59ec2141e362142ad0a87c59506d401dbd3bd1ee242abaa
+  languageName: node
+  linkType: hard
+
 "tar@npm:^6.0.2, tar@npm:^6.1.2":
   version: 6.1.11
   resolution: "tar@npm:6.1.11"
@@ -1789,6 +1842,16 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 2cab5dda362332efe4a85ee2ba4914e2cc87a30acc369ddff91213b1216367dbad47759543998a90e29065f5985069bd0e1751d9870bc0ac24f5eaea3c5f87d8
+  languageName: node
+  linkType: hard
+
+"token-types@npm:^5.0.0-alpha.2":
+  version: 5.0.0-alpha.2
+  resolution: "token-types@npm:5.0.0-alpha.2"
+  dependencies:
+    "@tokenizer/token": ^0.3.0
+    ieee754: ^1.2.1
+  checksum: ee23eeed6f383b1072d99781d62fc7840f1296a96d47e636e36fca757debd7eb4274d31fcd2d56997606eede00b12b1e61a64610fe0ed7807d6b1c4dcf5ccc6b
   languageName: node
   linkType: hard
 
