@@ -12,7 +12,7 @@ import ForwardController from './controllers/ForwardController';
       console: { type: 'console' },
     },
     categories: {
-      default: { level: 'trace', appenders: ['console'] },
+      default: { level: 'debug', appenders: ['console'] },
     },
   });
   const log = getLogger('Main');
