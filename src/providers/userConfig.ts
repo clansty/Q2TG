@@ -4,7 +4,6 @@ import { WorkMode } from '../types/definitions';
 
 type UserConfig = {
   owner: number
-  userBotSession: string;
   qqUin: number;
   qqPassword: string;
   qqPlatform: number
@@ -16,7 +15,6 @@ const CONFIG_PATH = './data/config.json';
 
 const defaultConfig: UserConfig = {
   owner: 0,
-  userBotSession: '',
   qqUin: 0,
   qqPassword: '',
   qqPlatform: 0,

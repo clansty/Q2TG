@@ -12,7 +12,7 @@ import ForwardController from './controllers/ForwardController';
       console: { type: 'console' },
     },
     categories: {
-      default: { level: 'debug', appenders: ['console'] },
+      default: { level: 'trace', appenders: ['console'] },
     },
   });
   const log = getLogger('Main');
@@ -23,7 +23,7 @@ import ForwardController from './controllers/ForwardController';
   log.debug('正在登录 TG Bot');
   const tgBot = await Telegram.create({
     botAuthToken: process.env.TG_BOT_TOKEN,
-  });
+  }, 'bot');
 
   let tgUser: Telegram, oicq: OicqClient;
   log.debug('TG Bot 登录完成');
@@ -33,11 +33,9 @@ import ForwardController from './controllers/ForwardController';
     ({ tgUser, oicq } = await setupController.waitForFinish());
   }
   else {
-    if (config.userBotSession) {
-      log.debug('正在登录 TG UserBot');
-      tgUser = await Telegram.connect(config.userBotSession);
-      log.debug('TG UserBot 登录完成');
-    }
+    log.debug('正在登录 TG UserBot');
+    tgUser = await Telegram.connect('user');
+    log.debug('TG UserBot 登录完成');
     log.debug('正在登录 OICQ');
     oicq = await OicqClient.create({
       uin: config.qqUin,

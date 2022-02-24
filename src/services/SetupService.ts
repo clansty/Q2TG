@@ -72,11 +72,7 @@ export default class SetupService {
         return await this.waitForOwnerInput(`请输入你${isCodeViaApp ? ' Telegram APP 中' : '手机上'}收到的验证码`);
       },
       onError: (err) => this.log.error(err),
-    });
-  }
-
-  public saveUserBotSession(session: string) {
-    config.userBotSession = session;
+    }, 'user');
   }
 
   public async createOicq(uin: number, password: string, platform: Platform) {

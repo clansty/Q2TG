@@ -10,6 +10,7 @@ import CallbackQueryHelper from '../helpers/CallbackQueryHelper';
 import { CallbackQuery } from 'telegram/events/CallbackQuery';
 import os from 'os';
 import TelegramChat from './TelegramChat';
+import TelegramSession from './TelegramSession';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean>;
 
@@ -20,9 +21,9 @@ export default class Telegram {
   private readonly onMessageHandlers: Array<MessageHandler> = [];
   public me: Api.User;
 
-  private constructor(stringSession = '') {
+  private constructor(sessionId: string) {
     this.client = new TelegramClient(
-      new StringSession(stringSession),
+      new TelegramSession(sessionId),
       parseInt(process.env.TG_API_ID),
       process.env.TG_API_HASH,
       {
@@ -39,15 +40,15 @@ export default class Telegram {
     );
   }
 
-  public static async create(startArgs: UserAuthParams | BotAuthParams, stringSession = '') {
-    const bot = new this(stringSession);
+  public static async create(startArgs: UserAuthParams | BotAuthParams, sessionId: string) {
+    const bot = new this(sessionId);
     await bot.client.start(startArgs);
     await bot.config();
     return bot;
   }
 
-  public static async connect(stringSession: string) {
-    const bot = new this(stringSession);
+  public static async connect(sessionId: string) {
+    const bot = new this(sessionId);
     await bot.client.connect();
     await bot.config();
     return bot;
@@ -91,11 +92,6 @@ export default class Telegram {
 
   public async getChat(entity: EntityLike) {
     return new TelegramChat(this, this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
-  }
-
-  public getStringSession() {
-    // 上游定义不好好写
-    return (this.client.session as StringSession).save();
   }
 
   public async setCommands(commands: Api.BotCommand[], scope: Api.TypeBotCommandScope) {

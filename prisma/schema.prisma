@@ -10,12 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Session {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  dcId            Int?
+  port            Int?
+  serverAddress   String?
+  authKey         Bytes?
+  entities        Entity[]
+}
+
+model Entity {
+  id          Int       @id @default(autoincrement())
+  // 源代码里面大概支持 string 和 BigInteger，不如先全都存 String
+  entityId    String
+  sessionId   Int
+  session     Session   @relation(fields: [sessionId], references: [id])
+  hash        String?
+  username    String?
+  phone       String?
+  name        String?
+
+  @@unique([entityId, sessionId])
+}
+
 model Message {
   id         Int      @id @default(autoincrement())
   qqRoomId   Int
   qqSenderId Int
   time       Int
-  brief      String
+  brief      String?
   seq        Int
   rand       Int
   pktnum     Int
@@ -30,7 +54,7 @@ model ForwardPair {
   id          Int           @id @default(autoincrement())
   qqRoomId    Int           @unique
   tgChatId    Int           @unique
-  AvatarCache AvatarCache[]
+  avatarCache AvatarCache[]
 }
 
 model File {

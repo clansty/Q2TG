@@ -99,30 +99,12 @@ export default class SetupController {
       this.isInProgress = false;
       throw e;
     }
-    let createUserBot: boolean;
-    if (workMode === 'group') {
-      const createUserBotChoice = await this.setupService.waitForOwnerInput('是否创建一个 Telegram UserBot\n' +
-        '将 UserBot 加入转发 Bot 所在的群可以监控原生的【删除消息】操作，方便用户直接删除消息', [
-        [Button.text('是', true, true)],
-        [Button.text('否', true, true)],
-      ]);
-      createUserBot = createUserBotChoice === '是';
-    }
-    else {
-      createUserBot = true;
-    }
     // 登录 tg UserBot
-    if (!createUserBot) {
-      this.setupService.saveUserBotSession('');
-      return;
-    }
     try {
       const phoneNumber = await this.setupService.waitForOwnerInput('创建 Telegram UserBot，请输入你的手机号码（需要带国家区号，例如：+86）');
       await this.setupService.informOwner('正在登录，请稍候…');
       this.tgUser = await this.setupService.createUserBot(phoneNumber);
       await this.setupService.informOwner(`登录成功`);
-      this.setupService.saveUserBotSession(this.tgUser.getStringSession());
-      this.log.debug('StringSession 保存成功');
     }
     catch (e) {
       this.log.error('创建 UserBot 失败', e);
