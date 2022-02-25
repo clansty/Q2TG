@@ -43,18 +43,18 @@ export default class SetupService {
     }
   }
 
-  public async informOwner(message: string) {
+  public async informOwner(message: string, buttons?: MarkupLike) {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
-    await this.owner.sendMessage({ message });
+    await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
   }
 
   public async waitForOwnerInput(message?: string, buttons?: MarkupLike) {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
-    message && await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
+    message && await this.informOwner(message, buttons);
     const { message: reply } = await this.owner.waitForInput();
     return reply;
   }
@@ -69,7 +69,10 @@ export default class SetupService {
         return await this.waitForOwnerInput(`请输入你的二步验证密码${hint ? '\n密码提示：' + hint : ''}`);
       },
       phoneCode: async (isCodeViaApp?: boolean) => {
-        return await this.waitForOwnerInput(`请输入你${isCodeViaApp ? ' Telegram APP 中' : '手机上'}收到的验证码`);
+        await this.informOwner(`请输入你${isCodeViaApp ? ' Telegram APP 中' : '手机上'}收到的验证码\n` +
+          '👇请使用下面的按钮输入，不要在文本框输入，<b>否则验证码会发不出去并立即失效</b>',
+          Button.text('👆请使用上面的按钮输入', true, true));
+        return await this.owner.inlineDigitInput(5);
       },
       onError: (err) => this.log.error(err),
     }, 'user');

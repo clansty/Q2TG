@@ -68,6 +68,10 @@ export default class TelegramSession extends MemorySession {
       .then(e => this.log.trace('authKey update result', e));
   }
 
+  get authKey() {
+    return this._authKey;
+  }
+
   processEntities(tlo: any) {
     this.log.trace('processEntities');
     const entitiesSet = this._entitiesToRows(tlo);

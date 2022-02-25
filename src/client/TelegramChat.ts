@@ -6,6 +6,7 @@ import { SendMessageParams } from 'telegram/client/messages';
 import { CustomFile } from 'telegram/client/uploads';
 import Telegram from './Telegram';
 import createPaginatedInlineSelector from '../utils/paginatedInlineSelector';
+import inlineDigitInput from '../utils/inlineDigitInput';
 
 export default class TelegramChat {
   public readonly inputPeer: Api.TypeInputPeer;
@@ -48,6 +49,10 @@ export default class TelegramChat {
 
   public createPaginatedInlineSelector(message: string, choices: ButtonLike[][]) {
     return createPaginatedInlineSelector(this, message, choices);
+  }
+
+  public inlineDigitInput(length: number) {
+    return inlineDigitInput(this, length);
   }
 
   public async setProfilePhoto(photo: Buffer) {
