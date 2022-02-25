@@ -88,7 +88,7 @@ export default class SetupController {
           [Button.text('二维码登录', true, true)],
         ]);
       if (isPasswordLogin === '密码登录') {
-        password = await this.setupService.waitForOwnerInput('请输入密码');
+        password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
       }
       this.oicq = await this.setupService.createOicq(uin, password, platform);
       await this.setupService.informOwner(`登录成功`);

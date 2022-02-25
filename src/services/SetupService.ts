@@ -47,16 +47,17 @@ export default class SetupService {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
-    await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
+    return await this.owner.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
   }
 
-  public async waitForOwnerInput(message?: string, buttons?: MarkupLike) {
+  public async waitForOwnerInput(message?: string, buttons?: MarkupLike, remove = false) {
     if (!this.owner) {
       throw new Error('应该不会运行到这里');
     }
     message && await this.informOwner(message, buttons);
-    const { message: reply } = await this.owner.waitForInput();
-    return reply;
+    const reply = await this.owner.waitForInput();
+    remove && await reply.delete({ revoke: true });
+    return reply.message;
   }
 
   public async createUserBot(phoneNumber: string) {
@@ -66,7 +67,8 @@ export default class SetupService {
     return await Telegram.create({
       phoneNumber,
       password: async (hint?: string) => {
-        return await this.waitForOwnerInput(`请输入你的二步验证密码${hint ? '\n密码提示：' + hint : ''}`);
+        return await this.waitForOwnerInput(
+          `请输入你的二步验证密码${hint ? '\n密码提示：' + hint : ''}`, undefined, true);
       },
       phoneCode: async (isCodeViaApp?: boolean) => {
         await this.informOwner(`请输入你${isCodeViaApp ? ' Telegram APP 中' : '手机上'}收到的验证码\n` +
