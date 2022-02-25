@@ -1,7 +1,6 @@
 import { MemorySession } from 'telegram/sessions';
 import db from '../providers/db';
 import { AuthKey } from 'telegram/crypto/AuthKey';
-import { returnBigInt } from 'telegram/Helpers';
 import { getLogger } from 'log4js';
 
 export default class TelegramSession extends MemorySession {
@@ -45,7 +44,7 @@ export default class TelegramSession extends MemorySession {
 
     // id, hash, username, phone, name
     this._entities = new Set(
-      dbEntry.entities.map(e => [returnBigInt(e.entityId), returnBigInt(e.hash), e.username, e.phone, e.name]));
+      dbEntry.entities.map(e => [e.entityId, e.hash, e.username, e.phone, e.name]));
   }
 
   setDC(dcId: number, serverAddress: string, port: number) {
