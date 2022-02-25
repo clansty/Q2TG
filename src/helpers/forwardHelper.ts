@@ -8,7 +8,7 @@ const log = getLogger('ForwardHelper');
 
 export default {
   async downloadToCustomFile(url: string) {
-    const { fileTypeFromBuffer } = await import('file-type');
+    const { fileTypeFromBuffer } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
     const file = await fetchFile(url);
     const type = await fileTypeFromBuffer(file);
     return new CustomFile(`image.${type.ext}`, file.length, '', file);
