@@ -1,9 +1,9 @@
 import { Friend, Group } from 'oicq';
 import TelegramChat from '../client/TelegramChat';
-import { Api } from 'telegram';
 import OicqClient from '../client/OicqClient';
 import Telegram from '../client/Telegram';
 import db from './db';
+import { Entity } from 'telegram/define';
 
 export type Pair = {
   qq: Friend | Group;
@@ -34,7 +34,7 @@ class ForwardPairsInternal {
     });
   }
 
-  public find(target: Friend | Group | TelegramChat | Api.Chat | number) {
+  public find(target: Friend | Group | TelegramChat | Entity | number) {
     if (target instanceof Friend) {
       return this.pairs.find(e => e.qq instanceof Friend && e.qq.user_id === target.user_id);
     }

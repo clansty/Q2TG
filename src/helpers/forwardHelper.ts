@@ -3,6 +3,10 @@ import { CustomFile } from 'telegram/client/uploads';
 import { Friend, Group } from 'oicq';
 import { base64decode } from 'nodejs-base64';
 import { getLogger } from 'log4js';
+import { Entity } from 'telegram/define';
+import { Api } from 'telegram';
+import ChatForbidden = Api.ChatForbidden;
+import ChatEmpty = Api.ChatEmpty;
 
 const log = getLogger('ForwardHelper');
 
@@ -117,6 +121,19 @@ export default {
         type: 'text',
         text: '[XML]',
       };
+    }
+  },
+
+  getUserDisplayName(user: Entity) {
+    if ('firstName' in user) {
+      return user.firstName +
+        (user.lastName ? ' ' + user.lastName : '');
+    }
+    else if('title' in user){
+      return user.title
+    }
+    else if('id' in user){
+      return user.id.toString()
     }
   },
 };

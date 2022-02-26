@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
+import { GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -12,6 +12,11 @@ import helper from '../helpers/forwardHelper';
 import db from '../providers/db';
 import { Button } from 'telegram/tl/custom/button';
 import { SendMessageParams } from 'telegram/client/messages';
+import { Api } from 'telegram';
+import { config } from '../providers/userConfig';
+import { file as createTempFile, FileResult } from 'tmp-promise';
+import fsP from 'fs/promises';
+import GeoPoint = Api.GeoPoint;
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -177,7 +182,101 @@ export default class ForwardService {
       return await pair.tg.sendMessage(messageToSend);
     }
     catch (e) {
-      this.log.error('从 QQ 到 TG 到消息转发失败', e);
+      this.log.error('从 QQ 到 TG 的消息转发失败', e);
+    }
+  }
+
+  async forwardFromTelegram(message: Api.Message, pair: Pair) {
+    try {
+      const tempFiles: FileResult[] = [];
+      const chain: Sendable = [];
+      config.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
+        (message.forward ? ' Forwarded from ' + helper.getUserDisplayName(message.forward.chat || message.forward.sender) : '') +
+        ': \n');
+      console.log(message.document);
+      if (message.photo instanceof Api.Photo ||
+        // stickers 和以文件发送的图片都是这个
+        message.document?.mimeType?.startsWith('image/')) {
+        chain.push(segment.image(await message.downloadMedia({})));
+      }
+      else if (message.video || message.videoNote || message.gif) {
+        const file = message.video || message.videoNote || message.gif;
+        if (file.size > 20 * 1024 * 1024) {
+          chain.push('[视频大于 20MB]');
+        }
+        else {
+          const temp = await createTempFile();
+          tempFiles.push(temp);
+          await fsP.writeFile(temp.path, await message.downloadMedia({}));
+          chain.push(segment.video(temp.path));
+        }
+      }
+      else if (message.voice) {
+        // TODO
+        chain.push('语音');
+      }
+      else if (message.poll) {
+        const poll = message.poll.poll;
+        chain.push(`${poll.multipleChoice ? '多' : '单'}选投票：\n${poll.question}`);
+        chain.push(...poll.answers.map(answer => `\n - ${answer.text}`));
+      }
+      else if (message.contact) {
+        const contact = message.contact;
+        chain.push(`名片：\n` +
+          contact.firstName + (contact.lastName ? ' ' + contact.lastName : '') +
+          (contact.phoneNumber ? `\n电话：${contact.phoneNumber}` : ''));
+      }
+      else if (message.venue && message.venue.geo instanceof GeoPoint) {
+        // 地标
+        chain.push(segment.location(message.venue.geo.lat, message.venue.geo.long, `${message.venue.title} (${message.venue.address})`));
+      }
+      else if (message.geo instanceof GeoPoint) {
+        // 普通的位置，没有名字
+        chain.push(segment.location(message.geo.lat, message.geo.long, '选中的位置'));
+      }
+      else if (message.media instanceof Api.MessageMediaDocument && message.media.document instanceof Api.Document) {
+        // TODO 转发比较小的群文件
+        const file = message.media.document;
+        const fileNameAttribute =
+          file.attributes.find(attribute => attribute instanceof Api.DocumentAttributeFilename) as Api.DocumentAttributeFilename;
+        chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
+          `类型：${file.mimeType}\n` +
+          `大小：${file.size}`);
+      }
+
+      message.message && chain.push(message.message);
+
+      // 处理回复
+      let source: Quotable;
+      if (message.replyToMsgId) {
+        try {
+          const quote = await db.message.findFirst({
+            where: {
+              tgChatId: Number(pair.tg.id),
+              tgMsgId: message.replyToMsgId,
+            },
+          });
+          if (quote) {
+            source = {
+              message: quote.brief,
+              seq: quote.seq,
+              rand: quote.rand,
+              user_id: quote.qqSenderId,
+              time: quote.time,
+            };
+          }
+        }
+        catch (e) {
+          this.log.error('查找回复消息失败', e);
+        }
+      }
+
+      const qqMessage = await pair.qq.sendMsg(chain);
+      tempFiles.forEach(it => it.cleanup());
+      return qqMessage;
+    }
+    catch (e) {
+      this.log.error('从 TG 到 QQ 的消息转发失败', e);
     }
   }
 }

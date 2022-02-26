@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
+    "module": "CommonJS",
     "target": "ESNext",
     "esModuleInterop": true,
     "sourceMap": false,

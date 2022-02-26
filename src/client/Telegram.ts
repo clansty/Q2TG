@@ -1,5 +1,4 @@
 import { Api, TelegramClient } from 'telegram';
-import { StringSession } from 'telegram/sessions';
 import { BotAuthParams, UserAuthParams } from 'telegram/client/auth';
 import { NewMessage, NewMessageEvent } from 'telegram/events';
 import { EditedMessage, EditedMessageEvent } from 'telegram/events/EditedMessage';
@@ -12,7 +11,7 @@ import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from './TelegramSession';
 
-type MessageHandler = (message: Api.Message) => Promise<boolean>;
+type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 
 export default class Telegram {
   private readonly client: TelegramClient;

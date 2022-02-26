@@ -1,4 +1,4 @@
-import { Client, createClient, Platform } from 'oicq';
+import { Client, LogLevel, Platform } from 'oicq';
 import * as Buffer from 'buffer';
 import { execSync } from 'child_process';
 import random from '../utils/random';
@@ -6,6 +6,8 @@ import fs from 'fs';
 import fsP from 'fs/promises';
 import path from 'path';
 import { Config } from 'oicq/lib/client';
+
+const LOG_LEVEL: LogLevel = 'warn';
 
 interface CreateOicqParams {
   uin: number;
