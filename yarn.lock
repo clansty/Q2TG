@@ -611,6 +611,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eviltransform@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "eviltransform@npm:0.2.2"
+  checksum: db4efeea529f4ab173eff7184ebd2273c2b64e4a5f772e5d3d250be773c46e60f3a176d7f7ced9ebb95cae9d8aee195d3aca2215bd4305453ffa0f74c48aa846
+  languageName: node
+  linkType: hard
+
 "ext@npm:^1.1.2":
   version: 1.6.0
   resolution: "ext@npm:1.6.0"
@@ -1546,6 +1553,7 @@ __metadata:
     "@prisma/client": latest
     "@types/node": ^17.0.18
     axios: ^0.26.0
+    eviltransform: ^0.2.2
     file-type: ^17.1.1
     log4js: ^6.4.1
     nodejs-base64: ^2.0.0

@@ -16,7 +16,7 @@ import { Api } from 'telegram';
 import { config } from '../providers/userConfig';
 import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
-import GeoPoint = Api.GeoPoint;
+import eviltransform from 'eviltransform';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -226,13 +226,15 @@ export default class ForwardService {
           contact.firstName + (contact.lastName ? ' ' + contact.lastName : '') +
           (contact.phoneNumber ? `\n电话：${contact.phoneNumber}` : ''));
       }
-      else if (message.venue && message.venue.geo instanceof GeoPoint) {
+      else if (message.venue && message.venue.geo instanceof Api.GeoPoint) {
         // 地标
-        chain.push(segment.location(message.venue.geo.lat, message.venue.geo.long, `${message.venue.title} (${message.venue.address})`));
+        const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.venue.geo.lat, message.venue.geo.long);
+        chain.push(segment.location(geo.lat, geo.lng, `${message.venue.title} (${message.venue.address})`));
       }
-      else if (message.geo instanceof GeoPoint) {
+      else if (message.geo instanceof Api.GeoPoint) {
         // 普通的位置，没有名字
-        chain.push(segment.location(message.geo.lat, message.geo.long, '选中的位置'));
+        const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.geo.lat, message.geo.long);
+        chain.push(segment.location(geo.lat, geo.lng, '选中的位置'));
       }
       else if (message.media instanceof Api.MessageMediaDocument && message.media.document instanceof Api.Document) {
         // TODO 转发比较小的群文件

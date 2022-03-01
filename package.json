@@ -17,6 +17,7 @@
   "dependencies": {
     "@prisma/client": "latest",
     "axios": "^0.26.0",
+    "eviltransform": "^0.2.2",
     "file-type": "^17.1.1",
     "log4js": "^6.4.1",
     "nodejs-base64": "^2.0.0",
