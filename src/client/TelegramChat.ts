@@ -115,4 +115,13 @@ export default class TelegramChat {
       }),
     );
   }
+
+  public async setNotificationSettings(params: { showPreviews?: boolean, silent?: boolean, muteUntil?: number, sound?: string }) {
+    return await this.client.invoke(
+      new Api.account.UpdateNotifySettings({
+        peer: new Api.InputNotifyPeer({ peer: this.inputPeer }),
+        settings: new Api.InputPeerNotifySettings(params),
+      }),
+    );
+  }
 }

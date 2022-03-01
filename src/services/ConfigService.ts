@@ -149,6 +149,12 @@ export default class ConfigService {
       status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
       await chat.hidePeerSettingsBar();
 
+      // 对于私聊，默认解除静音
+      if (roomId > 0) {
+        status && await status.edit({ text: '正在解除静音…' });
+        await chat.setNotificationSettings({ silent: false, showPreviews: true });
+      }
+
       // 关联写入数据库
       status && await status.edit({ text: '正在写数据库…' });
       const dbPair = await forwardPairs.add(qEntity, chatForBot);
