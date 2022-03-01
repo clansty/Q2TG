@@ -105,7 +105,6 @@ export default class TelegramChat {
         revoked: false,
       }),
     );
-    console.log(links);
     return links.invites[0];
   }
 

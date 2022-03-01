@@ -4,6 +4,7 @@ import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
 import { config } from '../providers/userConfig';
 import regExps from '../constants/regExps';
+import forwardPairs from '../providers/forwardPairs';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
@@ -13,6 +14,7 @@ export default class ConfigController {
               private readonly oicq: OicqClient) {
     this.configService = new ConfigService(tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
+    tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
     this.configService.configCommands();
     config.workMode === 'personal' && this.configService.setupFilter();
   }
@@ -57,6 +59,14 @@ export default class ConfigController {
             return true;
         }
       }
+    }
+  };
+
+  private handleServiceMessage = async (message: Api.MessageService) => {
+    if (message.action instanceof Api.MessageActionChatMigrateTo) {
+      const pair = forwardPairs.find((message.peerId as Api.PeerChat).chatId);
+      if (!pair) return;
+      pair.tg = await this.tgBot.getChat(message.action.channelId);
     }
   };
 }

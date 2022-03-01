@@ -193,7 +193,6 @@ export default class ForwardService {
       config.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
         (message.forward ? ' Forwarded from ' + helper.getUserDisplayName(message.forward.chat || message.forward.sender) : '') +
         ': \n');
-      console.log(message.document);
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
