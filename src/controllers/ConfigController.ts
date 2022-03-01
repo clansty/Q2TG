@@ -5,9 +5,11 @@ import ConfigService from '../services/ConfigService';
 import { config } from '../providers/userConfig';
 import regExps from '../constants/regExps';
 import forwardPairs from '../providers/forwardPairs';
+import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
+  private readonly createPrivateMessageGroupBlockList = new Map<number, Promise<void>>();
 
   constructor(private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
@@ -15,6 +17,7 @@ export default class ConfigController {
     this.configService = new ConfigService(tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
+    oicq.addNewMessageEventHandler(this.handleQqMessage);
     this.configService.configCommands();
     config.workMode === 'personal' && this.configService.setupFilter();
   }
@@ -68,5 +71,22 @@ export default class ConfigController {
       if (!pair) return;
       pair.tg = await this.tgBot.getChat(message.action.channelId);
     }
+  };
+
+  private handleQqMessage = async (message: GroupMessageEvent | PrivateMessageEvent) => {
+    if (message.message_type !== 'private') return false;
+    const pair = forwardPairs.find(message.friend);
+    if (pair) return false;
+    // 如果正在创建中，应该阻塞
+    let promise = this.createPrivateMessageGroupBlockList.get(message.from_id);
+    if (promise) {
+      await promise;
+      return false;
+    }
+    // 有未创建转发群的新私聊消息时自动创建
+    promise = this.configService.createGroupAndLink(message.from_id, message.friend.remark || message.friend.nickname, true);
+    this.createPrivateMessageGroupBlockList.set(message.from_id, promise);
+    await promise;
+    return false;
   };
 }

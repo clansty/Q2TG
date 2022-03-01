@@ -1,5 +1,5 @@
-import { Client, LogLevel, Platform } from 'oicq';
-import * as Buffer from 'buffer';
+import { Client, DiscussMessageEvent, GroupMessageEvent, LogLevel, Platform, PrivateMessageEvent } from 'oicq';
+import Buffer from 'buffer';
 import { execSync } from 'child_process';
 import random from '../utils/random';
 import fs from 'fs';
@@ -8,6 +8,8 @@ import path from 'path';
 import { Config } from 'oicq/lib/client';
 
 const LOG_LEVEL: LogLevel = 'warn';
+
+type MessageHandler = (event: PrivateMessageEvent | GroupMessageEvent) => Promise<boolean | void>
 
 interface CreateOicqParams {
   uin: number;
@@ -23,6 +25,8 @@ interface CreateOicqParams {
 
 // OicqExtended??
 export default class OicqClient extends Client {
+  private readonly onMessageHandlers: Array<MessageHandler> = [];
+
   private constructor(uin: number, conf?: Config) {
     super(uin, conf);
   }
@@ -59,7 +63,8 @@ export default class OicqClient extends Client {
           .off('system.login.slider', loginSliderHandler)
           .off('system.login.qrcode', loginQrCodeHandler)
           .off('system.login.error', loginErrorHandler)
-          .off('system.online', successLoginHandler);
+          .off('system.online', successLoginHandler)
+          .on('message', client.onMessage);
         resolve(client);
       }
 
@@ -73,8 +78,8 @@ export default class OicqClient extends Client {
           board: 'raincandy',
           brand: random.pick('GOOGLE', 'XIAOMI', 'HUAWEI', 'SAMSUNG', 'SONY'),
           model: 'raincandy',
-          wifi_ssid: random.pick('OpenWrt', `Redmi-${random.hex(4)}`,
-            `MiWifi-${random.hex(4)}`, `TP-LINK-${random.hex(6)}`),
+          wifi_ssid: random.pick('OpenWrt', `Redmi-${random.hex(4).toUpperCase()}`,
+            `MiWifi-${random.hex(4).toUpperCase()}`, `TP-LINK-${random.hex(6).toUpperCase()}`),
           bootloader: random.pick('U-Boot', 'GRUB', 'gummiboot'),
           android_id: random.hex(16),
           proc_version: `${execSync('uname -s').toString().replace('\n', '')} version ${execSync('uname -r').toString().replace('\n', '')}`,
@@ -90,7 +95,7 @@ export default class OicqClient extends Client {
       const client = new this(params.uin, {
         platform: params.platform,
         data_dir: path.resolve('./data'),
-        log_level: 'warn',
+        log_level: LOG_LEVEL,
       })
         .on('system.login.device', loginDeviceHandler)
         .on('system.login.slider', loginSliderHandler)
@@ -99,6 +104,23 @@ export default class OicqClient extends Client {
         .on('system.online', successLoginHandler);
       client.login(params.password);
     });
+  }
+
+  private onMessage = async (event: PrivateMessageEvent | GroupMessageEvent | DiscussMessageEvent) => {
+    if (event.message_type === 'discuss') return;
+    for (const handler of this.onMessageHandlers) {
+      const res = await handler(event);
+      if (res) return;
+    }
+  };
+
+  public addNewMessageEventHandler(handler: MessageHandler) {
+    this.onMessageHandlers.push(handler);
+  }
+
+  public removeNewMessageEventHandler(handler: MessageHandler) {
+    this.onMessageHandlers.includes(handler) &&
+    this.onMessageHandlers.splice(this.onMessageHandlers.indexOf(handler), 1);
   }
 
   public getChat(roomId: number) {

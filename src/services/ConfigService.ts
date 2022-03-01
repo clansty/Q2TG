@@ -109,7 +109,7 @@ export default class ConfigService {
 
   // endregion
 
-  private async createGroupAndLink(roomId: number, title?: string) {
+  public async createGroupAndLink(roomId: number, title?: string, silent = false) {
     this.log.info(`创建群组并关联：${roomId}`);
     const qEntity = this.oicq.getChat(roomId);
     if (!title) {
@@ -124,7 +124,7 @@ export default class ConfigService {
     let isFinish = false;
     try {
       // 状态信息
-      const status = await (await this.owner).sendMessage('正在创建 Telegram 群…');
+      const status = !silent && await (await this.owner).sendMessage('正在创建 Telegram 群…');
 
       // 创建群聊，拿到的是 user 的 chat
       const chat = await this.tgUser.createChat({
@@ -133,12 +133,12 @@ export default class ConfigService {
       });
 
       // 设置管理员
-      await status.edit({ text: '正在设置管理员…' });
+      status && await status.edit({ text: '正在设置管理员…' });
       await chat.editAdmin(this.tgBot.me.username, true);
       const chatForBot = await this.tgBot.getChat(chat.id);
 
       // 添加到 Filter
-      await status.edit({ text: '正在将群添加到文件夹…' });
+      status && await status.edit({ text: '正在将群添加到文件夹…' });
       this.filter.includePeers.push(utils.getInputPeer(chat));
       await this.tgUser.updateDialogFilter({
         id: this.filter.id,
@@ -146,16 +146,16 @@ export default class ConfigService {
       });
 
       // 关闭【添加成员】快捷条
-      await status.edit({ text: '正在关闭【添加成员】快捷条…' });
+      status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
       await chat.hidePeerSettingsBar();
 
       // 关联写入数据库
-      await status.edit({ text: '正在写数据库…' });
+      status && await status.edit({ text: '正在写数据库…' });
       const dbPair = await forwardPairs.add(qEntity, chatForBot);
       isFinish = true;
 
       // 更新头像
-      await status.edit({ text: '正在更新头像…' });
+      status && await status.edit({ text: '正在更新头像…' });
       const avatar = await getAvatar(roomId);
       const avatarHash = md5B64(avatar);
       await chatForBot.setProfilePhoto(avatar);
@@ -164,16 +164,18 @@ export default class ConfigService {
       });
 
       // 更新关于文本
-      await status.edit({ text: '正在更新关于文本…' });
+      status && await status.edit({ text: '正在更新关于文本…' });
       await chatForBot.editAbout(await this.getAboutText(qEntity));
 
       // 完成
-      await status.edit({ text: '正在获取链接…' });
-      const { link } = await chat.getInviteLink();
-      await status.edit({
-        text: '创建完成！',
-        buttons: Button.url('打开', link),
-      });
+      if (status) {
+        await status.edit({ text: '正在获取链接…' });
+        const { link } = await chat.getInviteLink();
+        await status.edit({
+          text: '创建完成！',
+          buttons: Button.url('打开', link),
+        });
+      }
     }
     catch (e) {
       this.log.error('创建群组并关联失败', e);

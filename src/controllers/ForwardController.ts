@@ -2,7 +2,7 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ForwardService from '../services/ForwardService';
 import forwardPairs from '../providers/forwardPairs';
-import { DiscussMessageEvent, Friend, Group, GroupMessageEvent, PrivateMessageEvent } from 'oicq';
+import { Friend, Group, GroupMessageEvent, PrivateMessageEvent } from 'oicq';
 import db from '../providers/db';
 import helper from '../helpers/forwardHelper';
 import { Api } from 'telegram';
@@ -15,19 +15,18 @@ export default class ForwardController {
               private readonly oicq: OicqClient) {
     this.forwardService = new ForwardService(tgBot, oicq);
     forwardPairs.init(oicq, tgBot)
-      .then(() => oicq.on('message', this.onQqMessage))
+      .then(() => oicq.addNewMessageEventHandler(this.onQqMessage))
       .then(() => tgBot.addNewMessageEventHandler(this.onTelegramMessage));
   }
 
-  private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent | DiscussMessageEvent) => {
+  private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
     let target: Friend | Group;
     if (event.message_type === 'private') {
       target = event.friend;
     }
-    else if (event.message_type === 'group') {
+    else {
       target = event.group;
     }
-    else return;
     const pair = forwardPairs.find(target);
     if (!pair) return;
     const tgMessage = await this.forwardService.forwardFromQq(event, pair);
