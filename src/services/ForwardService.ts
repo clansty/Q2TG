@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -217,6 +217,10 @@ export default class ForwardService {
           chain.push(segment.video(temp.path));
         }
       }
+      else if (message.sticker) {
+        // TODO
+        // 一定是 tgs
+      }
       else if (message.voice) {
         const temp = await createTempFile();
         tempFiles.push(temp);
@@ -246,13 +250,18 @@ export default class ForwardService {
         chain.push(segment.location(geo.lat, geo.lng, '选中的位置'));
       }
       else if (message.media instanceof Api.MessageMediaDocument && message.media.document instanceof Api.Document) {
-        // TODO 转发比较小的群文件
         const file = message.media.document;
         const fileNameAttribute =
           file.attributes.find(attribute => attribute instanceof Api.DocumentAttributeFilename) as Api.DocumentAttributeFilename;
         chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
           `类型：${file.mimeType}\n` +
           `大小：${file.size}`);
+        if (file.size <= 20 * 1024 * 1024 && pair.qq instanceof Group) {
+          chain.push('\n文件正在上传中…');
+          pair.qq.fs.upload(await message.downloadMedia({}), '/',
+            fileNameAttribute ? fileNameAttribute.fileName : 'file')
+            .catch(err => pair.qq.sendMsg(`上传失败：\n${err.message}`));
+        }
       }
 
       message.message && chain.push(message.message);
@@ -288,6 +297,9 @@ export default class ForwardService {
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);
+      message.reply({
+        message: `转发失败：${e.message}\n${e}`,
+      });
     }
   }
 }
