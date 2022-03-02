@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "start": "node build/index.js",
+    "start": "prisma db push && node build/index.js",
     "prisma": "prisma"
   },
   "devDependencies": {
