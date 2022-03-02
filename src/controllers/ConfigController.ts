@@ -5,7 +5,7 @@ import ConfigService from '../services/ConfigService';
 import { config } from '../providers/userConfig';
 import regExps from '../constants/regExps';
 import forwardPairs from '../providers/forwardPairs';
-import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
+import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
@@ -18,6 +18,7 @@ export default class ConfigController {
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
+    config.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
     this.configService.configCommands();
     config.workMode === 'personal' && this.configService.setupFilter();
   }
@@ -66,6 +67,7 @@ export default class ConfigController {
   };
 
   private handleServiceMessage = async (message: Api.MessageService) => {
+    // 用于检测群升级为超级群的情况
     if (message.action instanceof Api.MessageActionChatMigrateTo) {
       const pair = forwardPairs.find((message.peerId as Api.PeerChat).chatId);
       if (!pair) return;
@@ -88,5 +90,11 @@ export default class ConfigController {
     this.createPrivateMessageGroupBlockList.set(message.from_id, promise);
     await promise;
     return false;
+  };
+
+  private handleMemberIncrease = async (event: MemberIncreaseEvent) => {
+    if(event.user_id!==this.oicq.uin||await forwardPairs.find(event.group)) return;
+    // 是新群并且是自己加入了
+    await this.configService.promptNewGroup(event.group)
   };
 }

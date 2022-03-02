@@ -109,7 +109,13 @@ export default class ConfigService {
 
   // endregion
 
-  public async createGroupAndLink(roomId: number, title?: string, silent = false) {
+  /**
+   *
+   * @param roomId
+   * @param title
+   * @param status 传入 false 的话就不显示状态信息，可以传入一条已有消息覆盖
+   */
+  public async createGroupAndLink(roomId: number, title?: string, status: boolean | Api.Message = true) {
     this.log.info(`创建群组并关联：${roomId}`);
     const qEntity = this.oicq.getChat(roomId);
     if (!title) {
@@ -124,7 +130,12 @@ export default class ConfigService {
     let isFinish = false;
     try {
       // 状态信息
-      const status = !silent && await (await this.owner).sendMessage('正在创建 Telegram 群…');
+      if (status === true) {
+        status = await (await this.owner).sendMessage('正在创建 Telegram 群…');
+      }
+      else if (status instanceof Api.Message) {
+        await status.edit({ text: '正在创建 Telegram 群…', buttons: Button.clear() });
+      }
 
       // 创建群聊，拿到的是 user 的 chat
       const chat = await this.tgUser.createChat({
@@ -187,6 +198,19 @@ export default class ConfigService {
       this.log.error('创建群组并关联失败', e);
       await (await this.owner).sendMessage(`创建群组并关联${isFinish ? '成功了但没完全成功' : '失败'}\n<code>${e}</code>`);
     }
+  }
+
+  public async promptNewGroup(group: Group) {
+    const message = await (await this.owner).sendMessage({
+      message: '你加入了一个新的群：\n' +
+        `${group.name}\n` +
+        `${group.info.member_count} 名成员\n` +
+        `群号：${group.group_id}\n` +
+        '要创建关联群吗',
+      buttons: Button.inline('创建', this.tgBot.registerCallback(
+        () => this.createGroupAndLink(-group.group_id, group.name, message))),
+    });
+    return message;
   }
 
   public async createLinkGroup(qqRoomId: number, tgChatId: number) {
