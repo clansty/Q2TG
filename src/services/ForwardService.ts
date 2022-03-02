@@ -18,6 +18,8 @@ import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
 import silk from '../utils/silk';
+import fs from 'fs';
+import tgsToGif from '../utils/tgsToGif';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -203,7 +205,11 @@ export default class ForwardService {
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
-        chain.push(segment.image(await message.downloadMedia({})));
+        chain.push({
+          type: 'image',
+          file: await message.downloadMedia({}),
+          asface: !!message.sticker,
+        });
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
@@ -218,8 +224,26 @@ export default class ForwardService {
         }
       }
       else if (message.sticker) {
-        // TODO
         // 一定是 tgs
+        let gifPath: string;
+        const tempTgsPath = path.resolve(path.join('./data/cache/tgs', message.sticker.id.toString(16)));
+        // 先从缓存中找
+        if (fs.existsSync(tempTgsPath + '.gif')) {
+          gifPath = tempTgsPath + '.gif';
+        }
+        else {
+          await fsP.mkdir('./data/cache/tgs', { recursive: true });
+          await fsP.writeFile(tempTgsPath, await message.downloadMedia({}));
+          await tgsToGif(tempTgsPath);
+          await fsP.rm(tempTgsPath);
+          gifPath = tempTgsPath + '.gif';
+        }
+        console.log(gifPath);
+        chain.push({
+          type: 'image',
+          file: gifPath,
+          asface: true,
+        });
       }
       else if (message.voice) {
         const temp = await createTempFile();

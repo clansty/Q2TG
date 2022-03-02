@@ -69,8 +69,7 @@ export default class OicqClient extends Client {
       }
 
       if (!fs.existsSync(`./data/${params.uin}/device-${params.uin}.json`)) {
-        !fs.existsSync('./data') && await fsP.mkdir('./data');
-        !fs.existsSync(`./data/${params.uin}`) && await fsP.mkdir(`./data/${params.uin}`);
+        await fsP.mkdir(`./data/${params.uin}`, { recursive: true });
 
         const device = {
           product: 'Q2TG',
