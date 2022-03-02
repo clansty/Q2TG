@@ -83,5 +83,5 @@ model AvatarCache {
   id            Int         @id @default(autoincrement())
   forwardPair   ForwardPair @relation(fields: [forwardPairId], references: [id])
   forwardPairId Int         @unique
-  hash          String
+  hash          Bytes
 }

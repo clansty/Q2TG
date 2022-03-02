@@ -9,7 +9,7 @@ import db from '../providers/db';
 import { Api, utils } from 'telegram';
 import commands from '../constants/commands';
 import OicqClient from '../client/OicqClient';
-import { md5B64 } from '../utils/hashing';
+import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
 import forwardPairs from '../providers/forwardPairs';
 
@@ -174,7 +174,7 @@ export default class ConfigService {
       // 更新头像
       status && await status.edit({ text: '正在更新头像…' });
       const avatar = await getAvatar(roomId);
-      const avatarHash = md5B64(avatar);
+      const avatarHash = md5(avatar);
       await chatForBot.setProfilePhoto(avatar);
       await db.avatarCache.create({
         data: { forwardPairId: dbPair.id, hash: avatarHash },
