@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, MessageRet, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -37,8 +37,8 @@ export default class ForwardService {
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
         let sender = event.sender.card || event.sender.nickname;
-        if(event.anonymous){
-          sender = `[${sender}]${event.anonymous.name}`
+        if (event.anonymous) {
+          sender = `[${sender}]${event.anonymous.name}`;
         }
         messageHeader = `<b>${helper.htmlEscape(sender)}</b>: `;
       }
@@ -202,6 +202,8 @@ export default class ForwardService {
     try {
       const tempFiles: FileResult[] = [];
       const chain: Sendable = [];
+      // 这条消息在 tg 中被回复的时候显示的
+      let brief = '';
       config.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
         (message.forward ? ' Forwarded from ' + helper.getUserDisplayName(message.forward.chat || message.forward.sender) : '') +
         ': \n');
@@ -213,6 +215,7 @@ export default class ForwardService {
           file: await message.downloadMedia({}),
           asface: !!message.sticker,
         });
+        brief += '[图片]';
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
@@ -225,6 +228,7 @@ export default class ForwardService {
           await fsP.writeFile(temp.path, await message.downloadMedia({}));
           chain.push(segment.video(temp.path));
         }
+        brief += '[视频]';
       }
       else if (message.sticker) {
         // 一定是 tgs
@@ -241,12 +245,12 @@ export default class ForwardService {
           await fsP.rm(tempTgsPath);
           gifPath = tempTgsPath + '.gif';
         }
-        console.log(gifPath);
         chain.push({
           type: 'image',
           file: gifPath,
           asface: true,
         });
+        brief += '[贴纸]';
       }
       else if (message.voice) {
         const temp = await createTempFile();
@@ -254,27 +258,32 @@ export default class ForwardService {
         await fsP.writeFile(temp.path, await message.downloadMedia({}));
         const bufSilk = await silk.encode(temp.path);
         chain.push(segment.record(bufSilk));
+        brief += '[语音]';
       }
       else if (message.poll) {
         const poll = message.poll.poll;
         chain.push(`${poll.multipleChoice ? '多' : '单'}选投票：\n${poll.question}`);
         chain.push(...poll.answers.map(answer => `\n - ${answer.text}`));
+        brief += '[投票]';
       }
       else if (message.contact) {
         const contact = message.contact;
         chain.push(`名片：\n` +
           contact.firstName + (contact.lastName ? ' ' + contact.lastName : '') +
           (contact.phoneNumber ? `\n电话：${contact.phoneNumber}` : ''));
+        brief += '[名片]';
       }
       else if (message.venue && message.venue.geo instanceof Api.GeoPoint) {
         // 地标
         const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.venue.geo.lat, message.venue.geo.long);
         chain.push(segment.location(geo.lat, geo.lng, `${message.venue.title} (${message.venue.address})`));
+        brief += `[位置：${message.venue.title}]`;
       }
       else if (message.geo instanceof Api.GeoPoint) {
         // 普通的位置，没有名字
         const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.geo.lat, message.geo.long);
         chain.push(segment.location(geo.lat, geo.lng, '选中的位置'));
+        brief += '[位置]';
       }
       else if (message.media instanceof Api.MessageMediaDocument && message.media.document instanceof Api.Document) {
         const file = message.media.document;
@@ -289,6 +298,7 @@ export default class ForwardService {
             fileNameAttribute ? fileNameAttribute.fileName : 'file')
             .catch(err => pair.qq.sendMsg(`上传失败：\n${err.message}`));
         }
+        brief += '[文件]';
       }
 
       message.message && chain.push(message.message);
@@ -320,7 +330,10 @@ export default class ForwardService {
 
       const qqMessage = await pair.qq.sendMsg(chain, source);
       tempFiles.forEach(it => it.cleanup());
-      return qqMessage;
+      return {
+        ...qqMessage,
+        brief,
+      };
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);

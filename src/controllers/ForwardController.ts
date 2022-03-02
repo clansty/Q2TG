@@ -53,17 +53,16 @@ export default class ForwardController {
     const qqMessageSent = await this.forwardService.forwardFromTelegram(message, pair);
     // 返回的信息不太够
     if (qqMessageSent) {
-      const qqMessage = await this.oicq.getMsg(qqMessageSent.message_id);
       // 更新数据库
       await db.message.create({
         data: {
           qqRoomId: pair.qqRoomId,
-          qqSenderId: qqMessage.sender.user_id,
-          time: qqMessage.time,
-          brief: qqMessage.raw_message,
-          seq: qqMessage.seq,
-          rand: qqMessage.rand,
-          pktnum: qqMessage.pktnum,
+          qqSenderId: this.oicq.uin,
+          time: qqMessageSent.time,
+          brief: qqMessageSent.brief,
+          seq: qqMessageSent.seq,
+          rand: qqMessageSent.rand,
+          pktnum: 1,
           tgChatId: Number(pair.tg.id),
           tgMsgId: message.id,
         },
