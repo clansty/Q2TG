@@ -33,7 +33,7 @@ export class Pair {
       where: { id: this.dbId },
       data: { tgChatId: Number(value.id) },
     })
-      .then(() => log.info(`出现了到超级群组到转换: ${value.id}`));
+      .then(() => log.info(`出现了到超级群组的转换: ${value.id}`));
   }
 }
 

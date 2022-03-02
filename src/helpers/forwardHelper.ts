@@ -37,15 +37,6 @@ export default {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;'),
 
-  getRoomId(room: Friend | Group) {
-    if (room instanceof Friend) {
-      return room.user_id;
-    }
-    else {
-      return room.group_id;
-    }
-  },
-
   processJson(json: string) {
     const jsonObj = JSON.parse(json);
     if (jsonObj.app === 'com.tencent.mannounce') {

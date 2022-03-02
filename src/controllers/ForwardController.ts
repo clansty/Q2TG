@@ -4,7 +4,6 @@ import ForwardService from '../services/ForwardService';
 import forwardPairs from '../providers/forwardPairs';
 import { Friend, Group, GroupMessageEvent, PrivateMessageEvent } from 'oicq';
 import db from '../providers/db';
-import helper from '../helpers/forwardHelper';
 import { Api } from 'telegram';
 
 export default class ForwardController {
@@ -34,7 +33,7 @@ export default class ForwardController {
       // 更新数据库
       await db.message.create({
         data: {
-          qqRoomId: helper.getRoomId(pair.qq),
+          qqRoomId: pair.qqRoomId,
           qqSenderId: event.sender.user_id,
           time: event.time,
           brief: event.raw_message,
@@ -58,7 +57,7 @@ export default class ForwardController {
       // 更新数据库
       await db.message.create({
         data: {
-          qqRoomId: helper.getRoomId(pair.qq),
+          qqRoomId: pair.qqRoomId,
           qqSenderId: qqMessage.sender.user_id,
           time: qqMessage.time,
           brief: qqMessage.raw_message,

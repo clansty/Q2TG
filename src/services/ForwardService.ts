@@ -95,7 +95,7 @@ export default class ForwardService {
               message = `文件: ${elem.name}\n` +
                 `大小: ${helper.hSize(elem.size)}`;
               const dbEntry = await db.file.create({
-                data: { fileId: elem.fid, roomId: helper.getRoomId(pair.qq), info: message },
+                data: { fileId: elem.fid, roomId: pair.qqRoomId, info: message },
               });
               button = Button.url('⏬ 获取下载地址',
                 `https://t.me/${this.tgBot.me.username}?start=file-${dbEntry.id}`);
@@ -160,7 +160,7 @@ export default class ForwardService {
         try {
           const quote = await db.message.findFirst({
             where: {
-              qqRoomId: helper.getRoomId(pair.qq),
+              qqRoomId: pair.qqRoomId,
               seq: event.source.seq,
               rand: event.source.rand,
             },
