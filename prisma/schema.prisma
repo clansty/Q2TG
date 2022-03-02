@@ -36,14 +36,14 @@ model Entity {
 
 model Message {
   id         Int      @id @default(autoincrement())
-  qqRoomId   Int
-  qqSenderId Int
+  qqRoomId   BigInt      @db.BigInt
+  qqSenderId BigInt      @db.BigInt
   time       Int
   brief      String?
   seq        Int
   rand       Int
   pktnum     Int
-  tgChatId   Int
+  tgChatId   BigInt      @db.BigInt
   tgMsgId    Int
 
   @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time])
@@ -52,14 +52,14 @@ model Message {
 
 model ForwardPair {
   id          Int           @id @default(autoincrement())
-  qqRoomId    Int           @unique
-  tgChatId    Int           @unique
+  qqRoomId    BigInt           @unique @db.BigInt
+  tgChatId    BigInt           @unique @db.BigInt
   avatarCache AvatarCache[]
 }
 
 model File {
   id      Int    @id @default(autoincrement())
-  roomId  Int
+  roomId  BigInt    @db.BigInt
   fileId  String
   info    String
 
@@ -74,7 +74,7 @@ model FlashPhoto {
 model FlashPhotoView {
   id           Int @id @default(autoincrement())
   flashPhotoId Int
-  viewerId     Int
+  viewerId     BigInt @db.BigInt
 
   @@unique([flashPhotoId, viewerId])
 }

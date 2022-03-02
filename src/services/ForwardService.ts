@@ -305,7 +305,7 @@ export default class ForwardService {
               message: quote.brief,
               seq: quote.seq,
               rand: quote.rand,
-              user_id: quote.qqSenderId,
+              user_id: Number(quote.qqSenderId),
               time: quote.time,
             };
           }

@@ -45,8 +45,8 @@ class ForwardPairsInternal {
     const dbValues = await db.forwardPair.findMany();
     for (const i of dbValues) {
       this.pairs.push(new Pair(
-        oicq.getChat(i.qqRoomId),
-        await tgBot.getChat(i.tgChatId),
+        oicq.getChat(Number(i.qqRoomId)),
+        await tgBot.getChat(Number(i.tgChatId)),
         i.id,
       ));
     }
