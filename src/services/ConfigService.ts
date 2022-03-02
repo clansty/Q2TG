@@ -18,7 +18,6 @@ const DEFAULT_FILTER_ID = 114; // 514
 export default class ConfigService {
   private owner: Promise<TelegramChat>;
   private log = getLogger('ConfigService');
-  private filter: Api.DialogFilter;
 
   constructor(private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
@@ -150,11 +149,15 @@ export default class ConfigService {
 
       // 添加到 Filter
       status && await status.edit({ text: '正在将群添加到文件夹…' });
-      this.filter.includePeers.push(utils.getInputPeer(chat));
-      await this.tgUser.updateDialogFilter({
-        id: this.filter.id,
-        filter: this.filter,
-      });
+      const dialogFilters = await this.tgUser.getDialogFilters();
+      const filter = dialogFilters.find(e => e.id === DEFAULT_FILTER_ID);
+      if (filter) {
+        filter.includePeers.push(utils.getInputPeer(chat));
+        await this.tgUser.updateDialogFilter({
+          id: DEFAULT_FILTER_ID,
+          filter,
+        });
+      }
 
       // 关闭【添加成员】快捷条
       status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
@@ -231,13 +234,13 @@ export default class ConfigService {
   // 创建 QQ 群组的文件夹
   public async setupFilter() {
     const result = await this.tgUser.getDialogFilters();
-    this.filter = result.find(e => e.id === DEFAULT_FILTER_ID);
-    if (!this.filter) {
+    let filter = result.find(e => e.id === DEFAULT_FILTER_ID);
+    if (!filter) {
       this.log.info('创建 TG 文件夹');
       // 要自己计算新的 id，随意 id 也是可以的
       // https://github.com/morethanwords/tweb/blob/7d646bc9a87d943426d831f30b69d61b743f51e0/src/lib/storages/filters.ts#L251
       // 创建
-      this.filter = new Api.DialogFilter({
+      filter = new Api.DialogFilter({
         id: DEFAULT_FILTER_ID,
         title: 'QQ',
         pinnedPeers: [
@@ -251,16 +254,14 @@ export default class ConfigService {
       try {
         const isSuccess = await this.tgUser.updateDialogFilter({
           id: DEFAULT_FILTER_ID,
-          filter: this.filter,
+          filter,
         });
         if (!isSuccess) {
-          this.filter = null;
           this.log.error(errorText);
           await (await this.owner).sendMessage(errorText);
         }
       }
       catch (e) {
-        this.filter = null;
         this.log.error(errorText, e);
         await (await this.owner).sendMessage(errorText + `\n<code>${e}</code>`);
       }
