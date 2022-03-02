@@ -43,7 +43,8 @@ export default class ConfigService {
 
   // 开始添加转发群组流程
   public async addGroup() {
-    const qGroups = Array.from(this.oicq.gl).map(e => e[1]);
+    const qGroups = Array.from(this.oicq.gl).map(e => e[1])
+      .filter(it => !forwardPairs.find(-it.group_id));
     const buttons = qGroups.map(e =>
       config.workMode === 'personal' ?
         [Button.inline(
@@ -81,6 +82,7 @@ export default class ConfigService {
   }
 
   private async openFriendSelection(clazz: FriendInfo[], name: string) {
+    clazz = clazz.filter(them => !forwardPairs.find(them.user_id));
     await (await this.owner).createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
       Button.inline(`${e.remark || e.nickname} (${e.user_id})`, this.tgBot.registerCallback(
         () => this.createGroupAndLink(e.user_id, e.remark || e.nickname),
