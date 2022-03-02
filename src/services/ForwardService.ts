@@ -36,7 +36,10 @@ export default class ForwardService {
       let messageHeader = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
-        const sender = event.sender.card || event.sender.nickname;
+        let sender = event.sender.card || event.sender.nickname;
+        if(event.anonymous){
+          sender = `[${sender}]${event.anonymous.name}`
+        }
         messageHeader = `<b>${helper.htmlEscape(sender)}</b>: `;
       }
       for (const elem of event.message) {

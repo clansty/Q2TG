@@ -271,7 +271,7 @@ export default class ConfigService {
   }
 
   private async getAboutText(entity: Friend | Group) {
-    let text = '';
+    let text: string;
     if (entity instanceof Friend) {
       text = `备注：${entity.remark}\n` +
         `昵称：${entity.nickname}\n` +
