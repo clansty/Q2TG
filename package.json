@@ -8,6 +8,7 @@
     "prisma": "prisma"
   },
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2",
     "@types/node": "^17.0.18",
     "prisma": "latest",
     "ts-node": "^10.5.0",
@@ -19,9 +20,11 @@
     "axios": "^0.26.0",
     "eviltransform": "^0.2.2",
     "file-type": "^17.1.1",
+    "fluent-ffmpeg": "^2.1.2",
     "log4js": "^6.4.1",
     "nodejs-base64": "^2.0.0",
     "oicq": "^2.2.0",
+    "silk-sdk": "^0.2.2",
     "telegram": "^2.5.0",
     "tmp-promise": "^3.0.3"
   },

@@ -17,6 +17,7 @@ import { config } from '../providers/userConfig';
 import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
+import silk from '../utils/silk';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -28,6 +29,7 @@ export default class ForwardService {
 
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
+      const tempFiles: FileResult[] = [];
       let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0;
       let messageHeader = '';
       if (event.message_type === 'group') {
@@ -96,10 +98,13 @@ export default class ForwardService {
               button = Button.url('⏬ 获取下载地址',
                 `https://t.me/${this.tgBot.me.username}?start=file-${dbEntry.id}`);
             }
+            break;
           }
           case 'record': {
-            // TODO
-            message = '[语音]';
+            const temp = await createTempFile({ postfix: '.ogg' });
+            tempFiles.push(temp);
+            await silk.decode(await fetchFile(elem.url), temp.path);
+            files.push(temp.path);
             break;
           }
           case 'share': {
@@ -179,7 +184,9 @@ export default class ForwardService {
       button && (messageToSend.buttons = button);
       replyTo && (messageToSend.replyTo = replyTo);
 
-      return await pair.tg.sendMessage(messageToSend);
+      const messageSent = await pair.tg.sendMessage(messageToSend);
+      tempFiles.forEach(it => it.cleanup());
+      return messageSent;
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
@@ -211,8 +218,11 @@ export default class ForwardService {
         }
       }
       else if (message.voice) {
-        // TODO
-        chain.push('语音');
+        const temp = await createTempFile();
+        tempFiles.push(temp);
+        await fsP.writeFile(temp.path, await message.downloadMedia({}));
+        const bufSilk = await silk.encode(temp.path);
+        chain.push(segment.record(bufSilk));
       }
       else if (message.poll) {
         const poll = message.poll.poll;
@@ -272,7 +282,7 @@ export default class ForwardService {
         }
       }
 
-      const qqMessage = await pair.qq.sendMsg(chain);
+      const qqMessage = await pair.qq.sendMsg(chain, source);
       tempFiles.forEach(it => it.cleanup());
       return qqMessage;
     }
