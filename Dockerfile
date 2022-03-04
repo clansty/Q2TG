@@ -14,7 +14,6 @@ COPY prisma/ ./prisma/
 
 RUN apk add --no-cache --virtual .build-deps alpine-sdk python3 &&\
     yarn install &&\
-    yarn prisma generate &&\
     apk del .build-deps
 
 COPY build/ ./build/
