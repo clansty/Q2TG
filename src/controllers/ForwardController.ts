@@ -34,7 +34,7 @@ export default class ForwardController {
       await db.message.create({
         data: {
           qqRoomId: pair.qqRoomId,
-          qqSenderId: event.sender.user_id,
+          qqSenderId: event.user_id,
           time: event.time,
           brief: event.raw_message,
           seq: event.seq,
