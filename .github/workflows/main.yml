@@ -45,6 +45,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Pull old container
+        run: docker pull ghcr.io/${{ github.repository }}:raincandy
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
