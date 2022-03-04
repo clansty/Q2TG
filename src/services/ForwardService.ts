@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { Group, GroupMessageEvent, MessageRet, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -67,8 +67,6 @@ export default class ForwardService {
             // 先获取 URL，要传给下面
             url = await pair.qq.getVideoUrl(elem.fid, elem.md5);
           case 'image':
-          case 'flash':
-            // TODO 闪照单独处理
             if ('url' in elem)
               url = elem.url;
             try {
@@ -80,6 +78,14 @@ export default class ForwardService {
               files.push(url);
             }
             break;
+          case 'flash': {
+            message += `[闪照]\n${config.workMode === 'group' ? '每人' : ''}只能查看一次`;
+            const dbEntry = await db.flashPhoto.create({
+              data: { photoMd5: (elem.file as string).substring(0, 32) },
+            });
+            button = Button.url('📸查看', `https://t.me/${this.tgBot.me.username}?start=flash-${dbEntry.id}`);
+            break;
+          }
           case 'file': {
             const extName = path.extname(elem.name);
             if (exts.images.includes(extName.toLowerCase())) {

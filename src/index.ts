@@ -5,7 +5,7 @@ import SetupController from './controllers/SetupController';
 import OicqClient from './client/OicqClient';
 import ConfigController from './controllers/ConfigController';
 import ForwardController from './controllers/ForwardController';
-import FileController from './controllers/FileController';
+import FileAndFlashPhotoController from './controllers/FileAndFlashPhotoController';
 
 (async () => {
   configure({
@@ -50,5 +50,5 @@ import FileController from './controllers/FileController';
   }
   new ConfigController(tgBot, tgUser, oicq);
   new ForwardController(tgBot, tgUser, oicq);
-  new FileController(tgBot, oicq);
+  new FileAndFlashPhotoController(tgBot, oicq);
 })();
