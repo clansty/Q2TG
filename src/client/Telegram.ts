@@ -1,7 +1,7 @@
 import { Api, TelegramClient } from 'telegram';
 import { BotAuthParams, UserAuthParams } from 'telegram/client/auth';
 import { NewMessage, NewMessageEvent, Raw } from 'telegram/events';
-import { EditedMessage, EditedMessageEvent } from 'telegram/events/EditedMessage';
+import { EditedMessage } from 'telegram/events/EditedMessage';
 import { DeletedMessage, DeletedMessageEvent } from 'telegram/events/DeletedMessage';
 import { EntityLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
@@ -10,6 +10,7 @@ import { CallbackQuery } from 'telegram/events/CallbackQuery';
 import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from './TelegramSession';
+import { LogLevel } from 'telegram/extensions/Logger';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -39,6 +40,7 @@ export default class Telegram {
         } : undefined,
       },
     );
+    this.client.logger.setLevel(LogLevel.WARN);
   }
 
   public static async create(startArgs: UserAuthParams | BotAuthParams, sessionId: string) {
@@ -104,8 +106,8 @@ export default class Telegram {
     this.onServiceMessageHandlers.splice(this.onServiceMessageHandlers.indexOf(handler), 1);
   }
 
-  public addEditedMessageEventHandler(handler: (event: EditedMessageEvent) => any) {
-    this.client.addEventHandler(handler, new EditedMessage({}));
+  public addEditedMessageEventHandler(handler: (event: Api.Message) => any) {
+    this.client.addEventHandler((event) => handler(event.message), new EditedMessage({}));
   }
 
   public addDeletedMessageEventHandler(handler: (event: DeletedMessageEvent) => any) {
