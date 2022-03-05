@@ -12,6 +12,8 @@ COPY .yarn/ ./.yarn/
 RUN apk add --no-cache alpine-sdk python3 &&\
     yarn install
 
+RUN rm -rf ./.yarn/cache
+
 FROM node:17-alpine AS build
 
 WORKDIR /app
