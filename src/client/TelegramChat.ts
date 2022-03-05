@@ -196,4 +196,12 @@ export default class TelegramChat {
       }),
     );
   }
+
+  public async migrate(){
+    return await this.client.invoke(
+      new Api.messages.MigrateChat({
+        chatId: this.id,
+      })
+    );
+  }
 }

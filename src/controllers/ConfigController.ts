@@ -45,6 +45,9 @@ export default class ConfigController {
           case '/addgroup':
             await this.configService.addGroup();
             return true;
+          case '/migrate':
+            await this.configService.migrateAllChats();
+            return true;
         }
       }
       else {

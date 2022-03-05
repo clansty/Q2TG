@@ -12,6 +12,7 @@ import OicqClient from '../client/OicqClient';
 import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
 import forwardPairs from '../providers/forwardPairs';
+import bigInt from 'big-integer';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
@@ -292,5 +293,16 @@ export default class ConfigService {
     }
 
     return text + `\n\n由 @${this.tgBot.me.username} 管理`;
+  }
+
+  public async migrateAllChats(){
+    const dbPairs = await db.forwardPair.findMany();
+    for (const forwardPair of dbPairs) {
+      const chatForUser = await this.tgUser.getChat(bigInt(forwardPair.tgChatId))
+      if(chatForUser.entity instanceof Api.Chat){
+        this.log.info('升级群组 ', chatForUser.id);
+        console.log(await chatForUser.migrate());
+      }
+    }
   }
 }
