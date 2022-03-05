@@ -52,7 +52,13 @@ export default class ForwardController {
   private onTelegramMessage = async (message: Api.Message) => {
     try {
       const pair = forwardPairs.find(message.chat);
-      if (!pair) return;
+      if (!pair) return false;
+      // TODO: 可以做成 DeleteMessageController 之类
+      if (message.message?.startsWith('/rm')) {
+        // 撤回消息
+        await this.forwardService.handleTelegramMessageRm(message, pair);
+        return true;
+      }
       const qqMessageSent = await this.forwardService.forwardFromTelegram(message, pair);
       // 返回的信息不太够
       if (qqMessageSent) {

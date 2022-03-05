@@ -1,6 +1,6 @@
 import { BigInteger } from 'big-integer';
 import { Api, TelegramClient, utils } from 'telegram';
-import { ButtonLike, Entity, EntityLike } from 'telegram/define';
+import { ButtonLike, Entity, EntityLike, MessageIDLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
 import { SendMessageParams } from 'telegram/client/messages';
 import { CustomFile } from 'telegram/client/uploads';
@@ -14,6 +14,9 @@ export default class TelegramChat {
 
   constructor(public readonly parent: Telegram,
               private readonly client: TelegramClient,
+              // Api.Chat 是上限 200 人的普通群组
+              // 超级群组和频道都是 Api.Channel
+              // 有 Channel.broadcast 和 Channel.megagroup 标识
               public readonly entity: Entity,
               private readonly waitForInputHelper: WaitForMessageHelper) {
     this.inputPeer = utils.getInputPeer(entity);
@@ -123,5 +126,21 @@ export default class TelegramChat {
         settings: new Api.InputPeerNotifySettings(params),
       }),
     );
+  }
+
+  public async getMember(user: EntityLike) {
+    return await this.client.invoke(
+      new Api.channels.GetParticipant({
+        channel: this.entity,
+        participant: user,
+      }),
+    );
+  }
+
+  public async deleteMessages(messageId: MessageIDLike | MessageIDLike[]) {
+    if (!Array.isArray(messageId)) {
+      messageId = [messageId];
+    }
+    return await this.client.deleteMessages(this.entity, messageId, { revoke: true });
   }
 }
