@@ -89,7 +89,7 @@ export default class TelegramChat {
     }
   }
 
-  public async editAdmin(user: EntityLike, isAdmin: boolean) {
+  public async setAdmin(user: EntityLike) {
     if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置管理员');
     if (this.entity instanceof Api.Chat) {
@@ -97,7 +97,7 @@ export default class TelegramChat {
         new Api.messages.EditChatAdmin({
           chatId: this.id,
           userId: user,
-          isAdmin,
+          isAdmin: true,
         }),
       );
     }

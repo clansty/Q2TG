@@ -151,7 +151,7 @@ export default class ConfigService {
 
       // 设置管理员
       status && await status.edit({ text: '正在设置管理员…' });
-      await chat.editAdmin(this.tgBot.me.username, true);
+      await chat.setAdmin(this.tgBot.me.username);
 
       // 添加到 Filter
       status && await status.edit({ text: '正在将群添加到文件夹…' });

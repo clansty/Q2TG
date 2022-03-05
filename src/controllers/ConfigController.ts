@@ -71,7 +71,19 @@ export default class ConfigController {
     if (message.action instanceof Api.MessageActionChatMigrateTo) {
       const pair = forwardPairs.find((message.peerId as Api.PeerChat).chatId);
       if (!pair) return;
+      // 会自动写入数据库
       pair.tg = await this.tgBot.getChat(message.action.channelId);
+      // 升级之后 bot 的管理权限可能没了，需要修复一下
+      if (config.workMode === 'personal') {
+        const chatForUser = await this.tgUser.getChat(message.action.channelId);
+        await chatForUser.setAdmin(this.tgBot.me.username);
+      }
+      else {
+        await pair.tg.sendMessage({
+          message: '本群已升级为超级群，可能需要重新设置一下管理员权限',
+          silent: true,
+        });
+      }
     }
   };
 
@@ -93,8 +105,8 @@ export default class ConfigController {
   };
 
   private handleMemberIncrease = async (event: MemberIncreaseEvent) => {
-    if(event.user_id!==this.oicq.uin||await forwardPairs.find(event.group)) return;
+    if (event.user_id !== this.oicq.uin || await forwardPairs.find(event.group)) return;
     // 是新群并且是自己加入了
-    await this.configService.promptNewGroup(event.group)
+    await this.configService.promptNewGroup(event.group);
   };
 }
