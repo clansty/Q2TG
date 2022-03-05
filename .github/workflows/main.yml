@@ -12,15 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.3.0
-        with:
-          cache: yarn
-
-      - run: yarn install
-
-      - run: yarn build
-
       - name: OCI meta
         id: meta
         uses: docker/metadata-action@v3
