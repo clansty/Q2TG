@@ -61,29 +61,68 @@ export default class TelegramChat {
   public async setProfilePhoto(photo: Buffer) {
     if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置头像');
-    return await this.client.invoke(
-      new Api.messages.EditChatPhoto({
-        chatId: this.id,
-        photo: new Api.InputChatUploadedPhoto({
-          file: await this.client.uploadFile({
-            file: new CustomFile('photo.jpg', photo.length, '', photo),
-            workers: 1,
+    if (this.entity instanceof Api.Chat) {
+      return await this.client.invoke(
+        new Api.messages.EditChatPhoto({
+          chatId: this.id,
+          photo: new Api.InputChatUploadedPhoto({
+            file: await this.client.uploadFile({
+              file: new CustomFile('photo.jpg', photo.length, '', photo),
+              workers: 1,
+            }),
           }),
         }),
-      }),
-    );
+      );
+    }
+    else {
+      return await this.client.invoke(
+        new Api.channels.EditPhoto({
+          channel: this.entity,
+          photo: new Api.InputChatUploadedPhoto({
+            file: await this.client.uploadFile({
+              file: new CustomFile('photo.jpg', photo.length, '', photo),
+              workers: 1,
+            }),
+          }),
+        }),
+      );
+    }
   }
 
   public async editAdmin(user: EntityLike, isAdmin: boolean) {
     if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置管理员');
-    return await this.client.invoke(
-      new Api.messages.EditChatAdmin({
-        chatId: this.id,
-        userId: user,
-        isAdmin,
-      }),
-    );
+    if (this.entity instanceof Api.Chat) {
+      return await this.client.invoke(
+        new Api.messages.EditChatAdmin({
+          chatId: this.id,
+          userId: user,
+          isAdmin,
+        }),
+      );
+    }
+    else {
+      return await this.client.invoke(
+        new Api.channels.EditAdmin({
+          channel: this.entity,
+          userId: user,
+          adminRights: new Api.ChatAdminRights({
+            changeInfo: true,
+            postMessages: true,
+            editMessages: true,
+            deleteMessages: true,
+            banUsers: true,
+            inviteUsers: true,
+            pinMessages: true,
+            addAdmins: true,
+            anonymous: true,
+            manageCall: true,
+            other: true,
+          }),
+          rank: '转发姬',
+        }),
+      );
+    }
   }
 
   public async editAbout(about: string) {
@@ -129,6 +168,8 @@ export default class TelegramChat {
   }
 
   public async getMember(user: EntityLike) {
+    if (!(this.entity instanceof Api.Channel))
+      throw new Error('不是超级群，无法获取成员信息');
     return await this.client.invoke(
       new Api.channels.GetParticipant({
         channel: this.entity,
@@ -142,5 +183,17 @@ export default class TelegramChat {
       messageId = [messageId];
     }
     return await this.client.deleteMessages(this.entity, messageId, { revoke: true });
+  }
+
+  public async inviteMember(member: EntityLike | EntityLike[]) {
+    if (!Array.isArray(member)) {
+      member = [member];
+    }
+    return await this.client.invoke(
+      new Api.channels.InviteToChannel({
+        channel: this.entity,
+        users: member,
+      }),
+    );
   }
 }

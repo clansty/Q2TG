@@ -140,8 +140,11 @@ export default class Telegram {
     return await this.client.invoke(new Api.messages.UpdateDialogFilter(params));
   }
 
-  public async createChat(params: Partial<Partial<{ users: EntityLike[]; title: string; }>>) {
-    const updates = await this.client.invoke(new Api.messages.CreateChat(params)) as Api.Updates;
+  public async createChat(title: string, about?: string) {
+    const updates = await this.client.invoke(new Api.channels.CreateChannel({
+      title, about,
+      megagroup: true,
+    })) as Api.Updates;
     const newChat = updates.chats[0];
     return new TelegramChat(this, this.client, newChat, this.waitForMessageHelper);
   }

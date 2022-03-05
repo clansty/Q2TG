@@ -132,22 +132,26 @@ export default class ConfigService {
     try {
       // 状态信息
       if (status === true) {
-        status = await (await this.owner).sendMessage('正在创建 Telegram 群…');
+        const avatar = await getAvatar(roomId);
+        status = await (await this.owner).sendMessage({
+          message: '正在创建 Telegram 群…',
+          file: new CustomFile('avatar.png', avatar.length, '', avatar),
+        });
       }
       else if (status instanceof Api.Message) {
         await status.edit({ text: '正在创建 Telegram 群…', buttons: Button.clear() });
       }
 
       // 创建群聊，拿到的是 user 的 chat
-      const chat = await this.tgUser.createChat({
-        title,
-        users: [this.tgBot.me.username],
-      });
+      const chat = await this.tgUser.createChat(title, await this.getAboutText(qEntity));
+
+      // 添加机器人
+      status && await status.edit({ text: '正在添加机器人…' });
+      await chat.inviteMember(this.tgBot.me.id);
 
       // 设置管理员
       status && await status.edit({ text: '正在设置管理员…' });
       await chat.editAdmin(this.tgBot.me.username, true);
-      const chatForBot = await this.tgBot.getChat(chat.id);
 
       // 添加到 Filter
       status && await status.edit({ text: '正在将群添加到文件夹…' });
@@ -172,6 +176,7 @@ export default class ConfigService {
       }
 
       // 关联写入数据库
+      const chatForBot = await this.tgBot.getChat(chat.id);
       status && await status.edit({ text: '正在写数据库…' });
       const dbPair = await forwardPairs.add(qEntity, chatForBot);
       isFinish = true;
@@ -184,10 +189,6 @@ export default class ConfigService {
       await db.avatarCache.create({
         data: { forwardPairId: dbPair.id, hash: avatarHash },
       });
-
-      // 更新关于文本
-      status && await status.edit({ text: '正在更新关于文本…' });
-      await chatForBot.editAbout(await this.getAboutText(qEntity));
 
       // 完成
       if (status) {
