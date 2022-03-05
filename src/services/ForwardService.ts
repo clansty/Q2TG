@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Friend, Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -346,6 +346,33 @@ export default class ForwardService {
       message.reply({
         message: `转发失败：${e.message}\n${e}`,
       });
+    }
+  }
+
+  async telegramDeleteMessage(messageId: number, pair: Pair, isOthersMsg = false) {
+    // 删除的时候会返回记录
+    try {
+      const messageInfo = await db.message.delete({
+        where: { tgChatId_tgMsgId: { tgChatId: pair.tgId, tgMsgId: messageId } },
+      });
+      if (messageInfo) {
+        try {
+          await pair.qq.recallMsg(messageInfo.seq, messageInfo.rand,
+            pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum);
+        }
+        catch (e) {
+          const tipMsg = await pair.tg.sendMessage({
+            message: '撤回 QQ 中对应的消息失败，QQ Bot 需要是管理员' +
+              (isOthersMsg ? '，而且无法撤回其他管理员的消息' : '') +
+              e.message,
+            silent: true,
+          });
+          config.workMode === 'group' && setTimeout(async () => await tipMsg.delete(), 5000);
+        }
+      }
+    }
+    catch (e) {
+      this.log.error('处理 Telegram 消息删除失败', e);
     }
   }
 }
