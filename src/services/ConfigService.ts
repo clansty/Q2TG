@@ -298,7 +298,7 @@ export default class ConfigService {
   public async migrateAllChats(){
     const dbPairs = await db.forwardPair.findMany();
     for (const forwardPair of dbPairs) {
-      const chatForUser = await this.tgUser.getChat(bigInt(forwardPair.tgChatId))
+      const chatForUser = await this.tgUser.getChat(Number(forwardPair.tgChatId))
       if(chatForUser.entity instanceof Api.Chat){
         this.log.info('升级群组 ', chatForUser.id);
         console.log(await chatForUser.migrate());
