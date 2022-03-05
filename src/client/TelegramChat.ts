@@ -59,7 +59,7 @@ export default class TelegramChat {
   }
 
   public async setProfilePhoto(photo: Buffer) {
-    if (!(this.entity instanceof Api.Chat))
+    if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置头像');
     return await this.client.invoke(
       new Api.messages.EditChatPhoto({
@@ -75,7 +75,7 @@ export default class TelegramChat {
   }
 
   public async editAdmin(user: EntityLike, isAdmin: boolean) {
-    if (!(this.entity instanceof Api.Chat))
+    if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置管理员');
     return await this.client.invoke(
       new Api.messages.EditChatAdmin({
@@ -87,7 +87,7 @@ export default class TelegramChat {
   }
 
   public async editAbout(about: string) {
-    if (!(this.entity instanceof Api.Chat))
+    if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法设置描述');
     return await this.client.invoke(
       new Api.messages.EditChatAbout({
@@ -98,7 +98,7 @@ export default class TelegramChat {
   }
 
   public async getInviteLink() {
-    if (!(this.entity instanceof Api.Chat))
+    if (!(this.entity instanceof Api.Chat || this.entity instanceof Api.Channel))
       throw new Error('不是群组，无法邀请');
     const links = await this.client.invoke(
       new Api.messages.GetExportedChatInvites({

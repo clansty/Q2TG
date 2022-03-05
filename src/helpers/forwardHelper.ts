@@ -1,12 +1,8 @@
 import { fetchFile } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
-import { Friend, Group } from 'oicq';
 import { base64decode } from 'nodejs-base64';
 import { getLogger } from 'log4js';
 import { Entity } from 'telegram/define';
-import { Api } from 'telegram';
-import ChatForbidden = Api.ChatForbidden;
-import ChatEmpty = Api.ChatEmpty;
 
 const log = getLogger('ForwardHelper');
 
