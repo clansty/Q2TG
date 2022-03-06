@@ -5,7 +5,7 @@ import { Api } from 'telegram';
 import { Pair } from '../providers/forwardPairs';
 import { config } from '../providers/userConfig';
 import db from '../providers/db';
-import { Friend } from 'oicq';
+import { Friend, FriendRecallEvent, GroupRecallEvent } from 'oicq';
 
 export default class DeleteMessageService {
   private log = getLogger('DeleteMessageService');
@@ -98,6 +98,24 @@ export default class DeleteMessageService {
         silent: true,
       });
       setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
+    }
+  }
+
+  public async handleQqRecall(event: FriendRecallEvent | GroupRecallEvent, pair: Pair) {
+    try {
+      const message = await db.message.findFirst({
+        where: {
+          seq: event.seq,
+          rand: event.rand,
+          qqRoomId: pair.qqRoomId,
+        },
+      });
+      if (message) {
+        await pair.tg.deleteMessages(message.tgMsgId);
+      }
+    }
+    catch (e) {
+      this.log.error('处理 QQ 消息撤回失败', e);
     }
   }
 }
