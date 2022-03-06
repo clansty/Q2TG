@@ -7,11 +7,17 @@ import { Entity } from 'telegram/define';
 const log = getLogger('ForwardHelper');
 
 export default {
-  async downloadToCustomFile(url: string) {
+  async downloadToCustomFile(url: string, allowWebp = false) {
     const { fileTypeFromBuffer } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
     const file = await fetchFile(url);
     const type = await fileTypeFromBuffer(file);
-    return new CustomFile(`image.${type.ext}`, file.length, '', file);
+    if (allowWebp) {
+      return new CustomFile(`image.${type.ext}`, file.length, '', file);
+    }
+    else {
+      // 防止 webp 作为贴纸发送时丢失发送者信息
+      return new CustomFile(`image.${type.ext === 'gif' ? 'gif' : 'jpg'}`, file.length, '', file);
+    }
   },
 
   hSize(size: number) {
@@ -116,11 +122,11 @@ export default {
       return user.firstName +
         (user.lastName ? ' ' + user.lastName : '');
     }
-    else if('title' in user){
-      return user.title
+    else if ('title' in user) {
+      return user.title;
     }
-    else if('id' in user){
-      return user.id.toString()
+    else if ('id' in user) {
+      return user.id.toString();
     }
   },
 };

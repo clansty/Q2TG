@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { Friend, Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { Pair } from '../providers/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
@@ -70,7 +70,7 @@ export default class ForwardService {
             if ('url' in elem)
               url = elem.url;
             try {
-              files.push(await helper.downloadToCustomFile(url));
+              files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
             }
             catch (e) {
               this.log.error('下载媒体失败', e);
@@ -92,7 +92,7 @@ export default class ForwardService {
               // 是图片
               const url = await pair.qq.getFileUrl(elem.fid);
               try {
-                files.push(await helper.downloadToCustomFile(url));
+                files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
               }
               catch (e) {
                 this.log.error('下载媒体失败', e);
