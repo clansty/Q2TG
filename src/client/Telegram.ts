@@ -1,7 +1,7 @@
 import { Api, TelegramClient } from 'telegram';
 import { BotAuthParams, UserAuthParams } from 'telegram/client/auth';
 import { NewMessage, NewMessageEvent, Raw } from 'telegram/events';
-import { EditedMessage } from 'telegram/events/EditedMessage';
+import { EditedMessage, EditedMessageEvent } from 'telegram/events/EditedMessage';
 import { DeletedMessage, DeletedMessageEvent } from 'telegram/events/DeletedMessage';
 import { EntityLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
@@ -20,6 +20,7 @@ export default class Telegram {
   private waitForMessageHelper: WaitForMessageHelper;
   private callbackQueryHelper: CallbackQueryHelper = new CallbackQueryHelper();
   private readonly onMessageHandlers: Array<MessageHandler> = [];
+  private readonly onEditedMessageHandlers: Array<MessageHandler> = [];
   private readonly onServiceMessageHandlers: Array<ServiceMessageHandler> = [];
   public me: Api.User;
 
@@ -61,6 +62,7 @@ export default class Telegram {
     this.client.setParseMode('html');
     this.waitForMessageHelper = new WaitForMessageHelper(this);
     this.client.addEventHandler(this.onMessage, new NewMessage({}));
+    this.client.addEventHandler(this.onEditedMessage, new EditedMessage({}));
     this.client.addEventHandler(this.onServiceMessage, new Raw({
       types: [Api.UpdateNewMessage],
       func: (update: Api.UpdateNewMessage) => update.message instanceof Api.MessageService,
@@ -72,6 +74,13 @@ export default class Telegram {
   private onMessage = async (event: NewMessageEvent) => {
     // 能用的东西基本都在 message 里面，直接调用 event 里的会 undefined
     for (const handler of this.onMessageHandlers) {
+      const res = await handler(event.message);
+      if (res) return;
+    }
+  };
+
+  private onEditedMessage = async (event: EditedMessageEvent) => {
+    for (const handler of this.onEditedMessageHandlers) {
       const res = await handler(event.message);
       if (res) return;
     }
@@ -97,6 +106,15 @@ export default class Telegram {
     this.onMessageHandlers.splice(this.onMessageHandlers.indexOf(handler), 1);
   }
 
+  public addEditedMessageEventHandler(handler: MessageHandler) {
+    this.onEditedMessageHandlers.push(handler);
+  }
+
+  public removeEditedMessageEventHandler(handler: MessageHandler) {
+    this.onEditedMessageHandlers.includes(handler) &&
+    this.onEditedMessageHandlers.splice(this.onEditedMessageHandlers.indexOf(handler), 1);
+  }
+
   public addNewServiceMessageEventHandler(handler: ServiceMessageHandler) {
     this.onServiceMessageHandlers.push(handler);
   }
@@ -104,10 +122,6 @@ export default class Telegram {
   public removeNewServiceMessageEventHandler(handler: ServiceMessageHandler) {
     this.onServiceMessageHandlers.includes(handler) &&
     this.onServiceMessageHandlers.splice(this.onServiceMessageHandlers.indexOf(handler), 1);
-  }
-
-  public addEditedMessageEventHandler(handler: (event: Api.Message) => any) {
-    this.client.addEventHandler((event) => handler(event.message), new EditedMessage({}));
   }
 
   public addDeletedMessageEventHandler(handler: (event: DeletedMessageEvent) => any) {

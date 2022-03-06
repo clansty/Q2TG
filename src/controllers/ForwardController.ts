@@ -18,7 +18,7 @@ export default class ForwardController {
     forwardPairs.init(oicq, tgBot)
       .then(() => oicq.addNewMessageEventHandler(this.onQqMessage))
       .then(() => tgBot.addNewMessageEventHandler(this.onTelegramMessage))
-      .then(() => tgBot.addEditedMessageEventHandler(this.onTelegramEditMessage));
+      .then(() => tgBot.addEditedMessageEventHandler(this.onTelegramMessage));
   }
 
   private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
@@ -53,12 +53,6 @@ export default class ForwardController {
     try {
       const pair = forwardPairs.find(message.chat);
       if (!pair) return false;
-      // TODO: 可以做成 DeleteMessageController 之类
-      if (message.message?.startsWith('/rm')) {
-        // 撤回消息
-        await this.forwardService.handleTelegramMessageRm(message, pair);
-        return true;
-      }
       const qqMessageSent = await this.forwardService.forwardFromTelegram(message, pair);
       // 返回的信息不太够
       if (qqMessageSent) {
@@ -81,12 +75,5 @@ export default class ForwardController {
     catch (e) {
       this.log.error('处理 Telegram 消息时遇到问题', e);
     }
-  };
-
-  private onTelegramEditMessage = async (message: Api.Message) => {
-    const pair = forwardPairs.find(message.chat);
-    if (!pair) return;
-    await this.forwardService.telegramDeleteMessage(message.id, pair);
-    await this.onTelegramMessage(message);
   };
 }

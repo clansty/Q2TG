@@ -6,6 +6,7 @@ import OicqClient from './client/OicqClient';
 import ConfigController from './controllers/ConfigController';
 import ForwardController from './controllers/ForwardController';
 import FileAndFlashPhotoController from './controllers/FileAndFlashPhotoController';
+import DeleteMessageController from './controllers/DeleteMessageController';
 
 (async () => {
   configure({
@@ -49,6 +50,7 @@ import FileAndFlashPhotoController from './controllers/FileAndFlashPhotoControll
     log.debug('OICQ 登录完成');
   }
   new ConfigController(tgBot, tgUser, oicq);
+  new DeleteMessageController(tgBot, tgUser, oicq);
   new ForwardController(tgBot, tgUser, oicq);
   new FileAndFlashPhotoController(tgBot, oicq);
 })();
