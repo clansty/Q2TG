@@ -301,7 +301,7 @@ export default class ConfigService {
       const chatForUser = await this.tgUser.getChat(Number(forwardPair.tgChatId))
       if(chatForUser.entity instanceof Api.Chat){
         this.log.info('升级群组 ', chatForUser.id);
-        console.log(await chatForUser.migrate());
+        await chatForUser.migrate();
       }
     }
   }

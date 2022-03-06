@@ -3,6 +3,8 @@ import db from '../providers/db';
 import { AuthKey } from 'telegram/crypto/AuthKey';
 import { getLogger } from 'log4js';
 
+const PASS = () => 0;
+
 export default class TelegramSession extends MemorySession {
   private dbId: number;
   private log = getLogger('TelegramSession');
@@ -54,7 +56,8 @@ export default class TelegramSession extends MemorySession {
       where: { id: this.dbId },
       data: { dcId, serverAddress, port },
     })
-      .then(e => this.log.trace('DC update result', e));
+      .then(e => this.log.trace('DC update result', e))
+      .catch(PASS);
   }
 
   set authKey(value: AuthKey | undefined) {
@@ -64,7 +67,8 @@ export default class TelegramSession extends MemorySession {
       where: { id: this.dbId },
       data: { authKey: value?.getKey() || null },
     })
-      .then(e => this.log.trace('authKey update result', e));
+      .then(e => this.log.trace('authKey update result', e))
+      .catch(PASS);
   }
 
   get authKey() {
@@ -97,7 +101,8 @@ export default class TelegramSession extends MemorySession {
           name: e[4] && e[4].toString(),
         },
       })
-        .then(e => this.log.trace('Entity update result', e));
+        .then(e => this.log.trace('Entity update result', e))
+        .catch(PASS);
     }
   }
 }
