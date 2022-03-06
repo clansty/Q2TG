@@ -17,9 +17,9 @@ import { config } from '../providers/userConfig';
 import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
-import silk from '../utils/silk';
+import silk from '../encoding/silk';
 import fs from 'fs';
-import tgsToGif from '../utils/tgsToGif';
+import tgsToGif from '../encoding/tgsToGif';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
