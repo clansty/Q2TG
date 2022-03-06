@@ -14,6 +14,12 @@ export default class DeleteMessageService {
               private readonly oicq: OicqClient) {
   }
 
+  /**
+   * 删除 QQ 对应的消息
+   * @param messageId
+   * @param pair
+   * @param isOthersMsg
+   */
   async telegramDeleteMessage(messageId: number, pair: Pair, isOthersMsg = false) {
     // 删除的时候会返回记录
     try {

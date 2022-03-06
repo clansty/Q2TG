@@ -64,6 +64,7 @@ class ForwardPairsInternal {
   }
 
   public find(target: Friend | Group | TelegramChat | Entity | number | BigInteger) {
+    if (!target) return null;
     if (target instanceof Friend) {
       return this.pairs.find(e => e.qq instanceof Friend && e.qq.user_id === target.user_id);
     }

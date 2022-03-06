@@ -5,6 +5,7 @@ import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
 import forwardPairs from '../providers/forwardPairs';
 import { FriendRecallEvent, GroupRecallEvent } from 'oicq';
+import { DeletedMessageEvent } from 'telegram/events/DeletedMessage';
 
 export default class DeleteMessageController {
   private readonly deleteMessageService: DeleteMessageService;
@@ -16,6 +17,7 @@ export default class DeleteMessageController {
     this.deleteMessageService = new DeleteMessageService(tgBot, oicq);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramEditMessage);
+    tgUser.addDeletedMessageEventHandler(this.onTgDeletedMessage);
     oicq.on('notice.friend.recall', this.onQqFriendRecall);
     oicq.on('notice.group.recall', this.onQqGroupRecall);
   }
@@ -46,5 +48,14 @@ export default class DeleteMessageController {
   private onQqGroupRecall = async (event: GroupRecallEvent) => {
     const pair = forwardPairs.find(event.group);
     await this.deleteMessageService.handleQqRecall(event, pair);
+  };
+
+  private onTgDeletedMessage = async (event: DeletedMessageEvent) => {
+    if (!(event.peer instanceof Api.PeerChannel)) return;
+    const pair = forwardPairs.find(event.peer.channelId);
+    if (!pair) return;
+    for (const messageId of event.deletedIds) {
+      await this.deleteMessageService.telegramDeleteMessage(messageId, pair);
+    }
   };
 }
