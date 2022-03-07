@@ -67,11 +67,14 @@ model Message {
 
 model ForwardPair {
   id          Int           @id @default(autoincrement())
-  qqRoomId    BigInt        @unique @db.BigInt
-  tgChatId    BigInt        @unique @db.BigInt
+  qqRoomId    BigInt        @db.BigInt
+  tgChatId    BigInt        @db.BigInt
   avatarCache AvatarCache[]
   instanceId  Int           @default(0)
   instance    Instance      @relation(fields: [instanceId], references: [id])
+
+  @@unique([qqRoomId, instanceId])
+  @@unique([tgChatId, instanceId])
 }
 
 model File {
