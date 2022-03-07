@@ -1,6 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import { Api } from 'telegram';
 import db from '../models/db';
 import { Friend, FriendRecallEvent, GroupRecallEvent } from 'oicq';
@@ -8,11 +8,11 @@ import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 
 export default class DeleteMessageService {
-  private log = getLogger('DeleteMessageService');
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
-              private readonly tgBot: Telegram,
-              private readonly oicq: OicqClient) {
+              private readonly tgBot: Telegram) {
+    this.log = getLogger(`DeleteMessageService - ${instance.id}`);
   }
 
   /**

@@ -3,7 +3,7 @@ import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
 import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import { CustomFile } from 'telegram/client/uploads';
 import { fetchFile, getImageUrlByMd5 } from '../utils/urls';
 import Instance from '../models/Instance';
@@ -11,12 +11,13 @@ import Instance from '../models/Instance';
 const REGEX = /^\/start (file|flash)-(\d+)$/;
 
 export default class FileAndFlashPhotoController {
-  private readonly log = getLogger('FileController');
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
+    this.log = getLogger(`FileAndFlashPhotoController - ${instance.id}`);
   }
 
   private onTelegramMessage = async (message: Api.Message) => {

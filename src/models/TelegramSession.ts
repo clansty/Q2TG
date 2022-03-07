@@ -1,16 +1,17 @@
 import { MemorySession } from 'telegram/sessions';
 import db from './db';
 import { AuthKey } from 'telegram/crypto/AuthKey';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 
 const PASS = () => 0;
 
 export default class TelegramSession extends MemorySession {
   private dbId: number;
-  private log = getLogger('TelegramSession');
+  private readonly log: Logger;
 
   constructor(private readonly sessionName: string) {
     super();
+    this.log = getLogger(`TelegramSession - ${sessionName}`);
   }
 
   async load() {

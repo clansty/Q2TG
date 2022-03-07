@@ -1,5 +1,4 @@
 import DeleteMessageService from '../services/DeleteMessageService';
-import { getLogger } from 'log4js';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
@@ -9,13 +8,12 @@ import Instance from '../models/Instance';
 
 export default class DeleteMessageController {
   private readonly deleteMessageService: DeleteMessageService;
-  private readonly log = getLogger('DeleteMessageController');
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.deleteMessageService = new DeleteMessageService(this.instance, tgBot, oicq);
+    this.deleteMessageService = new DeleteMessageService(this.instance, tgBot);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramEditMessage);
     tgUser.addDeletedMessageEventHandler(this.onTgDeletedMessage);

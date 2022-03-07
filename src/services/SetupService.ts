@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import { BigInteger } from 'big-integer';
 import { Platform } from 'oicq';
 import { MarkupLike } from 'telegram/define';
@@ -12,10 +12,11 @@ import Instance from '../models/Instance';
 
 export default class SetupService {
   private owner: TelegramChat;
-  private log = getLogger('SetupService');
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram) {
+    this.log = getLogger(`SetupService - ${instance.id}`)
   }
 
   public setWorkMode(mode: WorkMode) {

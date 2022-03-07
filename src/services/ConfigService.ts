@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import { Friend, FriendInfo, Group } from 'oicq';
 import { Button } from 'telegram/tl/custom/button';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import db from '../models/db';
@@ -16,12 +16,13 @@ const DEFAULT_FILTER_ID = 114; // 514
 
 export default class ConfigService {
   private owner: Promise<TelegramChat>;
-  private log = getLogger('ConfigService');
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
+    this.log = getLogger(`ConfigService - ${instance.id}`)
     this.owner = tgBot.getChat(this.instance.owner);
   }
 

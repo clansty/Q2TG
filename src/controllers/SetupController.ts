@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import SetupService from '../services/SetupService';
 import { Api } from 'telegram';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import { Button } from 'telegram/tl/custom/button';
 import setupHelper from '../helpers/setupHelper';
 import { Platform } from 'oicq';
@@ -13,7 +13,7 @@ import Instance from '../models/Instance';
 
 export default class SetupController {
   private readonly setupService: SetupService;
-  private log = getLogger('SetupController');
+  private readonly log: Logger;
   private isInProgress = false;
   private waitForFinishCallbacks: Array<(ret: { tgUser: Telegram, oicq: OicqClient }) => unknown> = [];
   // 创建的 UserBot
@@ -22,6 +22,7 @@ export default class SetupController {
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram) {
+    this.log = getLogger(`SetupController - ${instance.id}`);
     this.setupService = new SetupService(this.instance, tgBot);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.setCommands(commands.preSetupCommands, new Api.BotCommandScopeUsers());

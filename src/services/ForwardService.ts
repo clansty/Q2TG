@@ -1,10 +1,9 @@
 import Telegram from '../client/Telegram';
-import OicqClient from '../client/OicqClient';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
 import { CustomFile } from 'telegram/client/uploads';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'log4js';
 import path from 'path';
 import exts from '../constants/exts';
 import helper from '../helpers/forwardHelper';
@@ -25,11 +24,11 @@ import { Pair } from '../models/Pair';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
-  private log = getLogger('ForwardService');
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
-              private readonly tgBot: Telegram,
-              private readonly oicq: OicqClient) {
+              private readonly tgBot: Telegram) {
+    this.log = getLogger(`ForwardService - ${instance.id}`);
   }
 
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
