@@ -3,6 +3,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import { base64decode } from 'nodejs-base64';
 import { getLogger } from 'log4js';
 import { Entity } from 'telegram/define';
+import { ForwardMessage } from 'oicq';
 
 const log = getLogger('ForwardHelper');
 
@@ -128,5 +129,20 @@ export default {
     else if ('id' in user) {
       return user.id.toString();
     }
+  },
+
+  generateForwardBrief(messages: ForwardMessage[]) {
+    const count = messages.length;
+    // 取前四条
+    messages = messages.slice(0, 4);
+    let result = '<b>转发的消息记录</b>';
+    for (const message of messages) {
+      result += `\n<b>${message.nickname}: </b>` +
+        `${message.raw_message.length > 10 ? message.raw_message.substring(0, 10) + '…' : message.raw_message}`;
+    }
+    if (count > messages.length) {
+      result += `\n<b>共 ${count} 条消息记录</b>`;
+    }
+    return result;
   },
 };

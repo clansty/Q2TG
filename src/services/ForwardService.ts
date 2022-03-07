@@ -20,6 +20,8 @@ import eviltransform from 'eviltransform';
 import silk from '../encoding/silk';
 import fs from 'fs';
 import tgsToGif from '../encoding/tgsToGif';
+import axios from 'axios';
+import { md5Hex } from '../utils/hashing';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -32,7 +34,7 @@ export default class ForwardService {
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
       const tempFiles: FileResult[] = [];
-      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0;
+      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0, noEscape = false;
       let messageHeader = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
@@ -143,8 +145,24 @@ export default class ForwardService {
                 }
                 break;
               case 'forward':
-                // TODO 详细展开
-                message = '[转发多条消息]';
+                try {
+                  const messages = await pair.qq.getForwardMsg(result.resId);
+                  message = helper.generateForwardBrief(messages);
+                  noEscape = true;
+                  const hash = md5Hex(result.resId);
+                  button = Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`);
+                  // 传到 Cloudflare
+                  axios.post(`${process.env.CRV_API}/add`, {
+                    auth: process.env.CRV_KEY,
+                    key: hash,
+                    data: messages,
+                  })
+                    .then(data => this.log.trace('上传消息记录到 Cloudflare', data.data))
+                    .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
+                }
+                catch (e) {
+                  message = '[转发多条消息（无法获取）]';
+                }
                 break;
             }
             break;
@@ -161,7 +179,7 @@ export default class ForwardService {
             break;
         }
       }
-      message = helper.htmlEscape(message.trim());
+      !noEscape && (message = helper.htmlEscape(message.trim()));
       message = messageHeader + (message && messageHeader ? '\n' : '') + message;
 
       // 处理回复
