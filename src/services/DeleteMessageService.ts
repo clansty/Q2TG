@@ -1,5 +1,4 @@
 import Telegram from '../client/Telegram';
-import OicqClient from '../client/OicqClient';
 import { getLogger, Logger } from 'log4js';
 import { Api } from 'telegram';
 import db from '../models/db';
@@ -25,7 +24,13 @@ export default class DeleteMessageService {
     // 删除的时候会返回记录
     try {
       const messageInfo = await db.message.delete({
-        where: { tgChatId_tgMsgId: { tgChatId: pair.tgId, tgMsgId: messageId } },
+        where: {
+          tgChatId_tgMsgId_instanceId: {
+            tgChatId: pair.tgId,
+            tgMsgId: messageId,
+            instanceId: this.instance.id,
+          },
+        },
       });
       if (messageInfo) {
         try {
@@ -115,6 +120,7 @@ export default class DeleteMessageService {
           seq: event.seq,
           rand: event.rand,
           qqRoomId: pair.qqRoomId,
+          instanceId: this.instance.id,
         },
       });
       if (message) {

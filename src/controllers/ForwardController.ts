@@ -41,6 +41,7 @@ export default class ForwardController {
             pktnum: event.pktnum,
             tgChatId: pair.tgId,
             tgMsgId: tgMessage.id,
+            instanceId: this.instance.id,
           },
         });
       }
@@ -69,6 +70,7 @@ export default class ForwardController {
             pktnum: 1,
             tgChatId: pair.tgId,
             tgMsgId: message.id,
+            instanceId: this.instance.id,
           },
         });
       }

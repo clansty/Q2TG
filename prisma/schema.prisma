@@ -61,8 +61,8 @@ model Message {
   instanceId Int      @default(0)
   instance   Instance @relation(fields: [instanceId], references: [id])
 
-  @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time])
-  @@unique([tgChatId, tgMsgId])
+  @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
+  @@unique([tgChatId, tgMsgId, instanceId])
 }
 
 model ForwardPair {

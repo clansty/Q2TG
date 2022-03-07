@@ -190,6 +190,7 @@ export default class ForwardService {
               qqRoomId: pair.qqRoomId,
               seq: event.source.seq,
               rand: event.source.rand,
+              instanceId: this.instance.id,
             },
           });
           if (quote) {
@@ -335,6 +336,7 @@ export default class ForwardService {
             where: {
               tgChatId: Number(pair.tg.id),
               tgMsgId: message.replyToMsgId,
+              instanceId: this.instance.id,
             },
           });
           if (quote) {
