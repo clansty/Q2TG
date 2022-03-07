@@ -17,7 +17,7 @@ export default {
     }
     else {
       // 防止 webp 作为贴纸发送时丢失发送者信息
-      return new CustomFile(`image.${type.ext === 'gif' ? 'gif' : 'jpg'}`, file.length, '', file);
+      return new CustomFile(`image.${type.ext === 'webp' ? 'png' : type.ext}`, file.length, '', file);
     }
   },
 
