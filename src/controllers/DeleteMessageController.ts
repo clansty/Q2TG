@@ -3,18 +3,20 @@ import { getLogger } from 'log4js';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
-import forwardPairs from '../providers/forwardPairs';
+import forwardPairs from '../models/forwardPairs';
 import { FriendRecallEvent, GroupRecallEvent } from 'oicq';
 import { DeletedMessageEvent } from 'telegram/events/DeletedMessage';
+import Instance from '../models/Instance';
 
 export default class DeleteMessageController {
   private readonly deleteMessageService: DeleteMessageService;
   private readonly log = getLogger('DeleteMessageController');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.deleteMessageService = new DeleteMessageService(tgBot, oicq);
+    this.deleteMessageService = new DeleteMessageService(this.instance, tgBot, oicq);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramEditMessage);
     tgUser.addDeletedMessageEventHandler(this.onTgDeletedMessage);

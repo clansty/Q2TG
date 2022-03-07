@@ -9,6 +9,7 @@ import commands from '../constants/commands';
 import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
 import { md5Hex } from '../utils/hashing';
+import Instance from '../models/Instance';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -19,8 +20,9 @@ export default class SetupController {
   private tgUser: Telegram;
   private oicq: OicqClient;
 
-  constructor(private readonly tgBot: Telegram) {
-    this.setupService = new SetupService(tgBot);
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram) {
+    this.setupService = new SetupService(this.instance, tgBot);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.setCommands(commands.preSetupCommands, new Api.BotCommandScopeUsers());
   }

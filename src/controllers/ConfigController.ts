@@ -2,29 +2,30 @@ import { Api } from 'telegram';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
-import { config } from '../providers/userConfig';
 import regExps from '../constants/regExps';
-import forwardPairs from '../providers/forwardPairs';
+import forwardPairs from '../models/forwardPairs';
 import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
+import Instance from '../models/Instance';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
   private readonly createPrivateMessageGroupBlockList = new Map<number, Promise<void>>();
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.configService = new ConfigService(tgBot, tgUser, oicq);
+    this.configService = new ConfigService(this.instance, tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
-    config.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
+    this.instance.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
     this.configService.configCommands();
-    config.workMode === 'personal' && this.configService.setupFilter();
+    this.instance.workMode === 'personal' && this.configService.setupFilter();
   }
 
   private handleMessage = async (message: Api.Message) => {
-    if (!message.sender.id.eq(config.owner)) {
+    if (!message.sender.id.eq(this.instance.owner)) {
       return false;
     }
     const messageSplit = message.message.split(' ');
@@ -37,7 +38,7 @@ export default class ConfigController {
         return false;
     }
     else if (message.isPrivate) {
-      if (config.workMode === 'personal') {
+      if (this.instance.workMode === 'personal') {
         switch (messageSplit[0]) {
           case '/addfriend':
             await this.configService.addFriend();
@@ -77,7 +78,7 @@ export default class ConfigController {
       // 会自动写入数据库
       pair.tg = await this.tgBot.getChat(message.action.channelId);
       // 升级之后 bot 的管理权限可能没了，需要修复一下
-      if (config.workMode === 'personal') {
+      if (this.instance.workMode === 'personal') {
         const chatForUser = await this.tgUser.getChat(message.action.channelId);
         await chatForUser.setAdmin(this.tgBot.me.username);
       }

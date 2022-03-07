@@ -1,18 +1,17 @@
 import Telegram from '../client/Telegram';
 import { Friend, FriendInfo, Group } from 'oicq';
-import { config } from '../providers/userConfig';
 import { Button } from 'telegram/tl/custom/button';
 import { getLogger } from 'log4js';
 import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
-import db from '../providers/db';
+import db from '../models/db';
 import { Api, utils } from 'telegram';
 import commands from '../constants/commands';
 import OicqClient from '../client/OicqClient';
 import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
-import forwardPairs from '../providers/forwardPairs';
-import bigInt from 'big-integer';
+import forwardPairs from '../models/forwardPairs';
+import Instance from '../models/Instance';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
@@ -20,10 +19,11 @@ export default class ConfigService {
   private owner: Promise<TelegramChat>;
   private log = getLogger('ConfigService');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.owner = tgBot.getChat(config.owner);
+    this.owner = tgBot.getChat(this.instance.owner);
   }
 
   private getAssociateLink(roomId: number) {
@@ -33,7 +33,7 @@ export default class ConfigService {
   public async configCommands() {
     await this.tgBot.setCommands([], new Api.BotCommandScopeUsers());
     await this.tgBot.setCommands(
-      config.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
+      this.instance.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
       new Api.BotCommandScopePeer({
         peer: (await this.owner).inputPeer,
       }),
@@ -47,7 +47,7 @@ export default class ConfigService {
     const qGroups = Array.from(this.oicq.gl).map(e => e[1])
       .filter(it => !forwardPairs.find(-it.group_id));
     const buttons = qGroups.map(e =>
-      config.workMode === 'personal' ?
+      this.instance.workMode === 'personal' ?
         [Button.inline(
           `${e.group_name} (${e.group_id})`,
           this.tgBot.registerCallback(() => this.createGroupAndLink(-e.group_id, e.group_name)),
@@ -57,7 +57,7 @@ export default class ConfigService {
           this.getAssociateLink(-e.group_id),
         )]);
     await (await this.owner).createPaginatedInlineSelector(
-      '选择 QQ 群组' + (config.workMode === 'group' ? '\n然后选择在 TG 中的群组' : ''), buttons);
+      '选择 QQ 群组' + (this.instance.workMode === 'group' ? '\n然后选择在 TG 中的群组' : ''), buttons);
   }
 
   // 只可能是 personal 运行模式

@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
-import { Pair } from '../providers/forwardPairs';
+import { Pair } from '../models/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
 import { CustomFile } from 'telegram/client/uploads';
@@ -9,11 +9,10 @@ import { getLogger } from 'log4js';
 import path from 'path';
 import exts from '../constants/exts';
 import helper from '../helpers/forwardHelper';
-import db from '../providers/db';
+import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
 import { SendMessageParams } from 'telegram/client/messages';
 import { Api } from 'telegram';
-import { config } from '../providers/userConfig';
 import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
@@ -22,12 +21,14 @@ import fs from 'fs';
 import tgsToGif from '../encoding/tgsToGif';
 import axios from 'axios';
 import { md5Hex } from '../utils/hashing';
+import Instance from '../models/Instance';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
   private log = getLogger('ForwardService');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
   }
 
@@ -81,7 +82,7 @@ export default class ForwardService {
             }
             break;
           case 'flash': {
-            message += `[闪照]\n${config.workMode === 'group' ? '每人' : ''}只能查看一次`;
+            message += `[闪照]\n${this.instance.workMode === 'group' ? '每人' : ''}只能查看一次`;
             const dbEntry = await db.flashPhoto.create({
               data: { photoMd5: (elem.file as string).substring(0, 32) },
             });
@@ -228,7 +229,7 @@ export default class ForwardService {
       const chain: Sendable = [];
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '';
-      config.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
+      this.instance.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
         (message.forward ? ' Forwarded from ' + helper.getUserDisplayName(message.forward.chat || message.forward.sender) : '') +
         ': \n');
       if (message.photo instanceof Api.Photo ||

@@ -1,5 +1,5 @@
 import { MemorySession } from 'telegram/sessions';
-import db from '../providers/db';
+import db from './db';
 import { AuthKey } from 'telegram/crypto/AuthKey';
 import { getLogger } from 'log4js';
 

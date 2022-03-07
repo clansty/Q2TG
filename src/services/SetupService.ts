@@ -1,5 +1,4 @@
 import Telegram from '../client/Telegram';
-import { config, saveConfig } from '../providers/userConfig';
 import { getLogger } from 'log4js';
 import { BigInteger } from 'big-integer';
 import { Platform } from 'oicq';
@@ -9,16 +8,18 @@ import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
 import { WorkMode } from '../types/definitions';
 import TelegramChat from '../client/TelegramChat';
+import Instance from '../models/Instance';
 
 export default class SetupService {
   private owner: TelegramChat;
   private log = getLogger('SetupService');
 
-  constructor(private readonly tgBot: Telegram) {
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram) {
   }
 
   public setWorkMode(mode: WorkMode) {
-    config.workMode = mode;
+    this.instance.workMode = mode;
   }
 
   /**
@@ -29,7 +30,7 @@ export default class SetupService {
   public async claimOwner(userId: number | BigInteger) {
     userId = Number(userId);
     if (!this.owner) {
-      config.owner = userId;
+      this.instance.owner = userId;
       await this.setupOwner();
       this.log.info(`用户 ID: ${userId} 成为了 Bot 主人`);
       return true;
@@ -38,8 +39,8 @@ export default class SetupService {
   }
 
   private async setupOwner() {
-    if (!this.owner && config.owner) {
-      this.owner = await this.tgBot.getChat(config.owner);
+    if (!this.owner && this.instance.owner) {
+      this.owner = await this.tgBot.getChat(this.instance.owner);
     }
   }
 
@@ -107,13 +108,12 @@ export default class SetupService {
   }
 
   public saveOicqLoginInfo(uin: number, password: string, platform: Platform) {
-    config.qqUin = uin;
-    config.qqPassword = password;
-    config.qqPlatform = platform;
+    this.instance.qqUin = uin;
+    this.instance.qqPassword = password;
+    this.instance.qqPlatform = platform;
   }
 
   public async finishConfig() {
-    config.isSetup = true;
-    await saveConfig();
+    this.instance.isSetup = true;
   }
 }

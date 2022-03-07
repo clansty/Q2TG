@@ -11,40 +11,55 @@ datasource db {
 }
 
 model Session {
-  id              Int      @id @default(autoincrement())
-  name            String   @unique
-  dcId            Int?
-  port            Int?
-  serverAddress   String?
-  authKey         Bytes?
-  entities        Entity[]
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  dcId          Int?
+  port          Int?
+  serverAddress String?
+  authKey       Bytes?
+  entities      Entity[]
 }
 
 model Entity {
-  id          Int       @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   // 源代码里面大概支持 string 和 BigInteger，不如先全都存 String
-  entityId    String
-  sessionId   Int
-  session     Session   @relation(fields: [sessionId], references: [id])
-  hash        String?
-  username    String?
-  phone       String?
-  name        String?
+  entityId  String
+  sessionId Int
+  session   Session @relation(fields: [sessionId], references: [id])
+  hash      String?
+  username  String?
+  phone     String?
+  name      String?
 
   @@unique([entityId, sessionId])
 }
 
+model Instance {
+  id          Int           @id @default(autoincrement())
+  owner       BigInt        @default(0)
+  qqUin       BigInt        @default(0)
+  qqPassword  String        @default("")
+  qqPlatform  Int           @default(0)
+  workMode    String        @default("")
+  isSetup     Boolean       @default(false)
+  botToken    String?
+  Message     Message[]
+  ForwardPair ForwardPair[]
+}
+
 model Message {
   id         Int      @id @default(autoincrement())
-  qqRoomId   BigInt      @db.BigInt
-  qqSenderId BigInt      @db.BigInt
+  qqRoomId   BigInt   @db.BigInt
+  qqSenderId BigInt   @db.BigInt
   time       Int
   brief      String?
   seq        Int
   rand       Int
   pktnum     Int
-  tgChatId   BigInt      @db.BigInt
+  tgChatId   BigInt   @db.BigInt
   tgMsgId    Int
+  instanceId Int      @default(0)
+  instance   Instance @relation(fields: [instanceId], references: [id])
 
   @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time])
   @@unique([tgChatId, tgMsgId])
@@ -52,29 +67,31 @@ model Message {
 
 model ForwardPair {
   id          Int           @id @default(autoincrement())
-  qqRoomId    BigInt           @unique @db.BigInt
-  tgChatId    BigInt           @unique @db.BigInt
+  qqRoomId    BigInt        @unique @db.BigInt
+  tgChatId    BigInt        @unique @db.BigInt
   avatarCache AvatarCache[]
+  instanceId  Int           @default(0)
+  instance    Instance      @relation(fields: [instanceId], references: [id])
 }
 
 model File {
-  id      Int    @id @default(autoincrement())
-  roomId  BigInt    @db.BigInt
-  fileId  String
-  info    String
-
-  @@unique([roomId, fileId])
+  id     Int    @id @default(autoincrement())
+  roomId BigInt @db.BigInt
+  fileId String
+  info   String
 }
 
 model FlashPhoto {
-  id       Int    @id @default(autoincrement())
+  id       Int              @id @default(autoincrement())
   photoMd5 String
+  views    FlashPhotoView[]
 }
 
 model FlashPhotoView {
-  id           Int @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   flashPhotoId Int
-  viewerId     BigInt @db.BigInt
+  flashPhoto   FlashPhoto @relation(fields: [flashPhotoId], references: [id])
+  viewerId     BigInt     @db.BigInt
 
   @@unique([flashPhotoId, viewerId])
 }

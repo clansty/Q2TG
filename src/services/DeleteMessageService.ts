@@ -2,15 +2,16 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { getLogger } from 'log4js';
 import { Api } from 'telegram';
-import { Pair } from '../providers/forwardPairs';
-import { config } from '../providers/userConfig';
-import db from '../providers/db';
+import { Pair } from '../models/forwardPairs';
+import db from '../models/db';
 import { Friend, FriendRecallEvent, GroupRecallEvent } from 'oicq';
+import Instance from '../models/Instance';
 
 export default class DeleteMessageService {
   private log = getLogger('DeleteMessageService');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
   }
 
@@ -36,12 +37,12 @@ export default class DeleteMessageService {
           console.log(123);
           const tipMsg = await pair.tg.sendMessage({
             message: '撤回 QQ 中对应的消息失败' +
-              (config.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
+              (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
               (isOthersMsg ? '，而且无法撤回其他管理员的消息' : '') +
               (e.message ? '\n' + e.message : ''),
             silent: true,
           });
-          config.workMode === 'group' && setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
+          this.instance.workMode === 'group' && setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
         }
       }
     }
@@ -59,7 +60,7 @@ export default class DeleteMessageService {
     const replyMessage = await message.getReplyMessage();
     if (replyMessage instanceof Api.Message) {
       // 检查权限并撤回被回复的消息
-      let hasPermission = config.workMode === 'personal' || replyMessage.senderId?.eq(message.senderId);
+      let hasPermission = this.instance.workMode === 'personal' || replyMessage.senderId?.eq(message.senderId);
       if (!hasPermission && message.chat instanceof Api.Channel) {
         // 可能是超级群
         try {

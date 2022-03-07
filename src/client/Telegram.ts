@@ -9,7 +9,7 @@ import CallbackQueryHelper from '../helpers/CallbackQueryHelper';
 import { CallbackQuery } from 'telegram/events/CallbackQuery';
 import os from 'os';
 import TelegramChat from './TelegramChat';
-import TelegramSession from './TelegramSession';
+import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;

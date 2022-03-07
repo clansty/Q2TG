@@ -1,18 +1,20 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
-import db from '../providers/db';
+import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
 import { getLogger } from 'log4js';
 import { CustomFile } from 'telegram/client/uploads';
 import { fetchFile, getImageUrlByMd5 } from '../utils/urls';
+import Instance from '../models/Instance';
 
 const REGEX = /^\/start (file|flash)-(\d+)$/;
 
 export default class FileAndFlashPhotoController {
   private readonly log = getLogger('FileController');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
   }

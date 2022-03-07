@@ -1,20 +1,22 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ForwardService from '../services/ForwardService';
-import forwardPairs from '../providers/forwardPairs';
+import forwardPairs from '../models/forwardPairs';
 import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
-import db from '../providers/db';
+import db from '../models/db';
 import { Api } from 'telegram';
 import { getLogger } from 'log4js';
+import Instance from '../models/Instance';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
   private readonly log = getLogger('ForwardController');
 
-  constructor(private readonly tgBot: Telegram,
+  constructor(private readonly instance: Instance,
+              private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.forwardService = new ForwardService(tgBot, oicq);
+    this.forwardService = new ForwardService(this.instance, tgBot, oicq);
     forwardPairs.init(oicq, tgBot)
       .then(() => oicq.addNewMessageEventHandler(this.onQqMessage))
       .then(() => tgBot.addNewMessageEventHandler(this.onTelegramMessage))
