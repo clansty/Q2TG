@@ -41,11 +41,13 @@ export default class DeleteMessageController {
 
   private onQqFriendRecall = async (event: FriendRecallEvent) => {
     const pair = this.instance.forwardPairs.find(event.friend);
+    if (!pair) return;
     await this.deleteMessageService.handleQqRecall(event, pair);
   };
 
   private onQqGroupRecall = async (event: GroupRecallEvent) => {
     const pair = this.instance.forwardPairs.find(event.group);
+    if (!pair) return;
     await this.deleteMessageService.handleQqRecall(event, pair);
   };
 
