@@ -225,15 +225,14 @@ export default class ConfigService {
     try {
       const qGroup = this.oicq.getChat(qqRoomId) as Group;
       const tgChat = await this.tgBot.getChat(tgChatId);
-      message = `QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
-        `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`;
       await this.instance.forwardPairs.add(qGroup, tgChat);
+      await tgChat.sendMessage(`QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
+        `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`);
     }
     catch (e) {
-      message = `错误：<code>${e}</code>`;
       this.log.error(e);
+      await (await this.owner).sendMessage(`错误：<code>${e}</code>`);
     }
-    await (await this.owner).sendMessage({ message });
   }
 
   // 创建 QQ 群组的文件夹
