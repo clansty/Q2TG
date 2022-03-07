@@ -29,7 +29,7 @@ export default class ConfigController {
     }
     const messageSplit = message.message.split(' ');
     if (message.isGroup) {
-      if (messageSplit.length === 2 && messageSplit[0].startsWith('/start') && regExps.roomId.test(messageSplit[1])) {
+      if (messageSplit.length === 2 && messageSplit[0] === `/start@${this.tgBot.me.username}` && regExps.roomId.test(messageSplit[1])) {
         await this.configService.createLinkGroup(Number(messageSplit[1]), Number(message.chat.id));
         return true;
       }
