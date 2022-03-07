@@ -8,6 +8,7 @@ import { Platform } from 'oicq';
 import commands from '../constants/commands';
 import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
+import { md5Hex } from '../utils/hashing';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -89,6 +90,7 @@ export default class SetupController {
         ]);
       if (isPasswordLogin === '密码登录') {
         password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
+        password = md5Hex(password);
       }
       this.oicq = await this.setupService.createOicq(uin, password, platform);
       await this.setupService.informOwner(`登录成功`);
