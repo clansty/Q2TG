@@ -326,7 +326,10 @@ export default class ForwardService {
         brief += '[文件]';
       }
 
-      message.message && chain.push(message.message);
+      if (message.message) {
+        chain.push(message.message);
+        brief += message.message;
+      }
 
       // 处理回复
       let source: Quotable;
@@ -341,7 +344,7 @@ export default class ForwardService {
           });
           if (quote) {
             source = {
-              message: quote.brief,
+              message: quote.brief || ' ',
               seq: quote.seq,
               rand: quote.rand,
               user_id: Number(quote.qqSenderId),
@@ -363,7 +366,7 @@ export default class ForwardService {
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);
-      message.reply({
+      await message.reply({
         message: `转发失败：${e.message}\n${e}`,
       });
     }
