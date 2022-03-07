@@ -117,6 +117,9 @@ export default class DeleteMessageService {
         },
       });
       if (message) {
+        await db.message.delete({
+          where: { id: message.id },
+        });
         await pair.tg.deleteMessages(message.tgMsgId);
       }
     }
