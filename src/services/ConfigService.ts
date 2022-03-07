@@ -10,7 +10,6 @@ import commands from '../constants/commands';
 import OicqClient from '../client/OicqClient';
 import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
-import forwardPairs from '../models/forwardPairs';
 import Instance from '../models/Instance';
 
 const DEFAULT_FILTER_ID = 114; // 514
@@ -45,7 +44,7 @@ export default class ConfigService {
   // 开始添加转发群组流程
   public async addGroup() {
     const qGroups = Array.from(this.oicq.gl).map(e => e[1])
-      .filter(it => !forwardPairs.find(-it.group_id));
+      .filter(it => !this.instance.forwardPairs.find(-it.group_id));
     const buttons = qGroups.map(e =>
       this.instance.workMode === 'personal' ?
         [Button.inline(
@@ -83,7 +82,7 @@ export default class ConfigService {
   }
 
   private async openFriendSelection(clazz: FriendInfo[], name: string) {
-    clazz = clazz.filter(them => !forwardPairs.find(them.user_id));
+    clazz = clazz.filter(them => !this.instance.forwardPairs.find(them.user_id));
     await (await this.owner).createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
       Button.inline(`${e.remark || e.nickname} (${e.user_id})`, this.tgBot.registerCallback(
         () => this.createGroupAndLink(e.user_id, e.remark || e.nickname),
@@ -179,7 +178,7 @@ export default class ConfigService {
       // 关联写入数据库
       const chatForBot = await this.tgBot.getChat(chat.id);
       status && await status.edit({ text: '正在写数据库…' });
-      const dbPair = await forwardPairs.add(qEntity, chatForBot);
+      const dbPair = await this.instance.forwardPairs.add(qEntity, chatForBot);
       isFinish = true;
 
       // 更新头像
@@ -227,7 +226,7 @@ export default class ConfigService {
       const tgChat = await this.tgBot.getChat(tgChatId);
       message = `QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
         `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`;
-      await forwardPairs.add(qGroup, tgChat);
+      await this.instance.forwardPairs.add(qGroup, tgChat);
     }
     catch (e) {
       message = `错误：<code>${e}</code>`;

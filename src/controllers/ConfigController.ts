@@ -3,7 +3,6 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
 import regExps from '../constants/regExps';
-import forwardPairs from '../models/forwardPairs';
 import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
 import Instance from '../models/Instance';
 
@@ -73,7 +72,7 @@ export default class ConfigController {
   private handleServiceMessage = async (message: Api.MessageService) => {
     // 用于检测群升级为超级群的情况
     if (message.action instanceof Api.MessageActionChatMigrateTo) {
-      const pair = forwardPairs.find((message.peerId as Api.PeerChat).chatId);
+      const pair = this.instance.forwardPairs.find((message.peerId as Api.PeerChat).chatId);
       if (!pair) return;
       // 会自动写入数据库
       pair.tg = await this.tgBot.getChat(message.action.channelId);
@@ -93,7 +92,7 @@ export default class ConfigController {
 
   private handleQqMessage = async (message: GroupMessageEvent | PrivateMessageEvent) => {
     if (message.message_type !== 'private') return false;
-    const pair = forwardPairs.find(message.friend);
+    const pair = this.instance.forwardPairs.find(message.friend);
     if (pair) return false;
     // 如果正在创建中，应该阻塞
     let promise = this.createPrivateMessageGroupBlockList.get(message.from_id);
@@ -109,7 +108,7 @@ export default class ConfigController {
   };
 
   private handleMemberIncrease = async (event: MemberIncreaseEvent) => {
-    if (event.user_id !== this.oicq.uin || await forwardPairs.find(event.group)) return;
+    if (event.user_id !== this.oicq.uin || await this.instance.forwardPairs.find(event.group)) return;
     // 是新群并且是自己加入了
     await this.configService.promptNewGroup(event.group);
   };

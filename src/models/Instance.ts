@@ -9,6 +9,7 @@ import FileAndFlashPhotoController from '../controllers/FileAndFlashPhotoControl
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { getLogger, Logger } from 'log4js';
+import ForwardPairs from './ForwardPairs';
 
 export default class Instance {
   private _owner = 0;
@@ -17,9 +18,11 @@ export default class Instance {
   private _qqPlatform = 0;
   private _isSetup = false;
   private _workMode = '';
+  private _botToken = '';
 
   private readonly log: Logger;
 
+  public forwardPairs: ForwardPairs;
   private setupController: SetupController;
   private configController: ConfigController;
   private deleteMessageController: DeleteMessageController;
@@ -53,12 +56,13 @@ export default class Instance {
     this._qqPlatform = dbEntry.qqPlatform;
     this._isSetup = dbEntry.isSetup;
     this._workMode = dbEntry.workMode;
+    this._botToken = dbEntry.botToken;
   }
 
   private async init() {
     this.log.debug('正在登录 TG Bot');
     const tgBot = await Telegram.create({
-      botAuthToken: process.env.TG_BOT_TOKEN,
+      botAuthToken: this.botToken,
     }, 'bot');
 
     let tgUser: Telegram, oicq: OicqClient;
@@ -83,6 +87,7 @@ export default class Instance {
       });
       this.log.debug('OICQ 登录完成');
     }
+    this.forwardPairs = await ForwardPairs.load(this.id, oicq, tgBot);
     this.configController = new ConfigController(this, tgBot, tgUser, oicq);
     this.deleteMessageController = new DeleteMessageController(this, tgBot, tgUser, oicq);
     this.forwardController = new ForwardController(this, tgBot, tgUser, oicq);
@@ -94,6 +99,13 @@ export default class Instance {
     await instance.load();
     await instance.init();
     return instance;
+  }
+
+  public static async createNew(botToken: string) {
+    const dbEntry = await db.instance.create({
+      data: { botToken },
+    });
+    return await this.start(dbEntry.id);
   }
 
   get owner() {
@@ -118,6 +130,10 @@ export default class Instance {
 
   get workMode() {
     return this._workMode as WorkMode;
+  }
+
+  get botToken() {
+    return this.id === 0 ? process.env.TG_BOT_TOKEN : this._botToken;
   }
 
   set owner(owner: number) {

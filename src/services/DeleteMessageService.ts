@@ -2,10 +2,10 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { getLogger } from 'log4js';
 import { Api } from 'telegram';
-import { Pair } from '../models/forwardPairs';
 import db from '../models/db';
 import { Friend, FriendRecallEvent, GroupRecallEvent } from 'oicq';
 import Instance from '../models/Instance';
+import { Pair } from '../models/Pair';
 
 export default class DeleteMessageService {
   private log = getLogger('DeleteMessageService');

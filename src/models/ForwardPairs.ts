@@ -4,45 +4,21 @@ import OicqClient from '../client/OicqClient';
 import Telegram from '../client/Telegram';
 import db from './db';
 import { Entity } from 'telegram/define';
-import { getLogger } from 'log4js';
 import { BigInteger } from 'big-integer';
+import { Pair } from './Pair';
 
-const log = getLogger('ForwardPairs');
 
-export class Pair {
-  constructor(public readonly qq: Friend | Group,
-              private _tg: TelegramChat,
-              public dbId: number) {
-  }
-
-  get qqRoomId() {
-    return this.qq instanceof Friend ? this.qq.user_id : -this.qq.group_id;
-  }
-
-  get tgId() {
-    return Number(this._tg.id);
-  }
-
-  get tg() {
-    return this._tg;
-  }
-
-  set tg(value: TelegramChat) {
-    this._tg = value;
-    db.forwardPair.update({
-      where: { id: this.dbId },
-      data: { tgChatId: Number(value.id) },
-    })
-      .then(() => log.info(`出现了到超级群组的转换: ${value.id}`));
-  }
-}
-
-class ForwardPairsInternal {
+export default class ForwardPairs {
   private pairs: Pair[] = [];
 
+  private constructor(private readonly instanceId: number) {
+  }
+
   // 在 forwardController 创建时初始化
-  public async init(oicq: OicqClient, tgBot: Telegram) {
-    const dbValues = await db.forwardPair.findMany();
+  private async init(oicq: OicqClient, tgBot: Telegram) {
+    const dbValues = await db.forwardPair.findMany({
+      where: { instanceId: this.instanceId },
+    });
     for (const i of dbValues) {
       this.pairs.push(new Pair(
         oicq.getChat(Number(i.qqRoomId)),
@@ -52,11 +28,18 @@ class ForwardPairsInternal {
     }
   }
 
+  public static async load(instanceId: number, oicq: OicqClient, tgBot: Telegram) {
+    const instance = new this(instanceId);
+    await instance.init(oicq, tgBot);
+    return instance;
+  }
+
   public async add(qq: Friend | Group, tg: TelegramChat) {
     const dbEntry = await db.forwardPair.create({
       data: {
         qqRoomId: qq instanceof Friend ? qq.user_id : -qq.group_id,
         tgChatId: Number(tg.id),
+        instanceId: this.instanceId,
       },
     });
     this.pairs.push(new Pair(qq, tg, dbEntry.id));
@@ -79,5 +62,3 @@ class ForwardPairsInternal {
     }
   }
 }
-
-export default new ForwardPairsInternal();

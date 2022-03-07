@@ -15,7 +15,7 @@ interface CreateOicqParams {
   uin: number;
   password: string;
   platform: Platform;
-  // 当需要验证手机时调用此方法，应该返回收到当手机验证码
+  // 当需要验证手机时调用此方法，应该返回收到的手机验证码
   onVerifyDevice: (phone: string) => Promise<string>;
   // 当滑块时调用此方法，返回 ticker，也可以返回假值改用扫码登录
   onVerifySlider: (url: string) => Promise<string>;

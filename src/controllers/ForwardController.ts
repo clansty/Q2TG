@@ -1,7 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ForwardService from '../services/ForwardService';
-import forwardPairs from '../models/forwardPairs';
 import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
 import db from '../models/db';
 import { Api } from 'telegram';
@@ -17,16 +16,15 @@ export default class ForwardController {
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
     this.forwardService = new ForwardService(this.instance, tgBot, oicq);
-    forwardPairs.init(oicq, tgBot)
-      .then(() => oicq.addNewMessageEventHandler(this.onQqMessage))
-      .then(() => tgBot.addNewMessageEventHandler(this.onTelegramMessage))
-      .then(() => tgBot.addEditedMessageEventHandler(this.onTelegramMessage));
+    oicq.addNewMessageEventHandler(this.onQqMessage);
+    tgBot.addNewMessageEventHandler(this.onTelegramMessage);
+    tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
   }
 
   private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
     try {
       const target = event.message_type === 'private' ? event.friend : event.group;
-      const pair = forwardPairs.find(target);
+      const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
       const tgMessage = await this.forwardService.forwardFromQq(event, pair);
       if (tgMessage) {
@@ -53,7 +51,7 @@ export default class ForwardController {
 
   private onTelegramMessage = async (message: Api.Message) => {
     try {
-      const pair = forwardPairs.find(message.chat);
+      const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
       const qqMessageSent = await this.forwardService.forwardFromTelegram(message, pair);
       // 返回的信息不太够

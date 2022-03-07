@@ -1,7 +1,6 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
-import { Pair } from '../models/forwardPairs';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { FileLike, MarkupLike } from 'telegram/define';
 import { CustomFile } from 'telegram/client/uploads';
@@ -22,6 +21,7 @@ import tgsToGif from '../encoding/tgsToGif';
 import axios from 'axios';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
+import { Pair } from '../models/Pair';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
