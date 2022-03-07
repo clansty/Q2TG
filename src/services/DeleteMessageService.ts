@@ -52,7 +52,6 @@ export default class DeleteMessageService {
       }
     }
     catch (e) {
-      this.log.error('处理 Telegram 消息删除失败', e);
     }
   }
 

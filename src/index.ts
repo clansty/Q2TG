@@ -1,5 +1,6 @@
 import { configure, getLogger } from 'log4js';
 import Instance from './models/Instance';
+import db from './models/db';
 
 (async () => {
   configure({
@@ -14,5 +15,13 @@ import Instance from './models/Instance';
   process.on('unhandledRejection', error => {
     log.error('UnhandledException: ', error);
   });
-  await Instance.start(0);
+  const instanceEntries = await db.instance.findMany();
+  if (!instanceEntries.length) {
+    await Instance.start(0);
+  }
+  else {
+    for (const instanceEntry of instanceEntries) {
+      await Instance.start(instanceEntry.id);
+    }
+  }
 })();

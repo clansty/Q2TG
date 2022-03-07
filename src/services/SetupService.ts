@@ -16,7 +16,7 @@ export default class SetupService {
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram) {
-    this.log = getLogger(`SetupService - ${instance.id}`)
+    this.log = getLogger(`SetupService - ${instance.id}`);
   }
 
   public setWorkMode(mode: WorkMode) {
@@ -79,7 +79,7 @@ export default class SetupService {
         return await this.owner.inlineDigitInput(5);
       },
       onError: (err) => this.log.error(err),
-    }, 'user');
+    }, `user:${this.instance.id}`);
   }
 
   public async createOicq(uin: number, password: string, platform: Platform) {

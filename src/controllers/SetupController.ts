@@ -33,7 +33,7 @@ export default class SetupController {
       return false;
     }
 
-    if (message.text === '/setup') {
+    if (message.text === '/setup' || message.text === '/start setup') {
       this.isInProgress = true;
       await this.doSetup(Number(message.sender.id));
       await this.finishSetup();
