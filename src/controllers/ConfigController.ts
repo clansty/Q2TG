@@ -91,7 +91,7 @@ export default class ConfigController {
   };
 
   private handleQqMessage = async (message: GroupMessageEvent | PrivateMessageEvent) => {
-    if (message.message_type !== 'private') return false;
+    if (message.message_type !== 'private' || this.instance.workMode === 'group') return false;
     const pair = this.instance.forwardPairs.find(message.friend);
     if (pair) return false;
     // 如果正在创建中，应该阻塞

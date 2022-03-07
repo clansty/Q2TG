@@ -22,7 +22,7 @@ export default class ConfigService {
               private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
-    this.log = getLogger(`ConfigService - ${instance.id}`)
+    this.log = getLogger(`ConfigService - ${instance.id}`);
     this.owner = tgBot.getChat(this.instance.owner);
   }
 
@@ -231,6 +231,7 @@ export default class ConfigService {
     }
     catch (e) {
       message = `错误：<code>${e}</code>`;
+      this.log.error(e);
     }
     await (await this.owner).sendMessage({ message });
   }
@@ -295,11 +296,11 @@ export default class ConfigService {
     return text + `\n\n由 @${this.tgBot.me.username} 管理`;
   }
 
-  public async migrateAllChats(){
+  public async migrateAllChats() {
     const dbPairs = await db.forwardPair.findMany();
     for (const forwardPair of dbPairs) {
-      const chatForUser = await this.tgUser.getChat(Number(forwardPair.tgChatId))
-      if(chatForUser.entity instanceof Api.Chat){
+      const chatForUser = await this.tgUser.getChat(Number(forwardPair.tgChatId));
+      if (chatForUser.entity instanceof Api.Chat) {
         this.log.info('升级群组 ', chatForUser.id);
         await chatForUser.migrate();
       }
