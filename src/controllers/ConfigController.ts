@@ -95,7 +95,8 @@ export default class ConfigController {
   };
 
   private handleChannelParticipant = async (event: Api.UpdateChannelParticipant) => {
-    if (event.prevParticipant instanceof Api.ChannelParticipantSelf && !event.newParticipant) {
+    if ('userId' in event.prevParticipant && event.prevParticipant.userId.eq(this.tgBot.me.id) &&
+      !event.newParticipant) {
       this.log.warn(`群 ${event.channelId.toString()} 删除了`);
       const pair = this.instance.forwardPairs.find(event.channelId);
       if (pair) {
