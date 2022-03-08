@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { Friend, FriendInfo, Group } from 'oicq';
+import { Friend, FriendInfo, Group, GroupInfo } from 'oicq';
 import { Button } from 'telegram/tl/custom/button';
 import { getLogger, Logger } from 'log4js';
 import { getAvatar } from '../utils/urls';
@@ -50,7 +50,7 @@ export default class ConfigService {
       this.instance.workMode === 'personal' ?
         [Button.inline(
           `${e.group_name} (${e.group_id})`,
-          this.tgBot.registerCallback(() => this.createGroupAndLink(-e.group_id, e.group_name)),
+          this.tgBot.registerCallback(() => this.onSelectChatPersonal(e)),
         )] :
         [Button.url(
           `${e.group_name} (${e.group_id})`,
@@ -86,9 +86,31 @@ export default class ConfigService {
     clazz = clazz.filter(them => !this.instance.forwardPairs.find(them.user_id));
     await (await this.owner).createPaginatedInlineSelector(`选择 QQ 好友\n分组：${name}`, clazz.map(e => [
       Button.inline(`${e.remark || e.nickname} (${e.user_id})`, this.tgBot.registerCallback(
-        () => this.createGroupAndLink(e.user_id, e.remark || e.nickname),
+        () => this.onSelectChatPersonal(e),
       )),
     ]));
+  }
+
+  private async onSelectChatPersonal(info: FriendInfo | GroupInfo) {
+    const roomId = 'user_id' in info ? info.user_id : -info.group_id;
+    const name = 'user_id' in info ? info.remark || info.nickname : info.group_name;
+    const entity = this.oicq.getChat(roomId);
+    const avatar = await getAvatar(roomId);
+    const message = await (await this.owner).sendMessage({
+      message: await this.getAboutText(entity),
+      buttons: [
+        [Button.inline('自动创建群组', this.tgBot.registerCallback(
+          async () => {
+            await message.edit({
+              text: '正在创建',
+              buttons: Button.clear(),
+            });
+            this.createGroupAndLink(roomId, name);
+          }))],
+        [Button.url('手动选择现有群组', this.getAssociateLink(roomId))],
+      ],
+      file: new CustomFile('avatar.png', avatar.length, '', avatar),
+    });
   }
 
   public async addExact(gin: number) {
@@ -116,8 +138,9 @@ export default class ConfigService {
    * @param roomId
    * @param title
    * @param status 传入 false 的话就不显示状态信息，可以传入一条已有消息覆盖
+   * @param chat
    */
-  public async createGroupAndLink(roomId: number, title?: string, status: boolean | Api.Message = true) {
+  public async createGroupAndLink(roomId: number, title?: string, status: boolean | Api.Message = true, chat?: TelegramChat) {
     this.log.info(`创建群组并关联：${roomId}`);
     const qEntity = this.oicq.getChat(roomId);
     if (!title) {
@@ -143,12 +166,14 @@ export default class ConfigService {
         await status.edit({ text: '正在创建 Telegram 群…', buttons: Button.clear() });
       }
 
-      // 创建群聊，拿到的是 user 的 chat
-      const chat = await this.tgUser.createChat(title, await this.getAboutText(qEntity));
+      if (!chat) {
+        // 创建群聊，拿到的是 user 的 chat
+        chat = await this.tgUser.createChat(title, await this.getAboutText(qEntity));
 
-      // 添加机器人
-      status && await status.edit({ text: '正在添加机器人…' });
-      await chat.inviteMember(this.tgBot.me.id);
+        // 添加机器人
+        status && await status.edit({ text: '正在添加机器人…' });
+        await chat.inviteMember(this.tgBot.me.id);
+      }
 
       // 设置管理员
       status && await status.edit({ text: '正在设置管理员…' });
@@ -210,9 +235,7 @@ export default class ConfigService {
   public async promptNewGroup(group: Group) {
     const message = await (await this.owner).sendMessage({
       message: '你加入了一个新的群：\n' +
-        `${group.name}\n` +
-        `${group.info.member_count} 名成员\n` +
-        `群号：${group.group_id}\n` +
+        await this.getAboutText(group) + '\n' +
         '要创建关联群吗',
       buttons: Button.inline('创建', this.tgBot.registerCallback(
         () => this.createGroupAndLink(-group.group_id, group.name, message))),
@@ -221,17 +244,22 @@ export default class ConfigService {
   }
 
   public async createLinkGroup(qqRoomId: number, tgChatId: number) {
-    let message: string;
-    try {
-      const qGroup = this.oicq.getChat(qqRoomId) as Group;
-      const tgChat = await this.tgBot.getChat(tgChatId);
-      await this.instance.forwardPairs.add(qGroup, tgChat);
-      await tgChat.sendMessage(`QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
-        `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`);
+    if (this.instance.workMode === 'group') {
+      try {
+        const qGroup = this.oicq.getChat(qqRoomId) as Group;
+        const tgChat = await this.tgBot.getChat(tgChatId);
+        await this.instance.forwardPairs.add(qGroup, tgChat);
+        await tgChat.sendMessage(`QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
+          `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`);
+      }
+      catch (e) {
+        this.log.error(e);
+        await (await this.owner).sendMessage(`错误：<code>${e}</code>`);
+      }
     }
-    catch (e) {
-      this.log.error(e);
-      await (await this.owner).sendMessage(`错误：<code>${e}</code>`);
+    else {
+      const chat = await this.tgUser.getChat(tgChatId);
+      await this.createGroupAndLink(qqRoomId, undefined, true, chat);
     }
   }
 
@@ -292,7 +320,7 @@ export default class ConfigService {
         ((entity.is_admin || entity.is_owner) ? '\n可管理' : '');
     }
 
-    return text + `\n\n由 @${this.tgBot.me.username} 管理`;
+    return text;
   }
 
   public async migrateAllChats() {

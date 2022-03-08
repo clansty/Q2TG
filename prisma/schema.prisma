@@ -25,7 +25,7 @@ model Entity {
   // 源代码里面大概支持 string 和 BigInteger，不如先全都存 String
   entityId  String
   sessionId Int
-  session   Session @relation(fields: [sessionId], references: [id])
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   hash      String?
   username  String?
   phone     String?
@@ -59,7 +59,7 @@ model Message {
   tgChatId   BigInt   @db.BigInt
   tgMsgId    Int
   instanceId Int      @default(0)
-  instance   Instance @relation(fields: [instanceId], references: [id])
+  instance   Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
   @@unique([tgChatId, tgMsgId, instanceId])
@@ -71,7 +71,7 @@ model ForwardPair {
   tgChatId    BigInt        @db.BigInt
   avatarCache AvatarCache[]
   instanceId  Int           @default(0)
-  instance    Instance      @relation(fields: [instanceId], references: [id])
+  instance    Instance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])
@@ -101,7 +101,7 @@ model FlashPhotoView {
 
 model AvatarCache {
   id            Int         @id @default(autoincrement())
-  forwardPair   ForwardPair @relation(fields: [forwardPairId], references: [id])
+  forwardPair   ForwardPair @relation(fields: [forwardPairId], references: [id], onDelete: Cascade)
   forwardPairId Int         @unique
   hash          Bytes
 }
