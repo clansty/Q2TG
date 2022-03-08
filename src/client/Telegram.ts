@@ -18,7 +18,7 @@ type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
 
 export default class Telegram {
-  public readonly client: TelegramClient;
+  private readonly client: TelegramClient;
   private waitForMessageHelper: WaitForMessageHelper;
   private callbackQueryHelper: CallbackQueryHelper = new CallbackQueryHelper();
   private readonly onMessageHandlers: Array<MessageHandler> = [];
