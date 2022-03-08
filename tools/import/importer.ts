@@ -128,6 +128,7 @@ export default {
         }
       }
     }
+    output += `${format(new Date, 'DD/MM/YYYY, HH:mm')} - 系统: 以上为导入的消息（你可以删除这条）\n`;
 
     fetchFilesBar.stop();
 
