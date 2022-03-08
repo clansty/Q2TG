@@ -5,18 +5,22 @@ import ConfigService from '../services/ConfigService';
 import regExps from '../constants/regExps';
 import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
 import Instance from '../models/Instance';
+import { getLogger, Logger } from 'log4js';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
   private readonly createPrivateMessageGroupBlockList = new Map<number, Promise<void>>();
+  private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
+    this.log = getLogger(`ConfigController - ${instance.id}`);
     this.configService = new ConfigService(this.instance, tgBot, tgUser, oicq);
     tgBot.addNewMessageEventHandler(this.handleMessage);
     tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
+    tgBot.addChannelParticipantEventHandler(this.handleChannelParticipant);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
     this.instance.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
     this.configService.configCommands();
@@ -86,6 +90,17 @@ export default class ConfigController {
           message: '本群已升级为超级群，可能需要重新设置一下管理员权限',
           silent: true,
         });
+      }
+    }
+  };
+
+  private handleChannelParticipant = async (event: Api.UpdateChannelParticipant) => {
+    if (event.prevParticipant instanceof Api.ChannelParticipantSelf && !event.newParticipant) {
+      this.log.warn(`群 ${event.channelId.toString()} 删除了`);
+      const pair = this.instance.forwardPairs.find(event.channelId);
+      if (pair) {
+        await this.instance.forwardPairs.remove(pair);
+        this.log.info(`已删除关联 ID: ${pair.dbId}`);
       }
     }
   };

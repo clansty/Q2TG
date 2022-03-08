@@ -128,6 +128,12 @@ export default class Telegram {
     this.client.addEventHandler(handler, new DeletedMessage({}));
   }
 
+  public addChannelParticipantEventHandler(handler: (event: Api.UpdateChannelParticipant) => any) {
+    this.client.addEventHandler(handler, new Raw({
+      types: [Api.UpdateChannelParticipant],
+    }));
+  }
+
   public async getChat(entity: EntityLike) {
     return new TelegramChat(this, this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
   }

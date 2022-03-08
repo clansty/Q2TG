@@ -7,7 +7,6 @@ import { Entity } from 'telegram/define';
 import { BigInteger } from 'big-integer';
 import { Pair } from './Pair';
 
-
 export default class ForwardPairs {
   private pairs: Pair[] = [];
 
@@ -44,6 +43,13 @@ export default class ForwardPairs {
     });
     this.pairs.push(new Pair(qq, tg, dbEntry.id));
     return dbEntry;
+  }
+
+  public async remove(pair: Pair) {
+    this.pairs.splice(this.pairs.indexOf(pair), 1);
+    await db.forwardPair.delete({
+      where: { id: pair.dbId },
+    });
   }
 
   public find(target: Friend | Group | TelegramChat | Entity | number | BigInteger) {
