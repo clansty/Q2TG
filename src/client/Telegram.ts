@@ -11,12 +11,14 @@ import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
+import { CustomFile } from 'telegram/client/uploads';
+import { TelegramImportSession } from './TelegramImportSession';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
 
 export default class Telegram {
-  private readonly client: TelegramClient;
+  public readonly client: TelegramClient;
   private waitForMessageHelper: WaitForMessageHelper;
   private callbackQueryHelper: CallbackQueryHelper = new CallbackQueryHelper();
   private readonly onMessageHandlers: Array<MessageHandler> = [];
@@ -24,7 +26,7 @@ export default class Telegram {
   private readonly onServiceMessageHandlers: Array<ServiceMessageHandler> = [];
   public me: Api.User;
 
-  private constructor(sessionId: string) {
+  private constructor(sessionId: string, appName: string) {
     this.client = new TelegramClient(
       new TelegramSession(sessionId),
       parseInt(process.env.TG_API_ID),
@@ -32,7 +34,7 @@ export default class Telegram {
       {
         connectionRetries: 5,
         langCode: 'zh',
-        deviceModel: `Q2TG On ${os.hostname()}`,
+        deviceModel: `${appName} On ${os.hostname()}`,
         appVersion: 'raincandy',
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
@@ -44,15 +46,15 @@ export default class Telegram {
     this.client.logger.setLevel(LogLevel.WARN);
   }
 
-  public static async create(startArgs: UserAuthParams | BotAuthParams, sessionId: string) {
-    const bot = new this(sessionId);
+  public static async create(startArgs: UserAuthParams | BotAuthParams, sessionId: string, appName = 'Q2TG') {
+    const bot = new this(sessionId, appName);
     await bot.client.start(startArgs);
     await bot.config();
     return bot;
   }
 
-  public static async connect(sessionId: string) {
-    const bot = new this(sessionId);
+  public static async connect(sessionId: string, appName = 'Q2TG') {
+    const bot = new this(sessionId, appName);
     await bot.client.connect();
     await bot.config();
     return bot;
@@ -160,12 +162,27 @@ export default class Telegram {
     return await this.client.invoke(new Api.messages.UpdateDialogFilter(params));
   }
 
-  public async createChat(title: string, about?: string) {
+  public async createChat(title: string, about = '') {
     const updates = await this.client.invoke(new Api.channels.CreateChannel({
       title, about,
       megagroup: true,
+      forImport: true,
     })) as Api.Updates;
     const newChat = updates.chats[0];
     return new TelegramChat(this, this.client, newChat, this.waitForMessageHelper);
+  }
+
+  public async startImportSession(chat: TelegramChat, textFile: CustomFile, mediaCount: number) {
+    const init = await this.client.invoke(
+      new Api.messages.InitHistoryImport({
+        peer: chat.entity,
+        file: await this.client.uploadFile({
+          file: textFile,
+          workers: 1,
+        }),
+        mediaCount,
+      }),
+    );
+    return new TelegramImportSession(chat, this.client, init.id);
   }
 }
