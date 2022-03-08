@@ -135,101 +135,107 @@ export default {
 
     console.log('正在准备导入…');
 
-    const newChat = await telegram.createChat(chatName);
     const txtBuffer = Buffer.from(output, 'utf-8');
+    try {
+      const newChat = await telegram.createChat(chatName);
 
-    const importSession = await telegram.startImportSession(
-      newChat,
-      new CustomFile('record.txt', txtBuffer.length, '', txtBuffer),
-      files.size,
-    );
+      const importSession = await newChat.startImportSession(
+        new CustomFile('record.txt', txtBuffer.length, '', txtBuffer),
+        files.size,
+      );
 
-    console.log('正在上传媒体…');
+      console.log('正在上传媒体…');
 
-    const uploadMediaBar = new SingleBar({
-      hideCursor: true,
-      format: '{bar} {percentage}% | {value}/{total}',
-      barsize: 120,
-    }, Presets.shades_grey);
-    uploadMediaBar.start(files.size, 0);
+      const uploadMediaBar = new SingleBar({
+        hideCursor: true,
+        format: '{bar} {percentage}% | {value}/{total}',
+        barsize: 120,
+      }, Presets.shades_grey);
+      uploadMediaBar.start(files.size, 0);
 
-    for (const md5 of files) {
-      const fileName = md5 + '.file';
-      const file = md5.startsWith('tgs') ? path.join('./assets/tgs', md5 + '.tgs') : path.join(outputPath, md5 + '.file');
-      const type = md5.startsWith('tgs') ? {
-        ext: 'tgs',
-        mime: 'application/x-tgsticker',
-      } : await fileTypeFromFile(file);
+      for (const md5 of files) {
+        const fileName = md5 + '.file';
+        const file = md5.startsWith('tgs') ? path.join('./assets/tgs', md5 + '.tgs') : path.join(outputPath, md5 + '.file');
+        const type = md5.startsWith('tgs') ? {
+          ext: 'tgs',
+          mime: 'application/x-tgsticker',
+        } : await fileTypeFromFile(file);
 
-      let media: Api.TypeInputMedia;
-      if (md5.startsWith('tgs') || type.ext === 'webp') {
-        // 贴纸
-        media = new Api.InputMediaUploadedDocument({
-          file: await importSession.uploadFile(new CustomFile(
-            `${fileName}.${type.ext}`,
-            fs.statSync(file).size,
-            file,
-          )),
-          mimeType: type.mime,
-          attributes: [],
-        });
+        let media: Api.TypeInputMedia;
+        if (md5.startsWith('tgs') || type.ext === 'webp') {
+          // 贴纸
+          media = new Api.InputMediaUploadedDocument({
+            file: await importSession.uploadFile(new CustomFile(
+              `${fileName}.${type.ext}`,
+              fs.statSync(file).size,
+              file,
+            )),
+            mimeType: type.mime,
+            attributes: [],
+          });
+        }
+        else if (type.mime.startsWith('audio/')) {
+          // 语音
+          media = new Api.InputMediaUploadedDocument({
+            file: await importSession.uploadFile(new CustomFile(
+              `${fileName}.${type.ext}`,
+              fs.statSync(file).size,
+              file,
+            )),
+            mimeType: type.mime,
+            attributes: [
+              new Api.DocumentAttributeAudio({
+                duration: 0,
+                voice: true,
+              }),
+            ],
+          });
+        }
+        else if (type.ext === 'gif') {
+          media = new Api.InputMediaUploadedDocument({
+            file: await importSession.uploadFile(new CustomFile(
+              `${fileName}.${type.ext}`,
+              fs.statSync(file).size,
+              file,
+            )),
+            mimeType: type.mime,
+            attributes: [new Api.DocumentAttributeAnimated()],
+          });
+        }
+        else if (type.mime.startsWith('image/')) {
+          media = new Api.InputMediaUploadedPhoto({
+            file: await importSession.uploadFile(new CustomFile(
+              `${fileName}.${type.ext}`,
+              fs.statSync(file).size,
+              file,
+            )),
+          });
+        }
+        else {
+          media = new Api.InputMediaUploadedDocument({
+            file: await importSession.uploadFile(new CustomFile(
+              `${fileName}.${type.ext}`,
+              fs.statSync(file).size,
+              file,
+            )),
+            mimeType: type.mime,
+            attributes: [],
+          });
+        }
+
+        await importSession.uploadMedia(fileName, media);
+        uploadMediaBar.increment();
       }
-      else if (type.mime.startsWith('audio/')) {
-        // 语音
-        media = new Api.InputMediaUploadedDocument({
-          file: await importSession.uploadFile(new CustomFile(
-            `${fileName}.${type.ext}`,
-            fs.statSync(file).size,
-            file,
-          )),
-          mimeType: type.mime,
-          attributes: [
-            new Api.DocumentAttributeAudio({
-              duration: 0,
-              voice: true,
-            }),
-          ],
-        });
-      }
-      else if (type.ext === 'gif') {
-        media = new Api.InputMediaUploadedDocument({
-          file: await importSession.uploadFile(new CustomFile(
-            `${fileName}.${type.ext}`,
-            fs.statSync(file).size,
-            file,
-          )),
-          mimeType: type.mime,
-          attributes: [new Api.DocumentAttributeAnimated()],
-        });
-      }
-      else if (type.mime.startsWith('image/')) {
-        media = new Api.InputMediaUploadedPhoto({
-          file: await importSession.uploadFile(new CustomFile(
-            `${fileName}.${type.ext}`,
-            fs.statSync(file).size,
-            file,
-          )),
-        });
-      }
-      else {
-        media = new Api.InputMediaUploadedDocument({
-          file: await importSession.uploadFile(new CustomFile(
-            `${fileName}.${type.ext}`,
-            fs.statSync(file).size,
-            file,
-          )),
-          mimeType: type.mime,
-          attributes: [],
-        });
-      }
 
-      await importSession.uploadMedia(fileName, media);
-      uploadMediaBar.increment();
+      await importSession.finish();
+
+      console.log('导入成功！');
     }
-
-    await importSession.finish();
-    await tmpDir.cleanup();
-
-    console.log('导入成功！');
+    catch (e) {
+      console.error('错误', e);
+      const dumpPath = path.join(outputPath, 'record');
+      await fsP.writeFile(dumpPath, txtBuffer);
+      console.log('临时文件位置', outputPath);
+    }
   },
 };

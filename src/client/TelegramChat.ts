@@ -7,6 +7,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import Telegram from './Telegram';
 import createPaginatedInlineSelector from '../utils/paginatedInlineSelector';
 import inlineDigitInput from '../utils/inlineDigitInput';
+import { TelegramImportSession } from './TelegramImportSession';
 
 export default class TelegramChat {
   public readonly inputPeer: Api.TypeInputPeer;
@@ -203,5 +204,24 @@ export default class TelegramChat {
         chatId: this.id,
       })
     );
+  }
+
+  public async startImportSession(textFile: CustomFile, mediaCount: number) {
+    await this.client.invoke(
+      new Api.messages.CheckHistoryImportPeer({
+        peer: this.entity,
+      })
+    );
+    const init = await this.client.invoke(
+      new Api.messages.InitHistoryImport({
+        peer: this.entity,
+        file: await this.client.uploadFile({
+          file: textFile,
+          workers: 1,
+        }),
+        mediaCount,
+      }),
+    );
+    return new TelegramImportSession(this, this.client, init.id);
   }
 }

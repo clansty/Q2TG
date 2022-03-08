@@ -11,8 +11,6 @@ import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
-import { CustomFile } from 'telegram/client/uploads';
-import { TelegramImportSession } from './TelegramImportSession';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -170,19 +168,5 @@ export default class Telegram {
     })) as Api.Updates;
     const newChat = updates.chats[0];
     return new TelegramChat(this, this.client, newChat, this.waitForMessageHelper);
-  }
-
-  public async startImportSession(chat: TelegramChat, textFile: CustomFile, mediaCount: number) {
-    const init = await this.client.invoke(
-      new Api.messages.InitHistoryImport({
-        peer: chat.entity,
-        file: await this.client.uploadFile({
-          file: textFile,
-          workers: 1,
-        }),
-        mediaCount,
-      }),
-    );
-    return new TelegramImportSession(chat, this.client, init.id);
   }
 }
