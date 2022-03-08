@@ -38,7 +38,7 @@ import axios from 'axios';
   content.sort((a, b) => a.time - b.time);
 
   console.log('count:', content.length);
-  console.log('files:', content.filter(it => it.file?.type?.startsWith('image/')).length);
+  console.log('files:', content.filter(it => it.file).length);
 
   for (const message of content) {
     let sender = message.senderId === selfId ? selfName : message.username;
@@ -61,13 +61,28 @@ import axios from 'axios';
           process.stdout.write('.');
         }
         catch (e) {
-          process.stdout.write('x');
+          process.stdout.write(e.message);
+          txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: ${message.file.url}\n`);
+        }
+      }
+      else if (message.file.type.startsWith('audio/') && message.file.url.startsWith('data:audio')) {
+        try {
+          let file: Buffer;
+          const base64Data = message.file.url.replace(/^data:audio\/\w+;base64,/, '');
+          file = Buffer.from(base64Data, 'base64');
+          const md5 = md5Hex(file);
+          await fsP.writeFile(path.join(outputPath, `AUDIO-${md5}.mp3`), file);
+          txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: AUDIO-${md5}.mp3 (file attached)\n`);
+          process.stdout.write('.');
+        }
+        catch (e) {
+          process.stdout.write(e.message);
           txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: ${message.file.url}\n`);
         }
       }
       else {
         txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: 文件: ${message.file.name}\n` +
-          `${message.file.type}\n${message.file.url}\n`);
+          `${message.file.type}\n`);
       }
     }
     if (message.content) {
@@ -83,10 +98,10 @@ import axios from 'axios';
             data: record,
           });
           txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: 转发的消息记录 ${crvApi}/?hash=${hash}\n`);
-          process.stdout.write('w');
+          process.stdout.write('_');
         }
         catch (e) {
-          process.stdout.write('v');
+          process.stdout.write(e.message);
         }
         txt.write(`${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: 转发的消息记录\n`);
       }
