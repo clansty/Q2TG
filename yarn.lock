@@ -125,6 +125,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/date-and-time@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@types/date-and-time@npm:0.13.0"
+  checksum: a430aaaa77479746b026295ee6dab19497cc838f7a575569e3a2304841396e1aeba431bc528a86ffce037c12e371f0f4847085f6c99117f8c5809a97560f2971
+  languageName: node
+  linkType: hard
+
 "@types/fluent-ffmpeg@npm:^2":
   version: 2.1.20
   resolution: "@types/fluent-ffmpeg@npm:2.1.20"
@@ -434,6 +441,13 @@ __metadata:
     es5-ext: ^0.10.50
     type: ^1.0.1
   checksum: 49ca0639c7b822db670de93d4fbce44b4aa072cd848c76292c9978a8cd0fff1028763020ff4b0f147bd77bfe29b4c7f82e0f71ade76b2a06100543cdfd948d19
+  languageName: node
+  linkType: hard
+
+"date-and-time@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "date-and-time@npm:2.2.1"
+  checksum: 7b789a94b86b551f2777ccefa25a5b9964c1cf0a929044aafbef93316f324002a0454394a2810f1247693c9d8e799adde9e607d4509ff03491e3bdd1321ae636
   languageName: node
   linkType: hard
 
@@ -1607,9 +1621,11 @@ __metadata:
   resolution: "q2tg@workspace:."
   dependencies:
     "@prisma/client": latest
+    "@types/date-and-time": ^0.13.0
     "@types/fluent-ffmpeg": ^2
     "@types/node": ^17.0.18
     axios: ^0.26.0
+    date-and-time: ^2.2.1
     eviltransform: ^0.2.2
     file-type: ^17.1.1
     fluent-ffmpeg: ^2.1.2
