@@ -230,7 +230,11 @@ export default class ForwardService {
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '';
       this.instance.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
-        (message.forward ? ' Forwarded from ' + helper.getUserDisplayName(message.forward.chat || message.forward.sender) : '') +
+        (message.forward ? ' 转发自 ' +
+          // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
+          message.fwdFrom.fromName ||
+          helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender()) :
+          '') +
         ': \n');
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
