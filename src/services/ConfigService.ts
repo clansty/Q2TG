@@ -249,7 +249,7 @@ export default class ConfigService {
         const qGroup = this.oicq.getChat(qqRoomId) as Group;
         const tgChat = await this.tgBot.getChat(tgChatId);
         await this.instance.forwardPairs.add(qGroup, tgChat);
-        await tgChat.sendMessage(`QQ群：${qGroup.group_id} (<code>${qGroup.group_id}</code>)已与 ` +
+        await tgChat.sendMessage(`QQ群：${qGroup.name} (<code>${qGroup.group_id}</code>)已与 ` +
           `Telegram 群 ${(tgChat.entity as Api.Channel).title} (<code>${tgChatId}</code>)关联`);
       }
       catch (e) {
