@@ -237,8 +237,10 @@ export default class ConfigService {
       message: '你加入了一个新的群：\n' +
         await this.getAboutText(group) + '\n' +
         '要创建关联群吗',
-      buttons: Button.inline('创建', this.tgBot.registerCallback(
-        () => this.createGroupAndLink(-group.group_id, group.name, message))),
+      buttons: Button.inline('创建', this.tgBot.registerCallback(async () => {
+        await message.delete({ revoke: true });
+        this.createGroupAndLink(-group.group_id, group.name);
+      })),
     });
     return message;
   }
