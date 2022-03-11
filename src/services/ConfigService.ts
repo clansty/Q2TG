@@ -101,10 +101,7 @@ export default class ConfigService {
       buttons: [
         [Button.inline('自动创建群组', this.tgBot.registerCallback(
           async () => {
-            await message.edit({
-              text: '正在创建',
-              buttons: Button.clear(),
-            });
+            await message.delete({ revoke: true });
             this.createGroupAndLink(roomId, name);
           }))],
         [Button.url('手动选择现有群组', this.getAssociateLink(roomId))],
@@ -157,7 +154,8 @@ export default class ConfigService {
       // 状态信息
       if (status === true) {
         const avatar = await getAvatar(roomId);
-        status = await (await this.owner).sendMessage({
+        const statusReceiver = chat || await this.owner;
+        status = await statusReceiver.sendMessage({
           message: '正在创建 Telegram 群…',
           file: new CustomFile('avatar.png', avatar.length, '', avatar),
         });
