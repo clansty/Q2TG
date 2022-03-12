@@ -10,14 +10,23 @@ export function debounce<TArgs extends any[], TRet>(fn: (...originArgs: TArgs) =
 }
 
 export function consumer<TArgs extends any[], TRet>(fn: (...originArgs: TArgs) => TRet, time = 100) {
-  let tasks = [], timer: NodeJS.Timeout;
+  const tasks: Function[] = [];
+  let timer: NodeJS.Timeout;
+
+  const nextTask = () => {
+    if (tasks.length === 0) return false;
+
+    tasks.shift().call(null);
+    return true;
+  };
 
   return function (...args: TArgs) {
     tasks.push(fn.bind(this, ...args));
+
     if (timer == null) {
+      nextTask();
       timer = setInterval(() => {
-        tasks.shift().call(this);
-        if (tasks.length <= 0) {
+        if (!nextTask()) {
           clearInterval(timer);
           timer = null;
         }
