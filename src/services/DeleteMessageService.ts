@@ -2,9 +2,10 @@ import Telegram from '../client/Telegram';
 import { getLogger, Logger } from 'log4js';
 import { Api } from 'telegram';
 import db from '../models/db';
-import { Friend, FriendRecallEvent, GroupRecallEvent } from 'oicq';
+import { Friend, FriendRecallEvent, Group, GroupRecallEvent } from 'oicq';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
+import { consumer } from '../utils/highLevelFunces';
 
 export default class DeleteMessageService {
   private readonly log: Logger;
@@ -13,6 +14,11 @@ export default class DeleteMessageService {
               private readonly tgBot: Telegram) {
     this.log = getLogger(`DeleteMessageService - ${instance.id}`);
   }
+
+  // 500ms 内只撤回一条消息，防止频繁导致一部分消息没有成功撤回。不过这样的话，会得不到返回的结果
+  private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number) => {
+    await qq.recallMsg(seq, rand, timeOrPktnum);
+  }, 500);
 
   /**
    * 删除 QQ 对应的消息
@@ -34,12 +40,10 @@ export default class DeleteMessageService {
       });
       if (messageInfo) {
         try {
-          const success = await pair.qq.recallMsg(messageInfo.seq, messageInfo.rand,
+          this.recallQqMessage(pair.qq, messageInfo.seq, messageInfo.rand,
             pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum);
-          if (!success) throw new Error();
         }
         catch (e) {
-          console.log(123);
           const tipMsg = await pair.tg.sendMessage({
             message: '撤回 QQ 中对应的消息失败' +
               (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
