@@ -11,6 +11,7 @@ import OicqClient from '../client/OicqClient';
 import { getLogger, Logger } from 'log4js';
 import ForwardPairs from './ForwardPairs';
 import InstanceManageController from '../controllers/InstanceManageController';
+import InChatCommandsController from '../controllers/InChatCommandsController';
 
 export default class Instance {
   private _owner = 0;
@@ -32,6 +33,7 @@ export default class Instance {
   private instanceManageController: InstanceManageController;
   private configController: ConfigController;
   private deleteMessageController: DeleteMessageController;
+  private inChatCommandsController: InChatCommandsController;
   private forwardController: ForwardController;
   private fileAndFlashPhotoController: FileAndFlashPhotoController;
 
@@ -99,6 +101,7 @@ export default class Instance {
       }
       this.configController = new ConfigController(this, this.tgBot, this.tgUser, this.oicq);
       this.deleteMessageController = new DeleteMessageController(this, this.tgBot, this.tgUser, this.oicq);
+      this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.oicq);
       this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()

@@ -11,6 +11,7 @@ import OicqClient from '../client/OicqClient';
 import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
 import Instance from '../models/Instance';
+import getAboutText from '../utils/getAboutText';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
@@ -97,7 +98,7 @@ export default class ConfigService {
     const entity = this.oicq.getChat(roomId);
     const avatar = await getAvatar(roomId);
     const message = await (await this.owner).sendMessage({
-      message: await this.getAboutText(entity),
+      message: await getAboutText(entity),
       buttons: [
         [Button.inline('自动创建群组', this.tgBot.registerCallback(
           async () => {
@@ -166,7 +167,7 @@ export default class ConfigService {
 
       if (!chat) {
         // 创建群聊，拿到的是 user 的 chat
-        chat = await this.tgUser.createChat(title, await this.getAboutText(qEntity));
+        chat = await this.tgUser.createChat(title, await getAboutText(qEntity));
 
         // 添加机器人
         status && await status.edit({ text: '正在添加机器人…' });
@@ -233,7 +234,7 @@ export default class ConfigService {
   public async promptNewGroup(group: Group) {
     const message = await (await this.owner).sendMessage({
       message: '你加入了一个新的群：\n' +
-        await this.getAboutText(group) + '\n' +
+        await getAboutText(group) + '\n' +
         '要创建关联群吗',
       buttons: Button.inline('创建', this.tgBot.registerCallback(async () => {
         await message.delete({ revoke: true });
@@ -298,29 +299,6 @@ export default class ConfigService {
         await (await this.owner).sendMessage(errorText + `\n<code>${e}</code>`);
       }
     }
-  }
-
-  private async getAboutText(entity: Friend | Group) {
-    let text: string;
-    if (entity instanceof Friend) {
-      text = `备注：${entity.remark}\n` +
-        `昵称：${entity.nickname}\n` +
-        `账号：${entity.user_id}`;
-    }
-    else {
-      const owner = entity.pickMember(entity.info.owner_id);
-      await owner.renew();
-      const self = entity.pickMember(this.oicq.uin);
-      await self.renew();
-      text = `群名称：${entity.name}\n` +
-        `${entity.info.member_count} 名成员\n` +
-        `群号：${entity.group_id}\n` +
-        (self ? `我的群名片：${self.title ? `【${self.title}】` : ''}${self.card}\n` : '') +
-        (owner ? `群主：${owner.title ? `【${owner.title}】` : ''}${owner.card || owner.info.nickname} (${owner.user_id})` : '') +
-        ((entity.is_admin || entity.is_owner) ? '\n可管理' : '');
-    }
-
-    return text;
   }
 
   public async migrateAllChats() {
