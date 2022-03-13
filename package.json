@@ -14,6 +14,7 @@
     "@types/fluent-ffmpeg": "^2",
     "@types/node": "^17.0.18",
     "@types/prompts": "^2",
+    "@types/sharp": "^0",
     "prisma": "latest",
     "ts-node": "^10.5.0",
     "tsc": "^2.0.4",
@@ -32,6 +33,7 @@
     "nodejs-base64": "^2.0.0",
     "oicq": "^2.2.0",
     "prompts": "^2.4.2",
+    "sharp": "^0.30.2",
     "silk-sdk": "^0.2.2",
     "telegram": "^2.5.0",
     "tmp-promise": "^3.0.3"

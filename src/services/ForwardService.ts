@@ -21,6 +21,7 @@ import axios from 'axios';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
+import sharp from 'sharp';
 
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
@@ -233,17 +234,34 @@ export default class ForwardService {
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
           (message.fwdFrom?.fromName ||
-          helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
+            helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
           '') +
         ': \n');
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
-        chain.push({
-          type: 'image',
-          file: await message.downloadMedia({}),
-          asface: !!message.sticker,
-        });
+        // 将 webp 转换为 png，防止 macOS 不识别
+        if (message.document.mimeType === 'image/webp') {
+          const convertedPath = path.resolve(path.join('./data/cache/webp', message.document.id.toString(16) + '.png'));
+          // 先从缓存中找
+          if (!fs.existsSync(convertedPath)) {
+            await fsP.mkdir('./data/cache/webp', { recursive: true });
+            const webpData = await message.downloadMedia({});
+            await sharp(webpData).png().toFile(convertedPath);
+          }
+          chain.push({
+            type: 'image',
+            file: '/'+convertedPath,
+            asface: true,
+          });
+        }
+        else {
+          chain.push({
+            type: 'image',
+            file: await message.downloadMedia({}),
+            asface: !!message.sticker,
+          });
+        }
         brief += '[图片]';
       }
       else if (message.video || message.videoNote || message.gif) {
