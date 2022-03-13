@@ -232,8 +232,8 @@ export default class ForwardService {
       this.instance.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
-          message.fwdFrom.fromName ||
-          helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender()) :
+          (message.fwdFrom?.fromName ||
+          helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
           '') +
         ': \n');
       if (message.photo instanceof Api.Photo ||
