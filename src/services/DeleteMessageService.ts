@@ -29,19 +29,20 @@ export default class DeleteMessageService {
   async telegramDeleteMessage(messageId: number, pair: Pair, isOthersMsg = false) {
     // 删除的时候会返回记录
     try {
-      const messageInfo = await db.message.delete({
+      const messageInfo = await db.message.findFirst({
         where: {
-          tgChatId_tgMsgId_instanceId: {
-            tgChatId: pair.tgId,
-            tgMsgId: messageId,
-            instanceId: this.instance.id,
-          },
+          tgChatId: pair.tgId,
+          tgMsgId: messageId,
+          instanceId: this.instance.id,
         },
       });
       if (messageInfo) {
         try {
           this.recallQqMessage(pair.qq, messageInfo.seq, messageInfo.rand,
             pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum);
+          await db.message.delete({
+            where: { id: messageInfo.id },
+          });
         }
         catch (e) {
           const tipMsg = await pair.tg.sendMessage({

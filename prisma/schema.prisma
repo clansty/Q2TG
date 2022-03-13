@@ -62,7 +62,7 @@ model Message {
   instance   Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
-  @@unique([tgChatId, tgMsgId, instanceId])
+  @@index([tgChatId, tgMsgId, instanceId])
 }
 
 model ForwardPair {

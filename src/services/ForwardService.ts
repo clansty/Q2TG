@@ -23,6 +23,8 @@ import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import sharp from 'sharp';
 
+const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
+
 // noinspection FallThroughInSwitchStatementJS
 export default class ForwardService {
   private readonly log: Logger;
@@ -251,7 +253,7 @@ export default class ForwardService {
           }
           chain.push({
             type: 'image',
-            file: '/'+convertedPath,
+            file: '/' + convertedPath,
             asface: true,
           });
         }
@@ -379,12 +381,23 @@ export default class ForwardService {
         }
       }
 
-      const qqMessage = await pair.qq.sendMsg(chain, source);
+      const notChainableElements = chain.filter(element => typeof element === 'object' && NOT_CHAINABLE_ELEMENTS.includes(element.type));
+      const chainableElements = chain.filter(element => typeof element !== 'object' || !NOT_CHAINABLE_ELEMENTS.includes(element.type));
+      const qqMessages = [];
+      if (chainableElements) {
+        qqMessages.push({
+          ...await pair.qq.sendMsg(chainableElements, source),
+          brief,
+        });
+      }
+      if (notChainableElements) {
+        qqMessages.push({
+          ...await pair.qq.sendMsg(notChainableElements, source),
+          brief,
+        });
+      }
       tempFiles.forEach(it => it.cleanup());
-      return {
-        ...qqMessage,
-        brief,
-      };
+      return qqMessages;
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);

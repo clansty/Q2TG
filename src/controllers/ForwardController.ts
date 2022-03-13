@@ -55,24 +55,26 @@ export default class ForwardController {
     try {
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
-      const qqMessageSent = await this.forwardService.forwardFromTelegram(message, pair);
+      const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
       // 返回的信息不太够
-      if (qqMessageSent) {
+      if (qqMessagesSent) {
         // 更新数据库
-        await db.message.create({
-          data: {
-            qqRoomId: pair.qqRoomId,
-            qqSenderId: this.oicq.uin,
-            time: qqMessageSent.time,
-            brief: qqMessageSent.brief,
-            seq: qqMessageSent.seq,
-            rand: qqMessageSent.rand,
-            pktnum: 1,
-            tgChatId: pair.tgId,
-            tgMsgId: message.id,
-            instanceId: this.instance.id,
-          },
-        });
+        for (const qqMessageSent of qqMessagesSent) {
+          await db.message.create({
+            data: {
+              qqRoomId: pair.qqRoomId,
+              qqSenderId: this.oicq.uin,
+              time: qqMessageSent.time,
+              brief: qqMessageSent.brief,
+              seq: qqMessageSent.seq,
+              rand: qqMessageSent.rand,
+              pktnum: 1,
+              tgChatId: pair.tgId,
+              tgMsgId: message.id,
+              instanceId: this.instance.id,
+            },
+          });
+        }
       }
     }
     catch (e) {
