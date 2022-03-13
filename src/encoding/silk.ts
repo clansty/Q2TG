@@ -48,5 +48,6 @@ export default {
     const { path, cleanup } = await file();
     await fsP.writeFile(path, bufPcm);
     await conventPcmToOgg(path, outputPath);
+    cleanup();
   },
 };

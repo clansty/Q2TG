@@ -22,6 +22,7 @@ import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import sharp from 'sharp';
+import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -253,7 +254,7 @@ export default class ForwardService {
           }
           chain.push({
             type: 'image',
-            file: '/' + convertedPath,
+            file: convertedPath,
             asface: true,
           });
         }
@@ -270,6 +271,23 @@ export default class ForwardService {
         const file = message.video || message.videoNote || message.gif;
         if (file.size > 20 * 1024 * 1024) {
           chain.push('[视频大于 20MB]');
+        }
+        else if (file.mimeType === 'video/webm') {
+          // 把 webm 转换成 gif
+          const convertedPath = path.resolve(path.join('./data/cache/webm', message.document.id.toString(16) + '.gif'));
+          // 先从缓存中找
+          if (!fs.existsSync(convertedPath)) {
+            await fsP.mkdir('./data/cache/webm', { recursive: true });
+            const temp = await createTempFile();
+            tempFiles.push(temp);
+            await fsP.writeFile(temp.path, await message.downloadMedia({}));
+            await convertWithFfmpeg(temp.path, convertedPath, 'gif');
+          }
+          chain.push({
+            type: 'image',
+            file: convertedPath,
+            asface: true,
+          });
         }
         else {
           const temp = await createTempFile();
@@ -384,13 +402,13 @@ export default class ForwardService {
       const notChainableElements = chain.filter(element => typeof element === 'object' && NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const chainableElements = chain.filter(element => typeof element !== 'object' || !NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const qqMessages = [];
-      if (chainableElements) {
+      if (chainableElements.length) {
         qqMessages.push({
           ...await pair.qq.sendMsg(chainableElements, source),
           brief,
         });
       }
-      if (notChainableElements) {
+      if (notChainableElements.length) {
         qqMessages.push({
           ...await pair.qq.sendMsg(notChainableElements, source),
           brief,
