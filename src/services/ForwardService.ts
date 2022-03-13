@@ -244,7 +244,7 @@ export default class ForwardService {
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
         // 将 webp 转换为 png，防止 macOS 不识别
-        if (message.document.mimeType === 'image/webp') {
+        if (message.document?.mimeType === 'image/webp') {
           const convertedPath = path.resolve(path.join('./data/cache/webp', message.document.id.toString(16) + '.png'));
           // 先从缓存中找
           if (!fs.existsSync(convertedPath)) {
