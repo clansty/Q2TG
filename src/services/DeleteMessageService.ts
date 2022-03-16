@@ -16,9 +16,24 @@ export default class DeleteMessageService {
   }
 
   // 500ms 内只撤回一条消息，防止频繁导致一部分消息没有成功撤回。不过这样的话，会得不到返回的结果
-  private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number) => {
-    await qq.recallMsg(seq, rand, timeOrPktnum);
-  }, 500);
+  private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number, pair: Pair, isOthersMsg: boolean) => {
+    try {
+      const result = await qq.recallMsg(seq, rand, timeOrPktnum);
+      this.log.info(seq, result);
+      if (!result) throw new Error('撤回失败');
+    }
+    catch (e) {
+      this.log.error('撤回失败', e);
+      const tipMsg = await pair.tg.sendMessage({
+        message: '撤回 QQ 中对应的消息失败' +
+          (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
+          (isOthersMsg ? '，而且无法撤回其他管理员的消息' : '') +
+          (e.message ? '\n' + e.message : ''),
+        silent: true,
+      });
+      this.instance.workMode === 'group' && setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
+    }
+  }, 1000);
 
   /**
    * 删除 QQ 对应的消息
@@ -39,20 +54,14 @@ export default class DeleteMessageService {
       if (messageInfo) {
         try {
           this.recallQqMessage(pair.qq, messageInfo.seq, messageInfo.rand,
-            pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum);
+            pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
+            pair, isOthersMsg);
           await db.message.delete({
             where: { id: messageInfo.id },
           });
         }
         catch (e) {
-          const tipMsg = await pair.tg.sendMessage({
-            message: '撤回 QQ 中对应的消息失败' +
-              (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
-              (isOthersMsg ? '，而且无法撤回其他管理员的消息' : '') +
-              (e.message ? '\n' + e.message : ''),
-            silent: true,
-          });
-          this.instance.workMode === 'group' && setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
+          this.log.error(e);
         }
       }
     }
