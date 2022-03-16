@@ -32,6 +32,11 @@ export default class InChatCommandsController {
       case '/info':
         await this.service.info(message, pair);
         return true;
+      case '/refresh':
+        if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
+        await pair.updateInfo();
+        await message.reply({ message: '刷新成功' });
+        return true;
     }
   };
 }

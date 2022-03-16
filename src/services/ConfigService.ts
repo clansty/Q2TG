@@ -88,7 +88,7 @@ export default class ConfigService {
     const entity = this.oicq.getChat(roomId);
     const avatar = await getAvatar(roomId);
     const message = await (await this.owner).sendMessage({
-      message: await getAboutText(entity),
+      message: await getAboutText(entity, true),
       buttons: [
         [Button.inline('自动创建群组', this.tgBot.registerCallback(
           async () => {
@@ -157,7 +157,7 @@ export default class ConfigService {
 
       if (!chat) {
         // 创建群聊，拿到的是 user 的 chat
-        chat = await this.tgUser.createChat(title, await getAboutText(qEntity));
+        chat = await this.tgUser.createChat(title, await getAboutText(qEntity, false));
 
         // 添加机器人
         status && await status.edit({ text: '正在添加机器人…' });
@@ -224,7 +224,7 @@ export default class ConfigService {
   public async promptNewGroup(group: Group) {
     const message = await (await this.owner).sendMessage({
       message: '你加入了一个新的群：\n' +
-        await getAboutText(group) + '\n' +
+        await getAboutText(group, true) + '\n' +
         '要创建关联群吗',
       buttons: Button.inline('创建', this.tgBot.registerCallback(async () => {
         await message.delete({ revoke: true });

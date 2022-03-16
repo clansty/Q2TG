@@ -64,7 +64,7 @@ export default class InChatCommandsService {
     else {
       const avatar = await getAvatar(pair.qqRoomId);
       await message.reply({
-        message: await getAboutText(pair.qq),
+        message: await getAboutText(pair.qq, true),
         file: new CustomFile('avatar.png', avatar.length, '', avatar),
       });
     }

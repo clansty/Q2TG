@@ -1,6 +1,6 @@
 import { Friend, Group } from 'oicq';
 
-export default async function getAboutText(entity: Friend | Group) {
+export default async function getAboutText(entity: Friend | Group, html: boolean) {
   let text: string;
   if (entity instanceof Friend) {
     text = `<b>备注：</b>${entity.remark}\n` +
@@ -21,5 +21,8 @@ export default async function getAboutText(entity: Friend | Group) {
       ((entity.is_admin || entity.is_owner) ? '\n<b>可管理</b>' : '');
   }
 
+  if (!html) {
+    text = text.replace(/<\/?\w+>/g, '');
+  }
   return text;
 }
