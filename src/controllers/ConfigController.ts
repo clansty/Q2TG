@@ -23,7 +23,6 @@ export default class ConfigController {
     tgBot.addChannelParticipantEventHandler(this.handleChannelParticipant);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
     this.instance.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
-    this.configService.configCommands();
     this.instance.workMode === 'personal' && this.configService.setupFilter();
   }
 

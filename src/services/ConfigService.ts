@@ -31,16 +31,6 @@ export default class ConfigService {
     return `https://t.me/${this.tgBot.me.username}?startgroup=${roomId}`;
   }
 
-  public async configCommands() {
-    await this.tgBot.setCommands([], new Api.BotCommandScopeUsers());
-    await this.tgBot.setCommands(
-      this.instance.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
-      new Api.BotCommandScopePeer({
-        peer: (await this.owner).inputPeer,
-      }),
-    );
-  }
-
   // region 打开添加关联的菜单
 
   // 开始添加转发群组流程

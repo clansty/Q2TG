@@ -12,6 +12,9 @@ import { getLogger, Logger } from 'log4js';
 import ForwardPairs from './ForwardPairs';
 import InstanceManageController from '../controllers/InstanceManageController';
 import InChatCommandsController from '../controllers/InChatCommandsController';
+import { Api } from 'telegram';
+import commands from '../constants/commands';
+import TelegramChat from '../client/TelegramChat';
 
 export default class Instance {
   private _owner = 0;
@@ -27,6 +30,8 @@ export default class Instance {
   private tgBot: Telegram;
   private tgUser: Telegram;
   private oicq: OicqClient;
+
+  private _ownerChat: TelegramChat;
 
   public forwardPairs: ForwardPairs;
   private setupController: SetupController;
@@ -95,7 +100,9 @@ export default class Instance {
         });
         this.log.info('OICQ 登录完成');
       }
+      this._ownerChat = await this.tgBot.getChat(this.owner);
       this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot);
+      this.setupCommands();
       if (this.id === 0) {
         this.instanceManageController = new InstanceManageController(this, this.tgBot);
       }
@@ -120,6 +127,33 @@ export default class Instance {
       data: { botToken },
     });
     return await this.start(dbEntry.id);
+  }
+
+  private async setupCommands() {
+    await this.tgBot.setCommands([], new Api.BotCommandScopeUsers());
+    // 设定管理员的
+    if (this.id === 0) {
+      await this.tgBot.setCommands(
+        this.workMode === 'personal' ? commands.personalPrivateSuperAdminCommands : commands.groupPrivateSuperAdminCommands,
+        new Api.BotCommandScopePeer({
+          peer: (this.ownerChat).inputPeer,
+        }),
+      );
+    }
+    else {
+      await this.tgBot.setCommands(
+        this.workMode === 'personal' ? commands.personalPrivateCommands : commands.groupPrivateCommands,
+        new Api.BotCommandScopePeer({
+          peer: (this.ownerChat).inputPeer,
+        }),
+      );
+    }
+    // 设定群组内的
+    await this.tgBot.setCommands(
+      this.workMode === 'personal' ? commands.privateInChatCommands : commands.groupInChatCommands,
+      // 普通用户其实不需要这些命令，这样可以让用户的输入框少点东西
+      new Api.BotCommandScopeChatAdmins(),
+    );
   }
 
   get owner() {
@@ -152,6 +186,10 @@ export default class Instance {
 
   get botMe() {
     return this.tgBot.me;
+  }
+
+  get ownerChat() {
+    return this._ownerChat;
   }
 
   set owner(owner: number) {

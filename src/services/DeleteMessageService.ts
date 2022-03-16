@@ -19,7 +19,6 @@ export default class DeleteMessageService {
   private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number, pair: Pair, isOthersMsg: boolean) => {
     try {
       const result = await qq.recallMsg(seq, rand, timeOrPktnum);
-      this.log.info(seq, result);
       if (!result) throw new Error('撤回失败');
     }
     catch (e) {
