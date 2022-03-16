@@ -52,7 +52,7 @@ export default class ForwardService {
         let url: string;
         switch (elem.type) {
           case 'text': {
-            message += elem.text;
+            message += helper.htmlEscape(elem.text);
             break;
           }
           case 'at': {
@@ -61,7 +61,7 @@ export default class ForwardService {
           }
           case 'face':
           case 'sface': {
-            message += `[${elem.text}]`;
+            message += `[<i>${helper.htmlEscape(elem.text)}</i>]`;
             break;
           }
           case 'bface': {
@@ -85,7 +85,7 @@ export default class ForwardService {
             }
             break;
           case 'flash': {
-            message += `[闪照]\n${this.instance.workMode === 'group' ? '每人' : ''}只能查看一次`;
+            message += `[<i>闪照<i>]\n${this.instance.workMode === 'group' ? '每人' : ''}只能查看一次`;
             const dbEntry = await db.flashPhoto.create({
               data: { photoMd5: (elem.file as string).substring(0, 32) },
             });
@@ -107,7 +107,7 @@ export default class ForwardService {
               }
             }
             else {
-              message = `文件: ${elem.name}\n` +
+              message = `文件: ${helper.htmlEscape(elem.name)}\n` +
                 `大小: ${helper.hSize(elem.size)}`;
               const dbEntry = await db.file.create({
                 data: { fileId: elem.fid, roomId: pair.qqRoomId, info: message },
@@ -125,18 +125,18 @@ export default class ForwardService {
             break;
           }
           case 'share': {
-            message = elem.url;
+            message = helper.htmlEscape(elem.url);
             break;
           }
           case 'json': {
-            message = helper.processJson(elem.data);
+            message = helper.htmlEscape(helper.processJson(elem.data));
             break;
           }
           case 'xml': {
             const result = helper.processXml(elem.data);
             switch (result.type) {
               case 'text':
-                message = result.text;
+                message = helper.htmlEscape(result.text);
                 break;
               case 'image':
                 try {
@@ -151,7 +151,7 @@ export default class ForwardService {
               case 'forward':
                 try {
                   const messages = await pair.qq.getForwardMsg(result.resId);
-                  message = helper.generateForwardBrief(messages);
+                  message = helper.htmlEscape(helper.generateForwardBrief(messages));
                   noEscape = true;
                   const hash = md5Hex(result.resId);
                   button = Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`);
@@ -165,7 +165,7 @@ export default class ForwardService {
                     .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
                 }
                 catch (e) {
-                  message = '[转发多条消息（无法获取）]';
+                  message = '[<i>转发多条消息（无法获取）</i>]';
                 }
                 break;
             }
@@ -173,17 +173,17 @@ export default class ForwardService {
           }
           case 'rps':
           case 'dice':
-            message = `[${elem.type === 'rps' ? '猜拳' : '骰子'}] ${elem.id}`;
+            message = `[<i>${elem.type === 'rps' ? '猜拳' : '骰子'}</i>] ${elem.id}`;
             break;
           case 'poke':
-            message = `[戳一戳] ${elem.text}`;
+            message = `[<i>戳一戳</i>] ${helper.htmlEscape(elem.text)}`;
             break;
           case 'location':
-            message = `[位置] ${elem.name}\n${elem.address}`;
+            message = `[<i>位置</i>] ${helper.htmlEscape(elem.name)}\n${helper.htmlEscape(elem.address)}`;
             break;
         }
       }
-      !noEscape && (message = helper.htmlEscape(message.trim()));
+      message = message.trim();
       message = messageHeader + (message && messageHeader ? '\n' : '') + message;
 
       // 处理回复

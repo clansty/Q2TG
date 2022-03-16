@@ -24,9 +24,10 @@ export default class DeleteMessageService {
     catch (e) {
       this.log.error('撤回失败', e);
       const tipMsg = await pair.tg.sendMessage({
-        message: '撤回 QQ 中对应的消息失败' +
+        message: '<i>撤回 QQ 中对应的消息失败' +
           (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
           (isOthersMsg ? '，而且无法撤回其他管理员的消息' : '') +
+          '</i>' +
           (e.message ? '\n' + e.message : ''),
         silent: true,
       });
@@ -101,12 +102,12 @@ export default class DeleteMessageService {
           await pair.tg.deleteMessages(message.replyToMsgId);
         }
         catch (e) {
-          await pair.tg.sendMessage(`删除消息失败：${e.message}`);
+          await pair.tg.sendMessage(`<i>删除消息失败</i>：${e.message}`);
         }
       }
       else {
         const tipMsg = await pair.tg.sendMessage({
-          message: '不能撤回别人的消息',
+          message: '<i>不能撤回别人的消息</i>',
           silent: true,
         });
         setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
@@ -118,7 +119,7 @@ export default class DeleteMessageService {
     }
     catch (e) {
       const tipMsg = await message.reply({
-        message: 'Bot 目前无法撤回其他用户的消息，Bot 需要「删除消息」权限',
+        message: '<i>Bot 目前无法撤回其他用户的消息，Bot 需要「删除消息」权限</i>',
         silent: true,
       });
       setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
