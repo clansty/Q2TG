@@ -33,6 +33,7 @@ export default class DeleteMessageController {
   };
 
   private onTelegramEditMessage = async (message: Api.Message) => {
+    if (message.senderId?.eq(this.instance.botMe.id)) return true;
     const pair = this.instance.forwardPairs.find(message.chat);
     if (!pair) return;
     await this.deleteMessageService.telegramDeleteMessage(message.id, pair);

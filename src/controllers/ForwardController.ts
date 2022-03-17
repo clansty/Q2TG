@@ -53,6 +53,7 @@ export default class ForwardController {
 
   private onTelegramMessage = async (message: Api.Message) => {
     try {
+      if (message.senderId?.eq(this.instance.botMe.id)) return true;
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
