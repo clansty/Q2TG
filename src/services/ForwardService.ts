@@ -23,6 +23,7 @@ import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import sharp from 'sharp';
 import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
+import OicqClient from '../client/OicqClient';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -31,7 +32,8 @@ export default class ForwardService {
   private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
-              private readonly tgBot: Telegram) {
+              private readonly tgBot: Telegram,
+              private readonly oicq: OicqClient) {
     this.log = getLogger(`ForwardService - ${instance.id}`);
   }
 
@@ -56,7 +58,7 @@ export default class ForwardService {
             break;
           }
           case 'at': {
-            if (event.source?.user_id === elem.qq)
+            if (event.source?.user_id === elem.qq || event.source?.user_id === this.oicq.uin)
               break;
           }
           case 'face':

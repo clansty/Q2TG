@@ -16,7 +16,7 @@ export default class ForwardController {
               private readonly tgUser: Telegram,
               private readonly oicq: OicqClient) {
     this.log = getLogger(`ForwardController - ${instance.id}`);
-    this.forwardService = new ForwardService(this.instance, tgBot);
+    this.forwardService = new ForwardService(this.instance, tgBot, oicq);
     oicq.addNewMessageEventHandler(this.onQqMessage);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
