@@ -112,7 +112,7 @@ export default class ForwardService {
               const dbEntry = await db.file.create({
                 data: { fileId: elem.fid, roomId: pair.qqRoomId, info: message },
               });
-              button = Button.url('⏬获取下载地址',
+              button = Button.url('📎获取下载地址',
                 `https://t.me/${this.tgBot.me.username}?start=file-${dbEntry.id}`);
             }
             break;
