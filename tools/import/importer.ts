@@ -13,6 +13,7 @@ import axios from 'axios';
 import { CustomFile } from 'telegram/client/uploads';
 import { Api } from 'telegram';
 import fs from 'fs';
+import TelegramChat from '../../src/client/TelegramChat';
 
 const TGS_MAP = ['打call', '流泪', '变形', '比心', '庆祝', '鞭炮'].map(text => `[${text}]请使用最新版手机QQ体验新功能`);
 
@@ -26,9 +27,23 @@ export default {
       { type: 'text', name: 'selfName', message: '请输入自己的 Telegram 名称（映射消息）' },
     ]));
 
-    const { chatName } = await prompts({
-      type: 'text', name: 'chatName', message: '请输入用于导入的群组名称（即将创建）',
+    let newChat: TelegramChat;
+
+    const { createNew } = await prompts({
+      type: 'confirm', name: 'createNew', message: '创建新的群组嘛',
     });
+    if (createNew) {
+      const { chatName } = await prompts({
+        type: 'text', name: 'chatName', message: '请输入用于导入的群组名称（即将创建）',
+      });
+      newChat = await telegram.createChat(chatName);
+    }
+    else {
+      const { chatId } = await prompts({
+        type: 'number', name: 'chatId', message: '请输入用于导入的群组 ID（数据库中必须有 accessHash）',
+      });
+      newChat = await telegram.getChat(chatId);
+    }
 
     console.log('正在读取记录…');
 
@@ -138,8 +153,6 @@ export default {
 
     const txtBuffer = Buffer.from(output, 'utf-8');
     try {
-      const newChat = await telegram.createChat(chatName);
-
       const importSession = await newChat.startImportSession(
         new CustomFile('record.txt', txtBuffer.length, '', txtBuffer),
         files.size,

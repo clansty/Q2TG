@@ -50,7 +50,7 @@ import importer from './importer';
 
   let isLoginOicq = !!(process.env.Q_UIN && process.env.Q_PASSWORD && process.env.Q_PLATFORM);
   !isLoginOicq && ({ isLoginOicq } = await prompts({
-    type: 'toggle', name: 'isLoginOicq', message: '要登录 OICQ 嘛，这样可以获取转发的消息记录',
+    type: 'confirm', name: 'isLoginOicq', message: '要登录 OICQ 嘛，这样可以获取转发的消息记录',
   }));
 
   let oicq: OicqClient,
@@ -105,7 +105,7 @@ import importer from './importer';
       });
       await importer.doImport(filePath.trim(), telegram, oicq, crvApi, crvKey);
       const { isContinue } = await prompts({
-        type: 'toggle', name: 'isContinue', message: '要继续导入嘛',
+        type: 'confirm', name: 'isContinue', message: '要继续导入嘛',
       });
       if (!isContinue) break;
     }
