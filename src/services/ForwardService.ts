@@ -187,10 +187,6 @@ export default class ForwardService {
       message = message.trim();
       message = messageHeader + (message && messageHeader ? '\n' : '') + message;
 
-      if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atme) {
-        message += `\n<b>@${this.instance.userMe.username}</b>`;
-      }
-
       // 处理回复
       if (event.source) {
         try {
@@ -209,6 +205,10 @@ export default class ForwardService {
         catch (e) {
           this.log.error('查找回复消息失败', e);
         }
+      }
+
+      if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atme && !replyTo) {
+        message += `\n<b>@${this.instance.userMe.username}</b>`;
       }
 
       // 发送消息
