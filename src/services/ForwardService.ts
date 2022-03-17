@@ -38,7 +38,7 @@ export default class ForwardService {
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
       const tempFiles: FileResult[] = [];
-      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0, noEscape = false;
+      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0;
       let messageHeader = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
@@ -151,8 +151,7 @@ export default class ForwardService {
               case 'forward':
                 try {
                   const messages = await pair.qq.getForwardMsg(result.resId);
-                  message = helper.htmlEscape(helper.generateForwardBrief(messages));
-                  noEscape = true;
+                  message = helper.generateForwardBrief(messages);
                   const hash = md5Hex(result.resId);
                   button = Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`);
                   // 传到 Cloudflare
@@ -185,6 +184,10 @@ export default class ForwardService {
       }
       message = message.trim();
       message = messageHeader + (message && messageHeader ? '\n' : '') + message;
+
+      if (event.message_type === 'group' && event.atme) {
+        message += `\n<b>@${this.instance.userMe.username}</b>`;
+      }
 
       // 处理回复
       if (event.source) {
@@ -219,6 +222,11 @@ export default class ForwardService {
       replyTo && (messageToSend.replyTo = replyTo);
 
       const messageSent = await pair.tg.sendMessage(messageToSend);
+
+      if (event.message_type === 'group' && event.atall) {
+        await messageSent.pin({ notify: false });
+      }
+
       tempFiles.forEach(it => it.cleanup());
       return messageSent;
     }

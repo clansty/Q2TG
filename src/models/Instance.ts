@@ -188,6 +188,10 @@ export default class Instance {
     return this.tgBot.me;
   }
 
+  get userMe() {
+    return this.tgUser.me;
+  }
+
   get ownerChat() {
     return this._ownerChat;
   }

@@ -7,6 +7,11 @@ import { ForwardMessage } from 'oicq';
 
 const log = getLogger('ForwardHelper');
 
+const htmlEscape = (text: string) =>
+  text.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
 export default {
   async downloadToCustomFile(url: string, allowWebp = false) {
     const { fileTypeFromBuffer } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
@@ -35,10 +40,7 @@ export default {
     return (size / Math.pow(BYTE, 4)).toFixed(1) + 'TB';
   },
 
-  htmlEscape: (text: string) =>
-    text.replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;'),
+  htmlEscape,
 
   processJson(json: string) {
     const jsonObj = JSON.parse(json);
@@ -142,7 +144,7 @@ export default {
     let result = '<b>转发的消息记录</b>';
     for (const message of messages) {
       result += `\n<b>${message.nickname}: </b>` +
-        `${message.raw_message.length > 10 ? message.raw_message.substring(0, 10) + '…' : message.raw_message}`;
+        `${htmlEscape(message.raw_message.length > 10 ? message.raw_message.substring(0, 10) + '…' : message.raw_message)}`;
     }
     if (count > messages.length) {
       result += `\n<b>共 ${count} 条消息记录</b>`;
