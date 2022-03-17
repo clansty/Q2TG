@@ -185,7 +185,7 @@ export default class ForwardService {
       message = message.trim();
       message = messageHeader + (message && messageHeader ? '\n' : '') + message;
 
-      if (event.message_type === 'group' && event.atme) {
+      if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atme) {
         message += `\n<b>@${this.instance.userMe.username}</b>`;
       }
 
@@ -223,7 +223,7 @@ export default class ForwardService {
 
       const messageSent = await pair.tg.sendMessage(messageToSend);
 
-      if (event.message_type === 'group' && event.atall) {
+      if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atall) {
         await messageSent.pin({ notify: false });
       }
 
