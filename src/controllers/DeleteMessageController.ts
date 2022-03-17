@@ -54,6 +54,8 @@ export default class DeleteMessageController {
 
   private onTgDeletedMessage = async (event: DeletedMessageEvent) => {
     if (!(event.peer instanceof Api.PeerChannel)) return;
+    // group anonymous bot
+    if (event._entities?.get('1087968824')) return;
     const pair = this.instance.forwardPairs.find(event.peer.channelId);
     if (!pair) return;
     for (const messageId of event.deletedIds) {
