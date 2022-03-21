@@ -14,8 +14,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import { Api } from 'telegram';
 import fs from 'fs';
 import TelegramChat from '../../src/client/TelegramChat';
-
-const TGS_MAP = ['打call', '流泪', '变形', '比心', '庆祝', '鞭炮'].map(text => `[${text}]请使用最新版手机QQ体验新功能`);
+import lottie from '../../src/constants/lottie';
 
 export default {
   async doImport(filePath: string, telegram: Telegram, oicq: OicqClient, crvApi: string, crvKey: string) {
@@ -117,7 +116,7 @@ export default {
       }
       if (message.content) {
         const FORWARD_REGEX = /\[Forward: ([A-Za-z0-9\/+=]+)]/;
-        const tgsIndex = TGS_MAP.indexOf(message.content);
+        const tgsIndex = lottie.TGS_MAP.indexOf(message.content);
         if (tgsIndex > -1) {
           output += `${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: tgs${tgsIndex}.file (file attached)\n`;
           files.add(`tgs${tgsIndex}`);

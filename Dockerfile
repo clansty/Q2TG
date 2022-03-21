@@ -33,6 +33,7 @@ COPY --from=ffmpeg / /
 COPY --from=tgs / /
 COPY --from=deps /app/ /app/
 COPY prisma/ ./prisma/
+COPY assets/ ./assets/
 COPY --from=build /app/build/ /app/build/
 
 CMD [ "yarn", "start" ]

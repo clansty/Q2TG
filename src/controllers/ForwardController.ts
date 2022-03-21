@@ -27,8 +27,8 @@ export default class ForwardController {
       const target = event.message_type === 'private' ? event.friend : event.group;
       const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
-      const tgMessage = await this.forwardService.forwardFromQq(event, pair);
-      if (tgMessage) {
+      const tgMessages = await this.forwardService.forwardFromQq(event, pair);
+      for (const tgMessage of tgMessages) {
         // 更新数据库
         await db.message.create({
           data: {
@@ -57,7 +57,6 @@ export default class ForwardController {
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
-      // 返回的信息不太够
       if (qqMessagesSent) {
         // 更新数据库
         for (const qqMessageSent of qqMessagesSent) {

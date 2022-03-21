@@ -24,6 +24,7 @@ import { Pair } from '../models/Pair';
 import sharp from 'sharp';
 import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
 import OicqClient from '../client/OicqClient';
+import lottie from '../constants/lottie';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -40,7 +41,7 @@ export default class ForwardService {
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
       const tempFiles: FileResult[] = [];
-      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0;
+      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0, tgs = -1;
       let messageHeader = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
@@ -54,7 +55,11 @@ export default class ForwardService {
         let url: string;
         switch (elem.type) {
           case 'text': {
-            message += helper.htmlEscape(elem.text);
+            tgs = lottie.TGS_MAP.indexOf(elem.text);
+            if (tgs === -1) {
+              message += helper.htmlEscape(elem.text);
+            }
+            console.log(tgs);
             break;
           }
           case 'at': {
@@ -223,17 +228,27 @@ export default class ForwardService {
       button && (messageToSend.buttons = button);
       replyTo && (messageToSend.replyTo = replyTo);
 
-      const messageSent = await pair.tg.sendMessage(messageToSend);
+      const tgMessages: Api.Message[] = [];
+
+      if (message || files.length || button) {
+        tgMessages.push(await pair.tg.sendMessage(messageToSend));
+      }
+      if (tgs>-1) {
+        tgMessages.push(await pair.tg.sendMessage({
+          file: `assets/tgs/tgs${tgs}.tgs`,
+        }));
+      }
 
       if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atall) {
-        await messageSent.pin({ notify: false });
+        await tgMessages[0].pin({ notify: false });
       }
 
       tempFiles.forEach(it => it.cleanup());
-      return messageSent;
+      return tgMessages;
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
+      return [];
     }
   }
 

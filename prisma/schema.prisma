@@ -61,7 +61,7 @@ model Message {
   instanceId Int      @default(0)
   instance   Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
-  @@unique([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
+  @@index([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
   @@index([tgChatId, tgMsgId, instanceId])
 }
 
