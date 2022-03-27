@@ -233,7 +233,7 @@ export default class ForwardService {
       if (message || files.length || button) {
         tgMessages.push(await pair.tg.sendMessage(messageToSend));
       }
-      if (tgs>-1) {
+      if (tgs > -1) {
         tgMessages.push(await pair.tg.sendMessage({
           file: `assets/tgs/tgs${tgs}.tgs`,
         }));
@@ -248,6 +248,11 @@ export default class ForwardService {
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
+      try {
+        this.instance.workMode === 'personal' && await pair.tg.sendMessage('<i>有一条来自 QQ 的消息转发失败</i>');
+      }
+      catch {
+      }
       return [];
     }
   }
@@ -444,9 +449,13 @@ export default class ForwardService {
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);
-      await message.reply({
-        message: `转发失败：${e.message}\n${e}`,
-      });
+      try {
+        await message.reply({
+          message: `<i>转发失败：${e.message}</i>\n${e}`,
+        });
+      }
+      catch {
+      }
     }
   }
 }
