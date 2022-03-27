@@ -59,7 +59,6 @@ export default class ForwardService {
             if (tgs === -1) {
               message += helper.htmlEscape(elem.text);
             }
-            console.log(tgs);
             break;
           }
           case 'at': {
