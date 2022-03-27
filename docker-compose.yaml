@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  # 如果有现成的 Postgresql 实例，可以删除这一小节
+  postgres:
+    image: postgres
+    container_name: postgresql_q2tg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_name
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+  q2tg:
+    image: ghcr.io/clansty/q2tg:raincandy
+    container_name: main_q2tg
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TG_API_ID=
+      - TG_API_HASH=
+      - TG_BOT_TOKEN=
+      - DATABASE_URL=postgres://user:password@postgres/db_name
+      - CRV_API=
+      - CRV_KEY=
+      # 如果需要通过代理联网，那么设置下面两个变量
+      #- PROXY_IP=
+      #- PROXY_PORT=
