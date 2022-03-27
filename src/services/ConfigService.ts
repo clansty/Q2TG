@@ -11,6 +11,7 @@ import { md5 } from '../utils/hashing';
 import TelegramChat from '../client/TelegramChat';
 import Instance from '../models/Instance';
 import getAboutText from '../utils/getAboutText';
+import random from '../utils/random';
 
 const DEFAULT_FILTER_ID = 114; // 514
 
@@ -122,28 +123,30 @@ export default class ConfigService {
 
   /**
    *
-   * @param roomId
+   * @param room
    * @param title
    * @param status 传入 false 的话就不显示状态信息，可以传入一条已有消息覆盖
    * @param chat
    */
-  public async createGroupAndLink(roomId: number, title?: string, status: boolean | Api.Message = true, chat?: TelegramChat) {
-    this.log.info(`创建群组并关联：${roomId}`);
-    const qEntity = this.oicq.getChat(roomId);
+  public async createGroupAndLink(room: number | Friend | Group, title?: string, status: boolean | Api.Message = true, chat?: TelegramChat) {
+    this.log.info(`创建群组并关联：${room}`);
+    if (typeof room === 'number') {
+      room = this.oicq.getChat(room);
+    }
     if (!title) {
       // TS 这边不太智能
-      if (qEntity instanceof Friend) {
-        title = qEntity.remark || qEntity.nickname;
+      if (room instanceof Friend) {
+        title = room.remark || room.nickname;
       }
       else {
-        title = qEntity.name;
+        title = room.name;
       }
     }
     let isFinish = false;
     try {
       // 状态信息
       if (status === true) {
-        const avatar = await getAvatar(roomId);
+        const avatar = await getAvatar(room);
         const statusReceiver = chat || await this.owner;
         status = await statusReceiver.sendMessage({
           message: '正在创建 Telegram 群…',
@@ -156,7 +159,7 @@ export default class ConfigService {
 
       if (!chat) {
         // 创建群聊，拿到的是 user 的 chat
-        chat = await this.tgUser.createChat(title, await getAboutText(qEntity, false));
+        chat = await this.tgUser.createChat(title, await getAboutText(room, false));
 
         // 添加机器人
         status && await status.edit({ text: '正在添加机器人…' });
@@ -184,7 +187,7 @@ export default class ConfigService {
       await chat.hidePeerSettingsBar();
 
       // 对于私聊，默认解除静音
-      if (roomId > 0) {
+      if (room instanceof Friend) {
         status && await status.edit({ text: '正在解除静音…' });
         await chat.setNotificationSettings({ silent: false, showPreviews: true });
       }
@@ -192,12 +195,12 @@ export default class ConfigService {
       // 关联写入数据库
       const chatForBot = await this.tgBot.getChat(chat.id);
       status && await status.edit({ text: '正在写数据库…' });
-      const dbPair = await this.instance.forwardPairs.add(qEntity, chatForBot);
+      const dbPair = await this.instance.forwardPairs.add(room, chatForBot);
       isFinish = true;
 
       // 更新头像
       status && await status.edit({ text: '正在更新头像…' });
-      const avatar = await getAvatar(roomId);
+      const avatar = await getAvatar(room);
       const avatarHash = md5(avatar);
       await chatForBot.setProfilePhoto(avatar);
       await db.avatarCache.create({
@@ -220,14 +223,16 @@ export default class ConfigService {
     }
   }
 
-  public async promptNewGroup(group: Group) {
+  public async promptNewQqChat(chat: Group | Friend) {
     const message = await (await this.owner).sendMessage({
-      message: '你加入了一个新的群：\n' +
-        await getAboutText(group, true) + '\n' +
+      message: '你' +
+        (chat instanceof Group ? '加入了一个新的群' : '增加了一' + random.pick('位', '个', '只', '头') + '好友') +
+        '：\n' +
+        await getAboutText(chat, true) + '\n' +
         '要创建关联群吗',
       buttons: Button.inline('创建', this.tgBot.registerCallback(async () => {
         await message.delete({ revoke: true });
-        this.createGroupAndLink(-group.group_id, group.name);
+        this.createGroupAndLink(chat, chat instanceof Group ? chat.name : chat.remark || chat.nickname);
       })),
     });
     return message;

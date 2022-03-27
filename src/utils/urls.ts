@@ -1,10 +1,17 @@
 import axios from 'axios';
+import { Friend, Group } from 'oicq';
 
-export function getAvatarUrl(roomId: number): string {
-  if (!roomId) return '';
-  return roomId < 0 ?
-    `https://p.qlogo.cn/gh/${-roomId}/${-roomId}/0` :
-    `https://q1.qlogo.cn/g?b=qq&nk=${roomId}&s=0`;
+export function getAvatarUrl(room: number | Friend | Group): string {
+  if (!room) return '';
+  if (room instanceof Friend) {
+    room = room.user_id;
+  }
+  if (room instanceof Group) {
+    room = room.group_id;
+  }
+  return room < 0 ?
+    `https://p.qlogo.cn/gh/${-room}/${-room}/0` :
+    `https://q1.qlogo.cn/g?b=qq&nk=${room}&s=0`;
 }
 
 export function getImageUrlByMd5(md5: string) {
@@ -22,6 +29,6 @@ export async function fetchFile(url: string): Promise<Buffer> {
   return res.data;
 }
 
-export function getAvatar(roomId: number) {
-  return fetchFile(getAvatarUrl(roomId));
+export function getAvatar(room: number | Friend | Group) {
+  return fetchFile(getAvatarUrl(room));
 }

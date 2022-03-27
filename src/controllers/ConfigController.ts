@@ -3,7 +3,7 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
 import regExps from '../constants/regExps';
-import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
+import { FriendIncreaseEvent, GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
 
@@ -23,6 +23,7 @@ export default class ConfigController {
     tgBot.addChannelParticipantEventHandler(this.handleChannelParticipant);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
     this.instance.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
+    this.instance.workMode === 'personal' && oicq.on('notice.friend.increase', this.handleFriendIncrease);
     this.instance.workMode === 'personal' && this.configService.setupFilter();
   }
 
@@ -124,8 +125,13 @@ export default class ConfigController {
   };
 
   private handleMemberIncrease = async (event: MemberIncreaseEvent) => {
-    if (event.user_id !== this.oicq.uin || await this.instance.forwardPairs.find(event.group)) return;
+    if (event.user_id !== this.oicq.uin || this.instance.forwardPairs.find(event.group)) return;
     // 是新群并且是自己加入了
-    await this.configService.promptNewGroup(event.group);
+    await this.configService.promptNewQqChat(event.group);
+  };
+
+  private handleFriendIncrease = async (event: FriendIncreaseEvent) => {
+    if (this.instance.forwardPairs.find(event.friend)) return;
+    await this.configService.promptNewQqChat(event.friend);
   };
 }
