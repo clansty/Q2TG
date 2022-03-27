@@ -1815,9 +1815,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "oicq@npm:2.2.0"
+"oicq@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "oicq@npm:2.2.1"
   dependencies:
     axios: ^0.24.0
     jsqr: ^1.4.0
@@ -1826,7 +1826,7 @@ __metadata:
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
     qrcode-terminal: ^0.12.0
-  checksum: 13157b51935e703d4573e4b35abd9480db2e5d3ff406641b44b3884f6178732edeb99977a4f72fec1f8c38b8b608e89da6cc1b055792c6969ee26d90b68e49f3
+  checksum: d96d7a6d31ff22ba3659e4278a76fae18581390ad7d18f26b38c959c1db6bb212cb04002676573d7529f13c3b7e44e4ea8ee6d9aadf2abf07dc56c950108be27
   languageName: node
   linkType: hard
 
@@ -2007,7 +2007,7 @@ __metadata:
     fluent-ffmpeg: ^2.1.2
     log4js: ^6.4.1
     nodejs-base64: ^2.0.0
-    oicq: ^2.2.0
+    oicq: ^2.2.1
     prisma: latest
     prompts: ^2.4.2
     sharp: ^0.30.2
