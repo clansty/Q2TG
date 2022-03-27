@@ -6,7 +6,7 @@ import { getAvatar } from '../utils/urls';
 import { md5 } from '../utils/hashing';
 import getAboutText from '../utils/getAboutText';
 
-const log = getLogger('ForwardPairs');
+const log = getLogger('ForwardPair');
 
 export class Pair {
   constructor(public readonly qq: Friend | Group,

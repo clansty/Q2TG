@@ -6,11 +6,14 @@ import db from './db';
 import { Entity } from 'telegram/define';
 import { BigInteger } from 'big-integer';
 import { Pair } from './Pair';
+import { getLogger, Logger } from 'log4js';
 
 export default class ForwardPairs {
   private pairs: Pair[] = [];
+  private readonly log: Logger;
 
   private constructor(private readonly instanceId: number) {
+    this.log = getLogger(`ForwardPairs - ${instanceId}`);
   }
 
   // 在 forwardController 创建时初始化
@@ -19,11 +22,16 @@ export default class ForwardPairs {
       where: { instanceId: this.instanceId },
     });
     for (const i of dbValues) {
-      this.pairs.push(new Pair(
-        oicq.getChat(Number(i.qqRoomId)),
-        await tgBot.getChat(Number(i.tgChatId)),
-        i.id,
-      ));
+      try {
+        const qq = oicq.getChat(Number(i.qqRoomId));
+        const tg = await tgBot.getChat(Number(i.tgChatId));
+        if (qq && tg) {
+          this.pairs.push(new Pair(qq, tg, i.id));
+        }
+      }
+      catch (e) {
+        this.log.warn(`初始化遇到问题，QQ: ${i.qqRoomId} TG: ${i.tgChatId}`);
+      }
     }
   }
 
