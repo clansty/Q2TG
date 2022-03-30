@@ -28,6 +28,7 @@ export default class InChatCommandsController {
       if (target !== this.tgBot.me.username) return false;
     }
     const pair = this.instance.forwardPairs.find(message.chat);
+    if (!pair) return false;
     switch (command) {
       case '/info':
         await this.service.info(message, pair);
