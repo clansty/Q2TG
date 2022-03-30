@@ -3,7 +3,13 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ConfigService from '../services/ConfigService';
 import regExps from '../constants/regExps';
-import { FriendIncreaseEvent, GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
+import {
+  FriendIncreaseEvent,
+  GroupMessageEvent,
+  MemberDecreaseEvent,
+  MemberIncreaseEvent,
+  PrivateMessageEvent,
+} from 'oicq';
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
 
@@ -22,6 +28,7 @@ export default class ConfigController {
     tgBot.addNewServiceMessageEventHandler(this.handleServiceMessage);
     tgBot.addChannelParticipantEventHandler(this.handleChannelParticipant);
     oicq.addNewMessageEventHandler(this.handleQqMessage);
+    oicq.on('notice.group.decrease', this.handleGroupDecrease);
     this.instance.workMode === 'personal' && oicq.on('notice.group.increase', this.handleMemberIncrease);
     this.instance.workMode === 'personal' && oicq.on('notice.friend.increase', this.handleFriendIncrease);
     this.instance.workMode === 'personal' && this.configService.setupFilter();
@@ -94,19 +101,6 @@ export default class ConfigController {
     }
   };
 
-  private handleChannelParticipant = async (event: Api.UpdateChannelParticipant) => {
-    if (event.prevParticipant && 'userId' in event.prevParticipant &&
-      event.prevParticipant.userId.eq(this.tgBot.me.id) &&
-      !event.newParticipant) {
-      this.log.warn(`群 ${event.channelId.toString()} 删除了`);
-      const pair = this.instance.forwardPairs.find(event.channelId);
-      if (pair) {
-        await this.instance.forwardPairs.remove(pair);
-        this.log.info(`已删除关联 ID: ${pair.dbId}`);
-      }
-    }
-  };
-
   private handleQqMessage = async (message: GroupMessageEvent | PrivateMessageEvent) => {
     if (message.message_type !== 'private' || this.instance.workMode === 'group') return false;
     const pair = this.instance.forwardPairs.find(message.friend);
@@ -133,5 +127,32 @@ export default class ConfigController {
   private handleFriendIncrease = async (event: FriendIncreaseEvent) => {
     if (this.instance.forwardPairs.find(event.friend)) return;
     await this.configService.promptNewQqChat(event.friend);
+  };
+
+  private handleChannelParticipant = async (event: Api.UpdateChannelParticipant) => {
+    if (event.prevParticipant && 'userId' in event.prevParticipant &&
+      event.prevParticipant.userId.eq(this.tgBot.me.id) &&
+      !event.newParticipant) {
+      this.log.warn(`群 ${event.channelId.toString()} 删除了`);
+      const pair = this.instance.forwardPairs.find(event.channelId);
+      if (pair) {
+        await this.instance.forwardPairs.remove(pair);
+        this.log.info(`已删除关联 ID: ${pair.dbId}`);
+      }
+    }
+  };
+
+  private handleGroupDecrease = async (event: MemberDecreaseEvent) => {
+    // 如果是自己被踢出群，则删除对应的配置
+    // 如果是群主解散群，则删除对应的配置
+    if (event.user_id !== this.oicq.uin) return;
+    const pair = this.instance.forwardPairs.find(event.group);
+    if (!pair) return;
+    await this.instance.forwardPairs.remove(pair);
+    this.log.info(`已删除关联 ID: ${pair.dbId}`);
+    if (this.instance.workMode === 'personal') {
+      const message = await pair.tg.sendMessage(event.dismiss ? '<i>群解散了</i>' : '<i>群已被踢出</i>');
+      await message.pin();
+    }
   };
 }
