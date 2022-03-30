@@ -144,6 +144,7 @@ export default class ConfigService {
     }
     let isFinish = false;
     try {
+      let errorMessage = '';
       // 状态信息
       if (status === true) {
         const avatar = await getAvatar(room);
@@ -171,25 +172,29 @@ export default class ConfigService {
       await chat.setAdmin(this.tgBot.me.username);
 
       // 添加到 Filter
-      status && await status.edit({ text: '正在将群添加到文件夹…' });
-      const dialogFilters = await this.tgUser.getDialogFilters();
-      const filter = dialogFilters.find(e => e.id === DEFAULT_FILTER_ID);
-      if (filter) {
-        filter.includePeers.push(utils.getInputPeer(chat));
-        await this.tgUser.updateDialogFilter({
-          id: DEFAULT_FILTER_ID,
-          filter,
-        });
+      try {
+        status && await status.edit({ text: '正在将群添加到文件夹…' });
+        const dialogFilters = await this.tgUser.getDialogFilters();
+        const filter = dialogFilters.find(e => e.id === DEFAULT_FILTER_ID);
+        if (filter) {
+          filter.includePeers.push(utils.getInputPeer(chat));
+          await this.tgUser.updateDialogFilter({
+            id: DEFAULT_FILTER_ID,
+            filter,
+          });
+        }
+      }
+      catch (e) {
+        errorMessage += `\n添加到文件夹失败：${e.message}`;
       }
 
       // 关闭【添加成员】快捷条
-      status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
-      await chat.hidePeerSettingsBar();
-
-      // 对于私聊，默认解除静音
-      if (room instanceof Friend) {
-        status && await status.edit({ text: '正在解除静音…' });
-        await chat.setNotificationSettings({ silent: false, showPreviews: true });
+      try {
+        status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
+        await chat.hidePeerSettingsBar();
+      }
+      catch (e) {
+        errorMessage += `\n关闭【添加成员】快捷条失败：${e.message}`;
       }
 
       // 关联写入数据库
@@ -199,20 +204,25 @@ export default class ConfigService {
       isFinish = true;
 
       // 更新头像
-      status && await status.edit({ text: '正在更新头像…' });
-      const avatar = await getAvatar(room);
-      const avatarHash = md5(avatar);
-      await chatForBot.setProfilePhoto(avatar);
-      await db.avatarCache.create({
-        data: { forwardPairId: dbPair.id, hash: avatarHash },
-      });
+      try {
+        status && await status.edit({ text: '正在更新头像…' });
+        const avatar = await getAvatar(room);
+        const avatarHash = md5(avatar);
+        await chatForBot.setProfilePhoto(avatar);
+        await db.avatarCache.create({
+          data: { forwardPairId: dbPair.id, hash: avatarHash },
+        });
+      }
+      catch (e) {
+        errorMessage += `\n更新头像失败：${e.message}`;
+      }
 
       // 完成
       if (status) {
         await status.edit({ text: '正在获取链接…' });
         const { link } = await chat.getInviteLink();
         await status.edit({
-          text: '创建完成！',
+          text: '创建完成！' + (errorMessage ? '但发生以下错误' + errorMessage : ''),
           buttons: Button.url('打开', link),
         });
       }
