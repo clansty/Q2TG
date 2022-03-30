@@ -50,10 +50,24 @@ export default class InChatCommandsService {
         }
         textToSend += `<b>发送时间：</b>${format(new Date(messageInfo.time * 1000), 'YYYY-M-D hh:mm:ss')}`;
         const avatar = await getAvatar(Number(messageInfo.qqSenderId));
-        await message.reply({
-          message: textToSend,
-          file: new CustomFile('avatar.png', avatar.length, '', avatar),
-        });
+        if (this.instance.workMode === 'personal') {
+          await message.reply({
+            message: textToSend,
+            file: new CustomFile('avatar.png', avatar.length, '', avatar),
+          });
+        }
+        else {
+          const sender = await this.tgBot.getChat(message.sender);
+          try {
+            await message.delete({ revoke: true });
+            await sender.sendMessage({
+              message: textToSend,
+              file: new CustomFile('avatar.png', avatar.length, '', avatar),
+            });
+          }
+          catch {
+          }
+        }
       }
       else {
         await message.reply({
