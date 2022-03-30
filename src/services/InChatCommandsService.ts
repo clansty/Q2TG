@@ -57,7 +57,7 @@ export default class InChatCommandsService {
       }
       else {
         await message.reply({
-          message: '获取消息信息失败',
+          message: '<i>获取消息信息失败</i>',
         });
       }
     }

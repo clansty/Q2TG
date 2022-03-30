@@ -35,7 +35,7 @@ export default class InChatCommandsController {
       case '/refresh':
         if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
         await pair.updateInfo();
-        await message.reply({ message: '刷新成功' });
+        await message.reply({ message: '<i>刷新成功</i>' });
         return true;
     }
   };
