@@ -15,6 +15,7 @@ import InChatCommandsController from '../controllers/InChatCommandsController';
 import { Api } from 'telegram';
 import commands from '../constants/commands';
 import TelegramChat from '../client/TelegramChat';
+import RequestController from '../controllers/RequestController';
 
 export default class Instance {
   private _owner = 0;
@@ -36,6 +37,7 @@ export default class Instance {
   public forwardPairs: ForwardPairs;
   private setupController: SetupController;
   private instanceManageController: InstanceManageController;
+  private requestController: RequestController;
   private configController: ConfigController;
   private deleteMessageController: DeleteMessageController;
   private inChatCommandsController: InChatCommandsController;
@@ -106,6 +108,7 @@ export default class Instance {
       if (this.id === 0) {
         this.instanceManageController = new InstanceManageController(this, this.tgBot);
       }
+      this.requestController = new RequestController(this, this.tgBot, this.oicq);
       this.configController = new ConfigController(this, this.tgBot, this.tgUser, this.oicq);
       this.deleteMessageController = new DeleteMessageController(this, this.tgBot, this.tgUser, this.oicq);
       this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.oicq);
