@@ -49,11 +49,15 @@ const groupInChatCommands = [
   }),
 ];
 
-const privateInChatCommands = [
+const personalInChatCommands = [
   ...groupInChatCommands,
   new Api.BotCommand({
     command: 'refresh',
     description: '刷新头像和简介',
+  }),
+  new Api.BotCommand({
+    command: 'poke',
+    description: '戳一戳',
   }),
 ];
 
@@ -64,5 +68,5 @@ export default {
   groupPrivateSuperAdminCommands,
   personalPrivateSuperAdminCommands,
   groupInChatCommands,
-  privateInChatCommands,
+  personalInChatCommands,
 };

@@ -153,7 +153,7 @@ export default class Instance {
     }
     // 设定群组内的
     await this.tgBot.setCommands(
-      this.workMode === 'personal' ? commands.privateInChatCommands : commands.groupInChatCommands,
+      this.workMode === 'personal' ? commands.personalInChatCommands : commands.groupInChatCommands,
       // 普通用户其实不需要这些命令，这样可以让用户的输入框少点东西
       new Api.BotCommandScopeChatAdmins(),
     );

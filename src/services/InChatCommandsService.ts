@@ -8,7 +8,7 @@ import { Pair } from '../models/Pair';
 import { CustomFile } from 'telegram/client/uploads';
 import { getAvatar } from '../utils/urls';
 import db from '../models/db';
-import { Friend } from 'oicq';
+import { Friend, Group } from 'oicq';
 import { format } from 'date-and-time';
 
 export default class InChatCommandsService {
@@ -80,6 +80,39 @@ export default class InChatCommandsService {
       await message.reply({
         message: await getAboutText(pair.qq, true),
         file: new CustomFile('avatar.png', avatar.length, '', avatar),
+      });
+    }
+  }
+
+  public async poke(message: Api.Message, pair: Pair) {
+    try {
+      let target: number;
+      if (message.replyToMsgId) {
+        const dbEntry = await db.message.findFirst({
+          where: {
+            tgChatId: pair.tgId,
+            tgMsgId: message.replyToMsgId,
+          },
+        });
+        if (dbEntry) {
+          target = Number(dbEntry.qqSenderId);
+        }
+      }
+      if (pair.qq instanceof Group && !target) {
+        await message.reply({
+          message: '<i>请回复一条消息</i>',
+        });
+      }
+      else if (pair.qq instanceof Group) {
+        await pair.qq.pokeMember(target);
+      }
+      else {
+        await pair.qq.poke(target && target !== pair.qqRoomId);
+      }
+    }
+    catch (e) {
+      await message.reply({
+        message: `<i>错误</i>\n${e.message}`,
       });
     }
   }
