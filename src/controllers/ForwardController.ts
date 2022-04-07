@@ -1,7 +1,14 @@
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import ForwardService from '../services/ForwardService';
-import { GroupMessageEvent, MemberIncreaseEvent, PrivateMessageEvent } from 'oicq';
+import {
+  Friend,
+  FriendPokeEvent,
+  GroupMessageEvent,
+  GroupPokeEvent,
+  MemberIncreaseEvent,
+  PrivateMessageEvent,
+} from 'oicq';
 import db from '../models/db';
 import { Api } from 'telegram';
 import { getLogger, Logger } from 'log4js';
@@ -22,6 +29,8 @@ export default class ForwardController {
     this.forwardService = new ForwardService(this.instance, tgBot, oicq);
     oicq.addNewMessageEventHandler(this.onQqMessage);
     oicq.on('notice.group.increase', this.onQqGroupMemberIncrease);
+    oicq.on('notice.friend.poke', this.onQqPoke);
+    oicq.on('notice.group.poke', this.onQqPoke);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
     instance.workMode === 'group' && tgBot.addChannelParticipantEventHandler(this.onTelegramParticipant);
@@ -113,10 +122,50 @@ export default class ForwardController {
         return false;
       const member = await this.tgBot.getChat(event.newParticipant.userId);
       await pair.qq.sendMsg(`${forwardHelper.getUserDisplayName(member.entity)} 加入了本群`);
-      await pair.qq.sendMsg(`${forwardHelper.getUserDisplayName(member.entity)} 加入了本群`);
     }
     catch (e) {
       this.log.error('处理 TG 群成员增加事件时遇到问题', e);
     }
+  };
+
+  private onQqPoke = async (event: FriendPokeEvent | GroupPokeEvent) => {
+    const target = event.notice_type === 'friend' ? event.friend : event.group;
+    const pair = this.instance.forwardPairs.find(target);
+    if (!pair?.poke) return;
+    let operatorName: string, targetName: string;
+    if (target instanceof Friend) {
+      if (event.operator_id === target.user_id) {
+        operatorName = target.remark || target.nickname;
+      }
+      else {
+        operatorName = '你';
+      }
+      if (event.operator_id === event.target_id) {
+        targetName = '自己';
+      }
+      else if (event.target_id === target.user_id) {
+        targetName = target.remark || target.nickname;
+      }
+      else {
+        targetName = '你';
+      }
+    }
+    else {
+      const operator = target.pickMember(event.operator_id);
+      await operator.renew();
+      operatorName = operator.card || operator.info.nickname;
+      if (event.operator_id === event.target_id) {
+        targetName = '自己';
+      }
+      else {
+        const targetUser = target.pickMember(event.target_id);
+        await targetUser.renew();
+        targetName = targetUser.card || targetUser.info.nickname;
+      }
+    }
+    await pair.tg.sendMessage({
+      message: `<i><b>${operatorName}</b>${event.action}<b>${targetName}</b>${event.suffix}</i>`,
+      silent: true,
+    });
   };
 }
