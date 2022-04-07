@@ -11,7 +11,9 @@ const log = getLogger('ForwardPair');
 export class Pair {
   constructor(public readonly qq: Friend | Group,
               private _tg: TelegramChat,
-              public dbId: number) {
+              public dbId: number,
+              public joinNotice: boolean,
+              public poke: boolean) {
   }
 
   // 更新 TG 群组的头像和简介

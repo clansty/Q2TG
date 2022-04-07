@@ -428,6 +428,11 @@ export default class ForwardService {
         }
       }
 
+      // 防止发送空白消息，也就是除了发送者啥都没有的消息
+      if (this.instance.workMode === 'group' && chain.length === 1) {
+        return [];
+      }
+
       const notChainableElements = chain.filter(element => typeof element === 'object' && NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const chainableElements = chain.filter(element => typeof element !== 'object' || !NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const qqMessages = [];
@@ -438,10 +443,12 @@ export default class ForwardService {
         });
       }
       if (notChainableElements.length) {
-        qqMessages.push({
-          ...await pair.qq.sendMsg(notChainableElements, source),
-          brief,
-        });
+        for (const notChainableElement of notChainableElements) {
+          qqMessages.push({
+            ...await pair.qq.sendMsg(notChainableElement, source),
+            brief,
+          });
+        }
       }
       tempFiles.forEach(it => it.cleanup());
       return qqMessages;

@@ -26,7 +26,7 @@ export default class ForwardPairs {
         const qq = oicq.getChat(Number(i.qqRoomId));
         const tg = await tgBot.getChat(Number(i.tgChatId));
         if (qq && tg) {
-          this.pairs.push(new Pair(qq, tg, i.id));
+          this.pairs.push(new Pair(qq, tg, i.id, i.joinNotice, i.poke));
         }
       }
       catch (e) {
@@ -49,7 +49,7 @@ export default class ForwardPairs {
         instanceId: this.instanceId,
       },
     });
-    this.pairs.push(new Pair(qq, tg, dbEntry.id));
+    this.pairs.push(new Pair(qq, tg, dbEntry.id, true, true));
     return dbEntry;
   }
 
