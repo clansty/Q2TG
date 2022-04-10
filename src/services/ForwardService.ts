@@ -55,6 +55,15 @@ export default class ForwardService {
         let url: string;
         switch (elem.type) {
           case 'text': {
+            // 判断微信文章
+            const WECHAT_ARTICLE_REGEX = /https?:\/\/mp\.weixin\.qq\.com\/[0-9a-zA-Z\-_+=&?#\/]+/;
+            if (WECHAT_ARTICLE_REGEX.test(elem.text)) {
+              const instantViewUrl = new URL('https://t.me/iv');
+              instantViewUrl.searchParams.set('url', WECHAT_ARTICLE_REGEX.exec(elem.text)[0]);
+              instantViewUrl.searchParams.set('rhash', '45756f9b0bb3c6');
+              message += `<a href="${instantViewUrl}">\u200e</a>`;
+            }
+            // 判断 tgs 表情
             tgs = lottie.TGS_MAP.indexOf(elem.text);
             if (tgs === -1) {
               message += helper.htmlEscape(elem.text);
