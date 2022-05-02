@@ -42,8 +42,7 @@ export default class FileAndFlashPhotoController {
       });
       const downloadUrl = await this.oicq.getChat(Number(fileInfo.roomId)).getFileUrl(fileInfo.fileId);
       await message.reply({
-        message: fileInfo.info,
-        buttons: Button.url('📎下载', downloadUrl),
+        message: fileInfo.info + `\n<a href="${downloadUrl}">下载</a>`,
       });
     }
     catch (e) {
