@@ -1414,13 +1414,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsqr@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "jsqr@npm:1.4.0"
-  checksum: 7c572971f90c42772e30d152bde63b84edf1164bde80c53942e6b2068ea31caf00ad704aa46cacc9e71645f52dbeddebc6e84ba15e883c678ee93cde690de339
-  languageName: node
-  linkType: hard
-
 "kleur@npm:^3.0.3":
   version: 3.0.3
   resolution: "kleur@npm:3.0.3"
@@ -1815,18 +1808,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "oicq@npm:2.2.1"
+"oicq@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "oicq@npm:2.3.0"
   dependencies:
     axios: ^0.24.0
-    jsqr: ^1.4.0
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-    qrcode-terminal: ^0.12.0
-  checksum: d96d7a6d31ff22ba3659e4278a76fae18581390ad7d18f26b38c959c1db6bb212cb04002676573d7529f13c3b7e44e4ea8ee6d9aadf2abf07dc56c950108be27
+  checksum: 54a423dc0d23b41d13c2285f08d1dc28893a580ee92f71c9216ae1c889bb9d91e29ae13af12fe33bb9bf94185565f1f815e6305faba55768d00591013a261d86
   languageName: node
   linkType: hard
 
@@ -2007,7 +1998,7 @@ __metadata:
     fluent-ffmpeg: ^2.1.2
     log4js: ^6.4.1
     nodejs-base64: ^2.0.0
-    oicq: ^2.2.1
+    oicq: ^2.3.0
     prisma: latest
     prompts: ^2.4.2
     sharp: ^0.30.2
@@ -2019,15 +2010,6 @@ __metadata:
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
-
-"qrcode-terminal@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "qrcode-terminal@npm:0.12.0"
-  bin:
-    qrcode-terminal: ./bin/qrcode-terminal.js
-  checksum: 51638d11d080e06ef79ef2d5cfe911202159e48d2873d6a80a3c5489b4b767acf4754811ceba4e113db8f41f61a06c163bcb17e6e18e6b34e04a7a5155dac974
-  languageName: node
-  linkType: hard
 
 "rc@npm:^1.2.7":
   version: 1.2.8
