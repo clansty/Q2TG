@@ -7,7 +7,7 @@ export function getAvatarUrl(room: number | Friend | Group): string {
     room = room.user_id;
   }
   if (room instanceof Group) {
-    room = room.group_id;
+    room = -room.group_id;
   }
   return room < 0 ?
     `https://p.qlogo.cn/gh/${-room}/${-room}/0` :
