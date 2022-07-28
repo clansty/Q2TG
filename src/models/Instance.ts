@@ -17,6 +17,9 @@ import commands from '../constants/commands';
 import TelegramChat from '../client/TelegramChat';
 import RequestController from '../controllers/RequestController';
 import OicqErrorNotifyController from '../controllers/OicqErrorNotifyController';
+import { MarkupLike } from 'telegram/define';
+import { Button } from 'telegram/tl/custom/button';
+import { CustomFile } from 'telegram/client/uploads';
 
 export default class Instance {
   private _owner = 0;
@@ -83,28 +86,46 @@ export default class Instance {
     }, `bot:${this.id}`);
     this.log.info('TG Bot 登录完成');
     (async () => {
-      if (!this.isSetup) {
+      if (!this.isSetup || !this._owner) {
         this.log.info('当前服务器未配置，请向 Bot 发送 /setup 来设置');
         this.setupController = new SetupController(this, this.tgBot);
         // 这会一直卡在这里，所以要新开一个异步来做，提前返回掉上面的
         ({ tgUser: this.tgUser, oicq: this.oicq } = await this.setupController.waitForFinish());
+        this._ownerChat = await this.tgBot.getChat(this.owner);
       }
       else {
         this.log.debug('正在登录 TG UserBot');
         this.tgUser = await Telegram.connect(`user:${this.id}`);
         this.log.info('TG UserBot 登录完成');
+        this._ownerChat = await this.tgBot.getChat(this.owner);
         this.log.debug('正在登录 OICQ');
         this.oicq = await OicqClient.create({
           uin: this.qqUin,
           password: this.qqPassword,
           platform: this.qqPlatform,
-          onVerifyDevice: () => null,
-          onVerifySlider: () => null,
-          onQrCode: () => null,
+          onQrCode: async (file) => {
+            await this.ownerChat.sendMessage({
+              message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
+              file: new CustomFile('qrcode.png', file.length, '', file),
+              buttons: Button.text('我已扫码', true, true),
+            });
+            await this.waitForOwnerInput();
+          },
+          onVerifyDevice: async (phone) => {
+            return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
+          },
+          onVerifySlider: async (url) => {
+            const res = await this.waitForOwnerInput(`收到滑块验证码 <code>${url}</code>\n` +
+              '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket\n' +
+              '或者点击下方的按钮切换到扫码登录', [
+              Button.text('切换到扫码登录', true, true),
+            ]);
+            if (res === '切换到扫码登录') return '';
+            return res;
+          },
         });
         this.log.info('OICQ 登录完成');
       }
-      this._ownerChat = await this.tgBot.getChat(this.owner);
       this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot);
       this.setupCommands();
       if (this.id === 0) {
@@ -160,6 +181,16 @@ export default class Instance {
       // 普通用户其实不需要这些命令，这样可以让用户的输入框少点东西
       new Api.BotCommandScopeChatAdmins(),
     );
+  }
+
+  private async waitForOwnerInput(message?: string, buttons?: MarkupLike, remove = false) {
+    if (!this.owner) {
+      throw new Error('应该不会运行到这里');
+    }
+    message && await this.ownerChat.sendMessage({ message, buttons: buttons || Button.clear(), linkPreview: false });
+    const reply = await this.ownerChat.waitForInput();
+    remove && await reply.delete({ revoke: true });
+    return reply.message;
   }
 
   get owner() {
