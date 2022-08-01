@@ -174,7 +174,7 @@ export default class ConfigService {
       // 添加到 Filter
       try {
         status && await status.edit({ text: '正在将群添加到文件夹…' });
-        const dialogFilters = await this.tgUser.getDialogFilters();
+        const dialogFilters = await this.tgUser.getDialogFilters() as Api.DialogFilter[];
         const filter = dialogFilters.find(e => e.id === DEFAULT_FILTER_ID);
         if (filter) {
           filter.includePeers.push(utils.getInputPeer(chat));
@@ -220,7 +220,7 @@ export default class ConfigService {
       // 完成
       if (status) {
         await status.edit({ text: '正在获取链接…' });
-        const { link } = await chat.getInviteLink();
+        const { link } = await chat.getInviteLink() as Api.ChatInviteExported;
         await status.edit({
           text: '创建完成！' + (errorMessage ? '但发生以下错误' + errorMessage : ''),
           buttons: Button.url('打开', link),
@@ -277,7 +277,7 @@ export default class ConfigService {
 
   // 创建 QQ 群组的文件夹
   public async setupFilter() {
-    const result = await this.tgUser.getDialogFilters();
+    const result = await this.tgUser.getDialogFilters() as Api.DialogFilter[];
     let filter = result.find(e => e.id === DEFAULT_FILTER_ID);
     if (!filter) {
       this.log.info('创建 TG 文件夹');

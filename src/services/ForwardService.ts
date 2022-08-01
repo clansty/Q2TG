@@ -307,7 +307,7 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        if (file.size > 20 * 1024 * 1024) {
+        if (file.size.gt(20 * 1024 * 1024)) {
           chain.push('[视频大于 20MB]');
         }
         else if (file.mimeType === 'video/webm') {
@@ -397,7 +397,7 @@ export default class ForwardService {
         chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
           `类型：${file.mimeType}\n` +
           `大小：${file.size}`);
-        if (file.size <= 20 * 1024 * 1024 && pair.qq instanceof Group) {
+        if (file.size.leq(20 * 1024 * 1024) && pair.qq instanceof Group) {
           chain.push('\n文件正在上传中…');
           pair.qq.fs.upload(await message.downloadMedia({}), '/',
             fileNameAttribute ? fileNameAttribute.fileName : 'file')

@@ -159,7 +159,7 @@ export default class TelegramChat {
     );
   }
 
-  public async setNotificationSettings(params: { showPreviews?: boolean, silent?: boolean, muteUntil?: number, sound?: string }) {
+  public async setNotificationSettings(params: ConstructorParameters<typeof Api.InputPeerNotifySettings>[0]) {
     return await this.client.invoke(
       new Api.account.UpdateNotifySettings({
         peer: new Api.InputNotifyPeer({ peer: this.inputPeer }),
@@ -198,11 +198,11 @@ export default class TelegramChat {
     );
   }
 
-  public async migrate(){
+  public async migrate() {
     return await this.client.invoke(
       new Api.messages.MigrateChat({
         chatId: this.id,
-      })
+      }),
     );
   }
 
@@ -210,7 +210,7 @@ export default class TelegramChat {
     await this.client.invoke(
       new Api.messages.CheckHistoryImportPeer({
         peer: this.entity,
-      })
+      }),
     );
     const init = await this.client.invoke(
       new Api.messages.InitHistoryImport({
