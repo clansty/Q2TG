@@ -13,9 +13,12 @@ const htmlEscape = (text: string) =>
     .replace(/>/g, '&gt;');
 
 export default {
-  async downloadToCustomFile(url: string, allowWebp = false) {
+  async downloadToCustomFile(url: string, allowWebp = false, filename?: string) {
     const { fileTypeFromBuffer } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
     const file = await fetchFile(url);
+    if (filename) {
+      return new CustomFile(filename, file.length, '', file);
+    }
     const type = await fileTypeFromBuffer(file);
     if (allowWebp) {
       return new CustomFile(`image.${type.ext}`, file.length, '', file);

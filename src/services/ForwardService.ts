@@ -109,11 +109,17 @@ export default class ForwardService {
           }
           case 'file': {
             const extName = path.extname(elem.name);
-            if (exts.images.includes(extName.toLowerCase())) {
+            // 50M 以下文件下载转发
+            if (elem.size < 1024 * 1024 * 50 || exts.images.includes(extName.toLowerCase())) {
               // 是图片
-              const url = await pair.qq.getFileUrl(elem.fid);
+              let url = await pair.qq.getFileUrl(elem.fid);
+              if (url.includes('?fname=')) {
+                url = url.split('?fname=')[0];
+                // Request path contains unescaped characters
+              }
+              this.log.info('正在发送媒体，长度', helper.hSize(elem.size));
               try {
-                files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
+                files.push(await helper.downloadToCustomFile(url, !(message || messageHeader), elem.name));
               }
               catch (e) {
                 this.log.error('下载媒体失败', e);
@@ -307,8 +313,8 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        if (file.size.gt(20 * 1024 * 1024)) {
-          chain.push('[视频大于 20MB]');
+        if (file.size.gt(50 * 1024 * 1024)) {
+          chain.push('[视频大于 50MB]');
         }
         else if (file.mimeType === 'video/webm') {
           // 把 webm 转换成 gif
@@ -397,7 +403,7 @@ export default class ForwardService {
         chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
           `类型：${file.mimeType}\n` +
           `大小：${file.size}`);
-        if (file.size.leq(20 * 1024 * 1024)) {
+        if (file.size.leq(50 * 1024 * 1024)) {
           chain.push('\n文件正在上传中…');
           if (pair.qq instanceof Group) {
             pair.qq.fs.upload(await message.downloadMedia({}), '/',
