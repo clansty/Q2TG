@@ -397,11 +397,18 @@ export default class ForwardService {
         chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
           `类型：${file.mimeType}\n` +
           `大小：${file.size}`);
-        if (file.size.leq(20 * 1024 * 1024) && pair.qq instanceof Group) {
+        if (file.size.leq(20 * 1024 * 1024)) {
           chain.push('\n文件正在上传中…');
-          pair.qq.fs.upload(await message.downloadMedia({}), '/',
-            fileNameAttribute ? fileNameAttribute.fileName : 'file')
-            .catch(err => pair.qq.sendMsg(`上传失败：\n${err.message}`));
+          if (pair.qq instanceof Group) {
+            pair.qq.fs.upload(await message.downloadMedia({}), '/',
+              fileNameAttribute ? fileNameAttribute.fileName : 'file')
+              .catch(err => pair.qq.sendMsg(`上传失败：\n${err.message}`));
+          }
+          else {
+            pair.qq.sendFile(await message.downloadMedia({}),
+              fileNameAttribute ? fileNameAttribute.fileName : 'file')
+              .catch(err => pair.qq.sendMsg(`上传失败：\n${err.message}`));
+          }
         }
         brief += '[文件]';
       }
