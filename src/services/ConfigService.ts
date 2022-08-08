@@ -148,7 +148,7 @@ export default class ConfigService {
       // 状态信息
       if (status === true) {
         const avatar = await getAvatar(room);
-        const statusReceiver = chat || await this.owner;
+        const statusReceiver = chat ? await this.tgBot.getChat(chat.id) : await this.owner;
         status = await statusReceiver.sendMessage({
           message: '正在创建 Telegram 群…',
           file: new CustomFile('avatar.png', avatar.length, '', avatar),
