@@ -167,6 +167,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.14.182
+  resolution: "@types/lodash@npm:4.14.182"
+  checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 17.0.21
   resolution: "@types/node@npm:17.0.21"
@@ -1170,6 +1177,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
 "log4js@npm:^6.3.0":
   version: 6.4.1
   resolution: "log4js@npm:6.4.1"
@@ -1676,6 +1690,7 @@ __metadata:
     "@types/cli-progress": ^3.11.0
     "@types/date-and-time": ^0.13.0
     "@types/fluent-ffmpeg": ^2.1.20
+    "@types/lodash": ^4
     "@types/node": ^18.6.3
     "@types/prompts": ^2.0.14
     "@types/sharp": ^0.30.4
@@ -1686,6 +1701,7 @@ __metadata:
     eviltransform: ^0.2.2
     file-type: ^17.1.4
     fluent-ffmpeg: ^2.1.2
+    lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
     oicq: ^2.3.1

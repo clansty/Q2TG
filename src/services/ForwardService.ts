@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
-import { FileLike, MarkupLike } from 'telegram/define';
+import { ButtonLike, FileLike, MarkupLike } from 'telegram/define';
 import { CustomFile } from 'telegram/client/uploads';
 import { getLogger, Logger } from 'log4js';
 import path from 'path';
@@ -25,6 +25,8 @@ import sharp from 'sharp';
 import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
 import OicqClient from '../client/OicqClient';
 import lottie from '../constants/lottie';
+import _ from 'lodash';
+import emoji from '../constants/emoji';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -41,7 +43,7 @@ export default class ForwardService {
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
       const tempFiles: FileResult[] = [];
-      let message = '', files: FileLike[] = [], button: MarkupLike, replyTo = 0, tgs = -1;
+      let message = '', files: FileLike[] = [], buttons: ButtonLike[] = [], replyTo = 0, tgs = -1;
       let messageHeader = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
@@ -92,6 +94,7 @@ export default class ForwardService {
               url = elem.url;
             try {
               files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
+              buttons.push(Button.url(`${emoji.picture()} 查看原图`, url));
             }
             catch (e) {
               this.log.error('下载媒体失败', e);
@@ -104,7 +107,7 @@ export default class ForwardService {
             const dbEntry = await db.flashPhoto.create({
               data: { photoMd5: (elem.file as string).substring(0, 32) },
             });
-            button = Button.url('📸查看', `https://t.me/${this.tgBot.me.username}?start=flash-${dbEntry.id}`);
+            buttons.push(Button.url('📸查看', `https://t.me/${this.tgBot.me.username}?start=flash-${dbEntry.id}`));
             break;
           }
           case 'file': {
@@ -132,8 +135,8 @@ export default class ForwardService {
             const dbEntry = await db.file.create({
               data: { fileId: elem.fid, roomId: pair.qqRoomId, info: message },
             });
-            button = Button.url('📎获取下载地址',
-              `https://t.me/${this.tgBot.me.username}?start=file-${dbEntry.id}`);
+            buttons.push(Button.url('📎获取下载地址',
+              `https://t.me/${this.tgBot.me.username}?start=file-${dbEntry.id}`));
             break;
           }
           case 'record': {
@@ -172,7 +175,7 @@ export default class ForwardService {
                   const messages = await pair.qq.getForwardMsg(result.resId);
                   message = helper.generateForwardBrief(messages);
                   const hash = md5Hex(result.resId);
-                  button = Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`);
+                  buttons.push(Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`));
                   // 传到 Cloudflare
                   axios.post(`${process.env.CRV_API}/add`, {
                     auth: process.env.CRV_KEY,
@@ -237,12 +240,12 @@ export default class ForwardService {
       else if (files.length) {
         messageToSend.file = files;
       }
-      button && (messageToSend.buttons = button);
+      buttons.length && (messageToSend.buttons = _.chunk(buttons, 3));
       replyTo && (messageToSend.replyTo = replyTo);
 
       const tgMessages: Api.Message[] = [];
 
-      if (message || files.length || button) {
+      if (message || files.length || buttons) {
         tgMessages.push(await pair.tg.sendMessage(messageToSend));
       }
       if (tgs > -1) {
