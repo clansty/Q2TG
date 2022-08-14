@@ -142,7 +142,7 @@ export default class Telegram {
     return await this.client.invoke(
       new Api.bots.SetBotCommands({
         commands,
-        langCode: 'zh',
+        langCode: '',
         scope,
       }),
     );

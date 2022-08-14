@@ -127,7 +127,9 @@ export default class Instance {
         this.log.info('OICQ 登录完成');
       }
       this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot);
-      await this.setupCommands();
+      this.setupCommands()
+        .then(() => this.log.info('命令设置成功'))
+        .catch(e => this.log.error('命令设置错误', e));
       if (this.id === 0) {
         this.instanceManageController = new InstanceManageController(this, this.tgBot);
       }
