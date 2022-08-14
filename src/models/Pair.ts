@@ -12,8 +12,9 @@ export class Pair {
   constructor(public readonly qq: Friend | Group,
               private _tg: TelegramChat,
               public dbId: number,
-              public joinNotice: boolean,
-              public poke: boolean) {
+              private _joinNotice: boolean,
+              private _poke: boolean,
+              private _enable: boolean) {
   }
 
   // 更新 TG 群组的头像和简介
@@ -55,5 +56,44 @@ export class Pair {
       data: { tgChatId: Number(value.id) },
     })
       .then(() => log.info(`出现了到超级群组的转换: ${value.id}`));
+  }
+
+  get joinNotice() {
+    return this._joinNotice;
+  }
+
+  set joinNotice(value) {
+    this._joinNotice = value;
+    db.forwardPair.update({
+      where: { id: this.dbId },
+      data: { joinNotice: value },
+    })
+      .then(() => 0);
+  }
+
+  get poke() {
+    return this._poke;
+  }
+
+  set poke(value) {
+    this._poke = value;
+    db.forwardPair.update({
+      where: { id: this.dbId },
+      data: { poke: value },
+    })
+      .then(() => 0);
+  }
+
+  get enable() {
+    return this._enable;
+  }
+
+  set enable(value) {
+    this._enable = value;
+    db.forwardPair.update({
+      where: { id: this.dbId },
+      data: { enable: value },
+    })
+      .then(() => 0);
   }
 }

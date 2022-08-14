@@ -36,6 +36,14 @@ export default class InChatCommandsController {
       case '/poke':
         await this.service.poke(message, pair);
         return true;
+      case '/forwardoff':
+        pair.enable = false;
+        await message.reply({ message: '转发已禁用' });
+        return true;
+      case '/forwardon':
+        pair.enable = true;
+        await message.reply({ message: '转发已启用' });
+        return true;
       case '/refresh':
         if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
         await pair.updateInfo();

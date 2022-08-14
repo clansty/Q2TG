@@ -47,6 +47,14 @@ const groupInChatCommands = [
     command: 'info',
     description: '查看本群或选定消息的详情',
   }),
+  new Api.BotCommand({
+    command: 'forwardoff',
+    description: '暂停消息转发',
+  }),
+  new Api.BotCommand({
+    command: 'forwardon',
+    description: '恢复消息转发',
+  }),
 ];
 
 const personalInChatCommands = [

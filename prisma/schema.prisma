@@ -74,6 +74,7 @@ model ForwardPair {
   instance    Instance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   joinNotice  Boolean       @default(true)
   poke        Boolean       @default(true)
+  enable      Boolean       @default(true)
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])

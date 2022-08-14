@@ -41,6 +41,7 @@ export default class ForwardController {
       const target = event.message_type === 'private' ? event.friend : event.group;
       const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
+      if (!pair.enable) return;
       const tgMessages = await this.forwardService.forwardFromQq(event, pair);
       for (const tgMessage of tgMessages) {
         // 更新数据库
@@ -70,6 +71,7 @@ export default class ForwardController {
       if (message.senderId?.eq(this.instance.botMe.id)) return true;
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
+      if (!pair.enable) return;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
       if (qqMessagesSent) {
         // 更新数据库
