@@ -276,6 +276,7 @@ export default class ForwardService {
     try {
       const tempFiles: FileResult[] = [];
       const chain: Sendable = [];
+      const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '';
       this.instance.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
@@ -460,6 +461,12 @@ export default class ForwardService {
       const chainableElements = chain.filter(element => typeof element !== 'object' || !NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const qqMessages = [];
       if (chainableElements.length) {
+        if (this.instance.workMode === 'group') {
+          chainableElements.push({
+            type: 'mirai',
+            data: JSON.stringify({ id: senderId }, undefined, 0),
+          });
+        }
         qqMessages.push({
           ...await pair.qq.sendMsg(chainableElements, source),
           brief,
