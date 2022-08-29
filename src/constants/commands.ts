@@ -42,11 +42,15 @@ const personalPrivateSuperAdminCommands = [
 ];
 
 // inChat 表示在关联了的转发群组中的命令
-const groupInChatCommands = [
+const inChatCommands = [
   new Api.BotCommand({
     command: 'info',
     description: '查看本群或选定消息的详情',
   }),
+];
+
+const groupInChatCommands = [
+  ...inChatCommands,
   new Api.BotCommand({
     command: 'forwardoff',
     description: '暂停消息转发',
@@ -58,7 +62,7 @@ const groupInChatCommands = [
 ];
 
 const personalInChatCommands = [
-  ...groupInChatCommands,
+  ...inChatCommands,
   new Api.BotCommand({
     command: 'refresh',
     description: '刷新头像和简介',
