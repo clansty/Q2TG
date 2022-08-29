@@ -4,7 +4,6 @@ import { Api } from 'telegram';
 import { getLogger, Logger } from 'log4js';
 import { Button } from 'telegram/tl/custom/button';
 import setupHelper from '../helpers/setupHelper';
-import { Platform } from 'oicq';
 import commands from '../constants/commands';
 import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
@@ -82,19 +81,10 @@ export default class SetupController {
         [Button.text('安卓平板', true, true)],
         [Button.text('iPad', true, true)],
         [Button.text('macOS', true, true)],
-        [Button.text('安卓手表', true, true)],
       ]);
       const platform = setupHelper.convertTextToPlatform(platformText);
-      let password = '';
-      const isPasswordLogin = platform === Platform.Watch ? '' :
-        await this.setupService.waitForOwnerInput('用密码登录吗？', [
-          [Button.text('密码登录', true, true)],
-          [Button.text('二维码登录', true, true)],
-        ]);
-      if (isPasswordLogin === '密码登录') {
-        password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
-        password = md5Hex(password);
-      }
+      let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
+      password = md5Hex(password);
       this.oicq = await this.setupService.createOicq(uin, password, platform);
       await this.setupService.informOwner(`登录成功`);
       this.setupService.saveOicqLoginInfo(uin, password, platform);
