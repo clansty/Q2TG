@@ -1,4 +1,13 @@
-import { Client, DiscussMessageEvent, GroupMessageEvent, LogLevel, Platform, PrivateMessageEvent } from 'oicq';
+import {
+  Client,
+  DiscussMessageEvent,
+  Friend,
+  Group,
+  GroupMessageEvent,
+  LogLevel,
+  Platform,
+  PrivateMessageEvent,
+} from 'oicq';
 import Buffer from 'buffer';
 import { execSync } from 'child_process';
 import random from '../utils/random';
@@ -122,7 +131,7 @@ export default class OicqClient extends Client {
     this.onMessageHandlers.splice(this.onMessageHandlers.indexOf(handler), 1);
   }
 
-  public getChat(roomId: number) {
+  public getChat(roomId: number): Group | Friend {
     if (roomId > 0) {
       return this.pickFriend(roomId);
     }

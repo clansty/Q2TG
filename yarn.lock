@@ -1534,16 +1534,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@npm:^2.3.1":
+"oicq@git+https://github.com/takayama-lily/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555":
   version: 2.3.1
-  resolution: "oicq@npm:2.3.1"
+  resolution: "oicq@https://github.com/takayama-lily/oicq.git#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555"
   dependencies:
     axios: ^0.27.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: 7f15733fdb07b58c60c5ce3f64d786ab6c691be8323d343850f444eca3f69e62981b649d60ccd66a8d36fd2591dfd778751f745042ca6c5fd2ca0a965c730af0
+  checksum: 27932ed34fc2fafd6aa6a2f7b4ed361ade6caed98b1b36c465c011f7716240c6c44bec1d8c36f52c878bc1f28df03c485236bd93932cdd462509401471b7be21
   languageName: node
   linkType: hard
 
@@ -1704,7 +1704,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: ^2.3.1
+    oicq: "git+https://github.com/takayama-lily/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555"
     prisma: ^4.1.1
     prompts: ^2.4.2
     sharp: ^0.30.7
