@@ -4,6 +4,7 @@ import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
+import { Group } from 'oicq';
 
 export default class InChatCommandsController {
   private readonly service: InChatCommandsService;
@@ -21,7 +22,8 @@ export default class InChatCommandsController {
     if (!message.message) return;
     const messageParts = message.message.split(' ');
     if (!messageParts.length || !messageParts[0].startsWith('/')) return;
-    let command: string = messageParts[0];
+    let command: string = messageParts.shift();
+    const params = messageParts.join(' ');
     if (command.includes('@')) {
       let target: string;
       [command, target] = command.split('@');
@@ -48,6 +50,20 @@ export default class InChatCommandsController {
         if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
         await pair.updateInfo();
         await message.reply({ message: '<i>刷新成功</i>' });
+        return true;
+      case '/nick':
+        if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
+        if (!(pair.qq instanceof Group)) return;
+        if (!params) {
+          await message.reply({
+            message: `群名片：<i>${pair.qq.pickMember(this.instance.qqUin, true).card}</i>`,
+          });
+          return true;
+        }
+        const result = await pair.qq.setCard(this.instance.qqUin, params);
+        await message.reply({
+          message: '设置' + (result ? '成功' : '失败'),
+        });
         return true;
     }
   };

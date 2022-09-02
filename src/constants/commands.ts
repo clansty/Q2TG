@@ -71,6 +71,10 @@ const personalInChatCommands = [
     command: 'poke',
     description: '戳一戳',
   }),
+  new Api.BotCommand({
+    command: 'nick',
+    description: '获取/设置群名片',
+  }),
 ];
 
 export default {
