@@ -318,7 +318,7 @@ export default class ForwardService {
         if (file.size.gt(50 * 1024 * 1024)) {
           chain.push('[视频大于 50MB]');
         }
-        else if (file.mimeType === 'video/webm') {
+        else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
           const convertedPath = path.resolve(path.join('./data/cache/webm', message.document.id.toString(16) + '.gif'));
           // 先从缓存中找
