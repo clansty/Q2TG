@@ -72,31 +72,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "@prisma/client@npm:4.1.1"
+"@prisma/client@git+https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7":
+  version: 4.2.1
+  resolution: "@prisma/client@https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7"
   dependencies:
-    "@prisma/engines-version": 4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8
+    "@prisma/engines-version": 4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826
   peerDependencies:
     prisma: "*"
   peerDependenciesMeta:
     prisma:
       optional: true
-  checksum: 0251ebba98c5212e5d2fabfadac945c5977b6e48c1baeaa5d962cd2d486524304e14f320870df879c7cc83de2783d0dd3fee9c63bcdd300bd88d2b5f8f461ed0
+  checksum: 6f0c726bb3cc4c0287f471408a7fd8a2c4dc3eed6ed17f7e971878b72bf372eeda12f38937e225300a32f56eb2705a5e7bff6d166bb12a31410db135d6c67101
   languageName: node
   linkType: hard
 
-"@prisma/engines-version@npm:4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8":
-  version: 4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8
-  resolution: "@prisma/engines-version@npm:4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8"
-  checksum: 6c2e937663439589412f5b5765abbae6aeed0df10640a9fdd5a8d39b77981e95b5b5871ed865e50ef8e4c150511f455d7b3acbf44cd3cae4a67732489dc58fec
-  languageName: node
-  linkType: hard
-
-"@prisma/engines@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@prisma/engines@npm:4.1.1"
-  checksum: 23877091007c288065b002cedc70273bc1a5eb601e3bae767549521aeffbd58775f079ba61fd9516546befe0a6c50db2fb2469f33b1e2ee847f5b1056ac4a07a
+"@prisma/engines-version@npm:4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826":
+  version: 4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826
+  resolution: "@prisma/engines-version@npm:4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826"
+  checksum: 65975c69a361b56a85cf3652c8d7aec7549abe574158e423a64bc0be4bee83fe72ac2abd60133f776f3d410f97e7dc8c5dc516791ec963703cc6f914d378efc4
   languageName: node
   linkType: hard
 
@@ -1622,18 +1615,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "prisma@npm:4.1.1"
-  dependencies:
-    "@prisma/engines": 4.1.1
-  bin:
-    prisma: build/index.js
-    prisma2: build/index.js
-  checksum: fdaa0cb464e00700539eced334f743fbc669336076cbe12c3a7bbd043c546baa9792064a216ae2ca061c5cb05d720b8fc6e2c6f7e434ab3d1d63ec9f25fa525f
-  languageName: node
-  linkType: hard
-
 "probe-image-size@npm:^7.2.2":
   version: 7.2.3
   resolution: "probe-image-size@npm:7.2.3"
@@ -1686,7 +1667,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "q2tg@workspace:."
   dependencies:
-    "@prisma/client": ^4.1.1
+    "@prisma/client": "git+https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7"
     "@types/cli-progress": ^3.11.0
     "@types/date-and-time": ^0.13.0
     "@types/fluent-ffmpeg": ^2.1.20
@@ -1705,7 +1686,6 @@ __metadata:
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
     oicq: "git+https://github.com/takayama-lily/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555"
-    prisma: ^4.1.1
     prompts: ^2.4.2
     sharp: ^0.30.7
     silk-sdk: ^0.2.2
@@ -1714,6 +1694,8 @@ __metadata:
     ts-node: ^10.9.1
     tsc: ^2.0.4
     typescript: ^4.7.4
+  bin:
+    q2tg: build/src/index.js
   languageName: unknown
   linkType: soft
 

@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
-import { ButtonLike, FileLike, MarkupLike } from 'telegram/define';
+import { ButtonLike, FileLike } from 'telegram/define';
 import { CustomFile } from 'telegram/client/uploads';
 import { getLogger, Logger } from 'log4js';
 import path from 'path';
