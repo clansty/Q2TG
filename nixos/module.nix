@@ -11,6 +11,20 @@ with pkgs.lib;
       type = types.package;
       default = import ../default.nix { inherit pkgs; };
     };
+    tgs-to-gif-package = mkOption {
+      type = types.package;
+      default =
+        let
+          clansty-flake = pkgs.fetchFromGitHub {
+            owner = "Clansty";
+            repo = "flake";
+            rev = "d602b0359456457b8d92d1f84e42e7aec3baa9be";
+            fetchSubmodules = true;
+            sha256 = "na+HvJ7B/rP+qew1b58hTkHzc6BRvOERUHgva7cEY5k=";
+          };
+        in
+        pkgs.callPackage "${clansty-flake}/packages/tgs-to-gif" { };
+    };
     tg.api-id = mkOption {
       type = types.int;
     };

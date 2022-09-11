@@ -18,7 +18,7 @@ in
     };
 
     systemd.services.q2tg = {
-      description = "Q2TG checkin";
+      description = "Q2TG service";
       path = [ cfg.package ];
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
@@ -35,6 +35,7 @@ in
         PRISMA_QUERY_ENGINE_LIBRARY = "${pkgs.prisma-engines}/lib/libquery_engine.node";
         PRISMA_INTROSPECTION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/introspection-engine";
         PRISMA_FMT_BINARY = "${pkgs.prisma-engines}/bin/prisma-fmt";
+        TGS_TO_GIF = "${cfg.tgs-to-gif-package}/bin/tgs-to-gif";
       };
       serviceConfig = {
         User = "q2tg";
