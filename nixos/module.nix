@@ -11,6 +11,10 @@ with pkgs.lib;
       type = types.package;
       default = import ../default.nix { inherit pkgs; };
     };
+    ffmpeg-package = mkOption {
+      type = types.package;
+      default = pkgs.ffmpeg;
+    };
     tgs-to-gif-package = mkOption {
       type = types.package;
       default =

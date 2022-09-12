@@ -36,6 +36,8 @@ in
         PRISMA_INTROSPECTION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/introspection-engine";
         PRISMA_FMT_BINARY = "${pkgs.prisma-engines}/bin/prisma-fmt";
         TGS_TO_GIF = "${cfg.tgs-to-gif-package}/bin/tgs-to-gif";
+        FFMPEG_PATH = "${cfg.ffmpeg-package}/bin/ffmpeg";
+        FFPROBE_PATH = "${cfg.ffmpeg-package}/bin/ffprobe";
       };
       serviceConfig = {
         User = "q2tg";

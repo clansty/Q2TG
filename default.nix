@@ -10,7 +10,6 @@
   '';
 
   buildInputs = attrs.buildInputs ++ (with pkgs; [
-    ffmpeg
     (vips.override {
       libjxl = libjxl.overrideAttrs (attrs: {
         doCheck = false;
