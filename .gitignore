@@ -738,3 +738,4 @@ build
 !.yarn/sdks
 !.yarn/versions
 result
+.direnv/
