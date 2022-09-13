@@ -14,6 +14,9 @@ pkgs.mkShell {
     })
   ];
 
+  TGS_TO_GIF =
+    let package = pkgs.callPackage "${import ./nixos/clansty-flake.nix pkgs}/packages/tgs-to-gif" { };
+    in "${package}/bin/tgs-to-gif";
   PRISMA_MIGRATION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/migration-engine";
   PRISMA_QUERY_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/query-engine";
   PRISMA_QUERY_ENGINE_LIBRARY = "${pkgs.prisma-engines}/lib/libquery_engine.node";
