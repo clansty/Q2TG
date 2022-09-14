@@ -21,7 +21,7 @@ with pkgs.lib;
     };
     prisma-package = mkOption {
       type = types.package;
-      default = callPackage ./prismaPatched.nix { };
+      default = pkgs.callPackage ./prismaPatched.nix { };
     };
     tg.api-id = mkOption {
       type = types.int;
@@ -42,11 +42,11 @@ with pkgs.lib;
       type = types.str;
     };
     proxy.ip = mkOption {
-      type = types.str;
+      type = types.nullOr types.str;
       default = null;
     };
     proxy.port = mkOption {
-      type = types.int;
+      type = types.nullOr types.int;
       default = null;
     };
   };

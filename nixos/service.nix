@@ -30,7 +30,7 @@ in
         CRV_API = cfg.crv.api;
         CRV_KEY = cfg.crv.key;
         DATABASE_URL = cfg.database;
-        PROXY_IP = cfg.proxy.ip;
+        PROXY_IP = toString cfg.proxy.ip;
         PROXY_PORT = toString cfg.proxy.port;
         PRISMA_MIGRATION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/migration-engine";
         PRISMA_QUERY_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/query-engine";
@@ -45,7 +45,7 @@ in
         User = "q2tg";
         Group = "q2tg";
         Restart = "on-failure";
-        ExecStartPre = "${cfg.prisma-package}/bin/prisma db push --accept-data-loss --skip-generate";
+        ExecStartPre = "${cfg.prisma-package}/bin/prisma db push --accept-data-loss --skip-generate --schema ${cfg.package}/libexec/q2tg/node_modules/.prisma/client/schema.prisma";
         ExecStart = "${cfg.package}/bin/q2tg";
       };
     };
