@@ -41,5 +41,13 @@ with pkgs.lib;
     database = mkOption {
       type = types.str;
     };
+    proxy.ip = mkOption {
+      type = types.str;
+      default = null;
+    };
+    proxy.port = mkOption {
+      type = types.int;
+      default = null;
+    };
   };
 }

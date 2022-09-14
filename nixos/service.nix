@@ -30,6 +30,8 @@ in
         CRV_API = cfg.crv.api;
         CRV_KEY = cfg.crv.key;
         DATABASE_URL = cfg.database;
+        PROXY_IP = cfg.proxy.ip;
+        PROXY_PORT = toString cfg.proxy.port;
         PRISMA_MIGRATION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/migration-engine";
         PRISMA_QUERY_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/query-engine";
         PRISMA_QUERY_ENGINE_LIBRARY = "${pkgs.prisma-engines}/lib/libquery_engine.node";
