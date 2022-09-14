@@ -19,6 +19,10 @@ with pkgs.lib;
       type = types.package;
       default = pkgs.callPackage "${import ./clansty-flake.nix pkgs}/packages/tgs-to-gif" { };
     };
+    prisma-package = mkOption {
+      type = types.package;
+      default = callPackage ./prismaPatched.nix { };
+    };
     tg.api-id = mkOption {
       type = types.int;
     };

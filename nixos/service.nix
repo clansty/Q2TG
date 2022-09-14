@@ -42,6 +42,8 @@ in
       serviceConfig = {
         User = "q2tg";
         Group = "q2tg";
+        Restart = "on-failure";
+        ExecStartPre = "${cfg.prisma-package}/bin/prisma db push --accept-data-loss --skip-generate";
         ExecStart = "${cfg.package}/bin/q2tg";
       };
     };
