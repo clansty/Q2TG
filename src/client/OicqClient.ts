@@ -104,6 +104,8 @@ export default class OicqClient extends Client {
         platform: params.platform,
         data_dir: path.resolve('./data'),
         log_level: LOG_LEVEL,
+        ffmpeg_path: process.env.FFMPEG_PATH,
+        ffprobe_path: process.env.FFPROBE_PATH,
       })
         .on('system.login.device', loginDeviceHandler)
         .on('system.login.slider', loginSliderHandler)
