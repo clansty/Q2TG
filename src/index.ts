@@ -3,7 +3,6 @@ import Instance from './models/Instance';
 import db from './models/db';
 
 (async () => {
-  process.env.DATA_DIR && process.chdir(process.env.DATA_DIR);
   configure({
     appenders: {
       console: { type: 'console' },

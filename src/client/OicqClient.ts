@@ -13,8 +13,8 @@ import { execSync } from 'child_process';
 import random from '../utils/random';
 import fs from 'fs';
 import fsP from 'fs/promises';
-import path from 'path';
 import { Config } from 'oicq/lib/client';
+import dataPath from '../helpers/dataPath';
 
 const LOG_LEVEL: LogLevel = 'warn';
 
@@ -77,8 +77,8 @@ export default class OicqClient extends Client {
         resolve(client);
       }
 
-      if (!fs.existsSync(`./data/${params.uin}/device-${params.uin}.json`)) {
-        await fsP.mkdir(`./data/${params.uin}`, { recursive: true });
+      if (!fs.existsSync(dataPath(`${params.uin}/device-${params.uin}.json`))) {
+        await fsP.mkdir(dataPath(params.uin.toString()), { recursive: true });
 
         const device = {
           product: 'Q2TG',
@@ -97,12 +97,12 @@ export default class OicqClient extends Client {
           imei: random.imei(),
         };
 
-        await fsP.writeFile(`./data/${params.uin}/device-${params.uin}.json`, JSON.stringify(device, null, 0), 'utf-8');
+        await fsP.writeFile(dataPath(`${params.uin}/device-${params.uin}.json`), JSON.stringify(device, null, 0), 'utf-8');
       }
 
       const client = new this(params.uin, {
         platform: params.platform,
-        data_dir: path.resolve('./data'),
+        data_dir: dataPath(),
         log_level: LOG_LEVEL,
         ffmpeg_path: process.env.FFMPEG_PATH,
         ffprobe_path: process.env.FFPROBE_PATH,

@@ -15,18 +15,15 @@ import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
 import silk from '../encoding/silk';
-import fs from 'fs';
-import tgsToGif from '../encoding/tgsToGif';
 import axios from 'axios';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
-import sharp from 'sharp';
-import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
 import OicqClient from '../client/OicqClient';
 import lottie from '../constants/lottie';
 import _ from 'lodash';
 import emoji from '../constants/emoji';
+import convert from '../helpers/convert';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -291,13 +288,7 @@ export default class ForwardService {
         message.document?.mimeType?.startsWith('image/')) {
         // 将 webp 转换为 png，防止 macOS 不识别
         if (message.document?.mimeType === 'image/webp') {
-          const convertedPath = path.resolve(path.join('./data/cache/webp', message.document.id.toString(16) + '.png'));
-          // 先从缓存中找
-          if (!fs.existsSync(convertedPath)) {
-            await fsP.mkdir('./data/cache/webp', { recursive: true });
-            const webpData = await message.downloadMedia({});
-            await sharp(webpData).png().toFile(convertedPath);
-          }
+          const convertedPath = await convert.png(message.document.id.toString(16), () => message.downloadMedia({}));
           chain.push({
             type: 'image',
             file: convertedPath,
@@ -320,15 +311,7 @@ export default class ForwardService {
         }
         else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
-          const convertedPath = path.resolve(path.join('./data/cache/webm', message.document.id.toString(16) + '.gif'));
-          // 先从缓存中找
-          if (!fs.existsSync(convertedPath)) {
-            await fsP.mkdir('./data/cache/webm', { recursive: true });
-            const temp = await createTempFile();
-            tempFiles.push(temp);
-            await fsP.writeFile(temp.path, await message.downloadMedia({}));
-            await convertWithFfmpeg(temp.path, convertedPath, 'gif');
-          }
+          const convertedPath = await convert.webm2gif(message.document.id.toString(16), () => message.downloadMedia({}));
           chain.push({
             type: 'image',
             file: convertedPath,
@@ -345,19 +328,7 @@ export default class ForwardService {
       }
       else if (message.sticker) {
         // 一定是 tgs
-        let gifPath: string;
-        const tempTgsPath = path.resolve(path.join('./data/cache/tgs', message.sticker.id.toString(16)));
-        // 先从缓存中找
-        if (fs.existsSync(tempTgsPath + '.gif')) {
-          gifPath = tempTgsPath + '.gif';
-        }
-        else {
-          await fsP.mkdir('./data/cache/tgs', { recursive: true });
-          await fsP.writeFile(tempTgsPath, await message.downloadMedia({}));
-          await tgsToGif(tempTgsPath);
-          await fsP.rm(tempTgsPath);
-          gifPath = tempTgsPath + '.gif';
-        }
+        const gifPath = await convert.tgs2gif(message.sticker.id.toString(16), () => message.downloadMedia({}));
         chain.push({
           type: 'image',
           file: gifPath,
