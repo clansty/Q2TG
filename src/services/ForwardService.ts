@@ -11,7 +11,7 @@ import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
 import { SendMessageParams } from 'telegram/client/messages';
 import { Api } from 'telegram';
-import { file, file as createTempFile, FileResult } from 'tmp-promise';
+import { file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
 import silk from '../encoding/silk';
@@ -98,7 +98,7 @@ export default class ForwardService {
             if ('url' in elem)
               url = elem.url;
             try {
-              if (elem.type === 'image' && elem.asface) {
+              if (elem.type === 'image' && elem.asface && !(elem.file as string).toLowerCase().endsWith('.gif')) {
                 useSticker(await convert.webp(elem.file as string, () => fetchFile(elem.url)));
               }
               else {
