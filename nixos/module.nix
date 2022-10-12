@@ -1,3 +1,4 @@
+{ self }:
 { pkgs, config, ... }:
 
 with pkgs.lib;
@@ -9,7 +10,7 @@ with pkgs.lib;
     enable = mkEnableOption "Enables Q2TG service";
     package = mkOption {
       type = types.package;
-      default = import ../default.nix { inherit pkgs; };
+      default = self.packages.${pkgs.system}.default;
     };
     ffmpeg-package = mkOption {
       type = types.package;
@@ -17,11 +18,11 @@ with pkgs.lib;
     };
     tgs-to-gif-package = mkOption {
       type = types.package;
-      default = pkgs.callPackage "${import ./clansty-flake.nix pkgs}/packages/tgs-to-gif" { };
+      default = self.packages.${pkgs.system}.tgs-to-gif;
     };
     prisma-package = mkOption {
       type = types.package;
-      default = pkgs.callPackage ./prismaPatched.nix { };
+      default = self.packages.${pkgs.system}.prisma-patched;
     };
     tg.api-id = mkOption {
       type = types.int;

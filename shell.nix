@@ -1,11 +1,11 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs, flakePkgs }:
 pkgs.mkShell {
-  buildInputs = with pkgs; [
+  buildInputs = with pkgs; with flakePkgs; [
     yarn
     nodejs-18_x
     python3
     ffmpeg
-    (callPackage ./nixos/prismaPatched.nix { })
+    prisma-patched
     pkg-config
     (vips.override {
       libjxl = pkgs.libjxl.overrideAttrs (attrs: {
@@ -14,9 +14,7 @@ pkgs.mkShell {
     })
   ];
 
-  TGS_TO_GIF =
-    let package = pkgs.callPackage "${import ./nixos/clansty-flake.nix pkgs}/packages/tgs-to-gif" { };
-    in "${package}/bin/tgs-to-gif";
+  TGS_TO_GIF = "${flakePkgs.tgs-to-gif}/bin/tgs-to-gif";
   PRISMA_MIGRATION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/migration-engine";
   PRISMA_QUERY_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/query-engine";
   PRISMA_QUERY_ENGINE_LIBRARY = "${pkgs.prisma-engines}/lib/libquery_engine.node";
