@@ -50,6 +50,12 @@ export default class ForwardService {
         }
         messageHeader = `<b>${helper.htmlEscape(sender)}</b>: `;
       }
+      const useSticker = (file: FileLike) => {
+        files.push(file);
+        if (event.message_type === 'group') {
+          buttons.push(Button.inline(`${sender}:`));
+        }
+      };
       for (const elem of event.message) {
         let url: string;
         switch (elem.type) {
@@ -68,10 +74,7 @@ export default class ForwardService {
               message += helper.htmlEscape(elem.text);
             }
             else {
-              files.push(`assets/tgs/tgs${tgs}.tgs`);
-              if (event.message_type === 'group') {
-                buttons.push(Button.inline(`${sender}:`));
-              }
+              useSticker(`assets/tgs/tgs${tgs}.tgs`);
             }
             break;
           }
@@ -85,8 +88,7 @@ export default class ForwardService {
             break;
           }
           case 'bface': {
-            const file = await fetchFile(getBigFaceUrl(elem.file));
-            files.push(new CustomFile('face.png', file.length, '', file));
+            useSticker(await convert.webp(elem.file, () => fetchFile(getBigFaceUrl(elem.file))));
             break;
           }
           case 'video':
@@ -96,8 +98,13 @@ export default class ForwardService {
             if ('url' in elem)
               url = elem.url;
             try {
-              files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
-              buttons.push(Button.url(`${emoji.picture()} 查看原图`, url));
+              if (elem.type === 'image' && elem.asface) {
+                useSticker(await convert.webp(elem.file as string, () => fetchFile(elem.url)));
+              }
+              else {
+                files.push(await helper.downloadToCustomFile(url, !(message || messageHeader)));
+                buttons.push(Button.url(`${emoji.picture()} 查看原图`, url));
+              }
             }
             catch (e) {
               this.log.error('下载媒体失败', e);

@@ -39,4 +39,8 @@ export default {
       await tgsToGif(tempTgsPath);
       await fsP.rm(tempTgsPath);
     }),
+  webp: (key: string, imageData: () => Promise<Buffer | Uint8Array | string>) =>
+    cachedConvert(key + '.webp', async (convertedPath) => {
+      await sharp(await imageData()).webp().toFile(convertedPath);
+    }),
 };
