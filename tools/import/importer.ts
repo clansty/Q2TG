@@ -116,7 +116,7 @@ export default {
       }
       if (message.content) {
         const FORWARD_REGEX = /\[Forward: ([A-Za-z0-9\/+=]+)]/;
-        const tgsIndex = lottie.TGS_MAP.indexOf(message.content);
+        const tgsIndex = lottie.getTgsIndex(message.content);
         if (tgsIndex > -1) {
           output += `${format(date, 'DD/MM/YYYY, HH:mm')} - ${sender}: tgs${tgsIndex}.file (file attached)\n`;
           files.add(`tgs${tgsIndex}`);

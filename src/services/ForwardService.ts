@@ -11,7 +11,7 @@ import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
 import { SendMessageParams } from 'telegram/client/messages';
 import { Api } from 'telegram';
-import { file as createTempFile, FileResult } from 'tmp-promise';
+import { file, file as createTempFile, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
 import silk from '../encoding/silk';
@@ -40,11 +40,11 @@ export default class ForwardService {
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
       const tempFiles: FileResult[] = [];
-      let message = '', files: FileLike[] = [], buttons: ButtonLike[] = [], replyTo = 0, tgs = -1;
-      let messageHeader = '';
+      let message = '', files: FileLike[] = [], buttons: ButtonLike[] = [], replyTo = 0;
+      let messageHeader = '', sender = '';
       if (event.message_type === 'group') {
         // 产生头部，这和工作模式没有关系
-        let sender = event.sender.card || event.sender.nickname;
+        sender = event.sender.card || event.sender.nickname;
         if (event.anonymous) {
           sender = `[${sender}]${event.anonymous.name}`;
         }
@@ -63,9 +63,15 @@ export default class ForwardService {
               message += `<a href="${instantViewUrl}">\u200e</a>`;
             }
             // 判断 tgs 表情
-            tgs = lottie.TGS_MAP.indexOf(elem.text);
+            let tgs = lottie.getTgsIndex(elem.text);
             if (tgs === -1) {
               message += helper.htmlEscape(elem.text);
+            }
+            else {
+              files.push(`assets/tgs/tgs${tgs}.tgs`);
+              if (event.message_type === 'group') {
+                buttons.push(Button.inline(`${sender}:`));
+              }
             }
             break;
           }
@@ -240,23 +246,14 @@ export default class ForwardService {
       buttons.length && (messageToSend.buttons = _.chunk(buttons, 3));
       replyTo && (messageToSend.replyTo = replyTo);
 
-      const tgMessages: Api.Message[] = [];
-
-      if (message || files.length || buttons) {
-        tgMessages.push(await pair.tg.sendMessage(messageToSend));
-      }
-      if (tgs > -1) {
-        tgMessages.push(await pair.tg.sendMessage({
-          file: `assets/tgs/tgs${tgs}.tgs`,
-        }));
-      }
+      const tgMessage = await pair.tg.sendMessage(messageToSend);
 
       if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atall) {
-        await tgMessages[0].pin({ notify: false });
+        await tgMessage.pin({ notify: false });
       }
 
       tempFiles.forEach(it => it.cleanup());
-      return tgMessages;
+      return tgMessage;
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
@@ -265,7 +262,7 @@ export default class ForwardService {
       }
       catch {
       }
-      return [];
+      return null;
     }
   }
 

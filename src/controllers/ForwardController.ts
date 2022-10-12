@@ -42,8 +42,8 @@ export default class ForwardController {
       const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
       if (!pair.enable) return;
-      const tgMessages = await this.forwardService.forwardFromQq(event, pair);
-      for (const tgMessage of tgMessages) {
+      const tgMessage = await this.forwardService.forwardFromQq(event, pair);
+      if (tgMessage) {
         // 更新数据库
         await db.message.create({
           data: {
