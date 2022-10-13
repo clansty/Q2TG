@@ -2,7 +2,6 @@ import Telegram from '../client/Telegram';
 import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
-import { CustomFile } from 'telegram/client/uploads';
 import { getLogger, Logger } from 'log4js';
 import path from 'path';
 import exts from '../constants/exts';
@@ -54,6 +53,7 @@ export default class ForwardService {
         files.push(file);
         if (event.message_type === 'group') {
           buttons.push(Button.inline(`${sender}:`));
+          messageHeader = '';
         }
       };
       for (const elem of event.message) {
