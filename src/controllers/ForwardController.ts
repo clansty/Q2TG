@@ -1,6 +1,6 @@
-import Telegram from '../client/Telegram';
-import OicqClient from '../client/OicqClient';
-import ForwardService from '../services/ForwardService';
+import Telegram from "../client/Telegram";
+import OicqClient from "../client/OicqClient";
+import ForwardService from "../services/ForwardService";
 import {
   Friend,
   FriendPokeEvent,
@@ -8,40 +8,43 @@ import {
   GroupPokeEvent,
   MemberIncreaseEvent,
   PrivateMessageEvent,
-} from 'oicq';
-import db from '../models/db';
-import { Api } from 'telegram';
-import { getLogger, Logger } from 'log4js';
-import Instance from '../models/Instance';
-import { getAvatar } from '../utils/urls';
-import { CustomFile } from 'telegram/client/uploads';
-import forwardHelper from '../helpers/forwardHelper';
+} from "oicq";
+import db from "../models/db";
+import { Api } from "telegram";
+import { getLogger, Logger } from "log4js";
+import Instance from "../models/Instance";
+import { getAvatar } from "../utils/urls";
+import { CustomFile } from "telegram/client/uploads";
+import forwardHelper from "../helpers/forwardHelper";
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
   private readonly log: Logger;
 
-  constructor(private readonly instance: Instance,
-              private readonly tgBot: Telegram,
-              private readonly tgUser: Telegram,
-              private readonly oicq: OicqClient) {
+  constructor(
+    private readonly instance: Instance,
+    private readonly tgBot: Telegram,
+    private readonly tgUser: Telegram,
+    private readonly oicq: OicqClient
+  ) {
     this.log = getLogger(`ForwardController - ${instance.id}`);
     this.forwardService = new ForwardService(this.instance, tgBot, oicq);
     oicq.addNewMessageEventHandler(this.onQqMessage);
-    oicq.on('notice.group.increase', this.onQqGroupMemberIncrease);
-    oicq.on('notice.friend.poke', this.onQqPoke);
-    oicq.on('notice.group.poke', this.onQqPoke);
+    oicq.on("notice.group.increase", this.onQqGroupMemberIncrease);
+    oicq.on("notice.friend.poke", this.onQqPoke);
+    oicq.on("notice.group.poke", this.onQqPoke);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
-    instance.workMode === 'group' && tgBot.addChannelParticipantEventHandler(this.onTelegramParticipant);
+    instance.workMode === "group" && tgBot.addChannelParticipantEventHandler(this.onTelegramParticipant);
   }
 
   private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
     try {
-      const target = event.message_type === 'private' ? event.friend : event.group;
+      const target = event.message_type === "private" ? event.friend : event.group;
       const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
       if (!pair.enable) return;
+      if (pair.disableQ2TG) return;
       const tgMessage = await this.forwardService.forwardFromQq(event, pair);
       if (tgMessage) {
         // 更新数据库
@@ -60,9 +63,8 @@ export default class ForwardController {
           },
         });
       }
-    }
-    catch (e) {
-      this.log.error('处理 QQ 消息时遇到问题', e);
+    } catch (e) {
+      this.log.error("处理 QQ 消息时遇到问题", e);
     }
   };
 
@@ -72,6 +74,7 @@ export default class ForwardController {
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
       if (!pair.enable) return;
+      if (pair.disableTG2Q) return;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
       if (qqMessagesSent) {
         // 更新数据库
@@ -92,9 +95,8 @@ export default class ForwardController {
           });
         }
       }
-    }
-    catch (e) {
-      this.log.error('处理 Telegram 消息时遇到问题', e);
+    } catch (e) {
+      this.log.error("处理 Telegram 消息时遇到问题", e);
     }
   };
 
@@ -104,13 +106,12 @@ export default class ForwardController {
       if (!pair?.joinNotice) return false;
       const avatar = await getAvatar(event.user_id);
       await pair.tg.sendMessage({
-        file: new CustomFile('avatar.png', avatar.length, '', avatar),
+        file: new CustomFile("avatar.png", avatar.length, "", avatar),
         message: `<b>${event.nickname}</b> (<code>${event.user_id}</code>) <i>加入了本群</i>`,
         silent: true,
       });
-    }
-    catch (e) {
-      this.log.error('处理 QQ 群成员增加事件时遇到问题', e);
+    } catch (e) {
+      this.log.error("处理 QQ 群成员增加事件时遇到问题", e);
     }
   };
 
@@ -118,48 +119,44 @@ export default class ForwardController {
     try {
       const pair = this.instance.forwardPairs.find(event.channelId);
       if (!pair?.joinNotice) return false;
-      if (!(event.newParticipant instanceof Api.ChannelParticipantAdmin)
-        && !(event.newParticipant instanceof Api.ChannelParticipantCreator)
-        && !(event.newParticipant instanceof Api.ChannelParticipant))
+      if (
+        !(event.newParticipant instanceof Api.ChannelParticipantAdmin) &&
+        !(event.newParticipant instanceof Api.ChannelParticipantCreator) &&
+        !(event.newParticipant instanceof Api.ChannelParticipant)
+      )
         return false;
       const member = await this.tgBot.getChat(event.newParticipant.userId);
       await pair.qq.sendMsg(`${forwardHelper.getUserDisplayName(member.entity)} 加入了本群`);
-    }
-    catch (e) {
-      this.log.error('处理 TG 群成员增加事件时遇到问题', e);
+    } catch (e) {
+      this.log.error("处理 TG 群成员增加事件时遇到问题", e);
     }
   };
 
   private onQqPoke = async (event: FriendPokeEvent | GroupPokeEvent) => {
-    const target = event.notice_type === 'friend' ? event.friend : event.group;
+    const target = event.notice_type === "friend" ? event.friend : event.group;
     const pair = this.instance.forwardPairs.find(target);
     if (!pair?.poke) return;
     let operatorName: string, targetName: string;
     if (target instanceof Friend) {
       if (event.operator_id === target.user_id) {
         operatorName = target.remark || target.nickname;
-      }
-      else {
-        operatorName = '你';
+      } else {
+        operatorName = "你";
       }
       if (event.operator_id === event.target_id) {
-        targetName = '自己';
-      }
-      else if (event.target_id === target.user_id) {
+        targetName = "自己";
+      } else if (event.target_id === target.user_id) {
         targetName = target.remark || target.nickname;
+      } else {
+        targetName = "你";
       }
-      else {
-        targetName = '你';
-      }
-    }
-    else {
+    } else {
       const operator = target.pickMember(event.operator_id);
       await operator.renew();
       operatorName = operator.card || operator.info.nickname;
       if (event.operator_id === event.target_id) {
-        targetName = '自己';
-      }
-      else {
+        targetName = "自己";
+      } else {
         const targetUser = target.pickMember(event.target_id);
         await targetUser.renew();
         targetName = targetUser.card || targetUser.info.nickname;

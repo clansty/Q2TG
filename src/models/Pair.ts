@@ -1,21 +1,24 @@
-import { Friend, Group } from 'oicq';
-import TelegramChat from '../client/TelegramChat';
-import db from './db';
-import { getLogger } from 'log4js';
-import { getAvatar } from '../utils/urls';
-import { md5 } from '../utils/hashing';
-import getAboutText from '../utils/getAboutText';
+import { getLogger } from "log4js";
+import { Friend, Group } from "oicq";
+import TelegramChat from "../client/TelegramChat";
+import getAboutText from "../utils/getAboutText";
+import { md5 } from "../utils/hashing";
+import { getAvatar } from "../utils/urls";
+import db from "./db";
 
-const log = getLogger('ForwardPair');
+const log = getLogger("ForwardPair");
 
 export class Pair {
-  constructor(public readonly qq: Friend | Group,
-              private _tg: TelegramChat,
-              public dbId: number,
-              private _joinNotice: boolean,
-              private _poke: boolean,
-              private _enable: boolean) {
-  }
+  constructor(
+    public readonly qq: Friend | Group,
+    private _tg: TelegramChat,
+    public dbId: number,
+    private _joinNotice: boolean,
+    private _poke: boolean,
+    private _enable: boolean,
+    private _disableQ2TG: boolean,
+    private _disableTG2Q: boolean
+  ) {}
 
   // 更新 TG 群组的头像和简介
   public async updateInfo() {
@@ -51,10 +54,11 @@ export class Pair {
 
   set tg(value: TelegramChat) {
     this._tg = value;
-    db.forwardPair.update({
-      where: { id: this.dbId },
-      data: { tgChatId: Number(value.id) },
-    })
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { tgChatId: Number(value.id) },
+      })
       .then(() => log.info(`出现了到超级群组的转换: ${value.id}`));
   }
 
@@ -64,10 +68,11 @@ export class Pair {
 
   set joinNotice(value) {
     this._joinNotice = value;
-    db.forwardPair.update({
-      where: { id: this.dbId },
-      data: { joinNotice: value },
-    })
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { joinNotice: value },
+      })
       .then(() => 0);
   }
 
@@ -77,10 +82,11 @@ export class Pair {
 
   set poke(value) {
     this._poke = value;
-    db.forwardPair.update({
-      where: { id: this.dbId },
-      data: { poke: value },
-    })
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { poke: value },
+      })
       .then(() => 0);
   }
 
@@ -90,10 +96,39 @@ export class Pair {
 
   set enable(value) {
     this._enable = value;
-    db.forwardPair.update({
-      where: { id: this.dbId },
-      data: { enable: value },
-    })
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { enable: value },
+      })
+      .then(() => 0);
+  }
+
+  get disableQ2TG() {
+    return this._disableQ2TG;
+  }
+
+  set disableQ2TG(value) {
+    this._disableQ2TG = value;
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { disableQ2TG: value },
+      })
+      .then(() => 0);
+  }
+
+  get disableTG2Q() {
+    return this._disableTG2Q;
+  }
+
+  set disableTG2Q(value) {
+    this._disableTG2Q = value;
+    db.forwardPair
+      .update({
+        where: { id: this.dbId },
+        data: { disableTG2Q: value },
+      })
       .then(() => 0);
   }
 }

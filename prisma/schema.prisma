@@ -75,6 +75,8 @@ model ForwardPair {
   joinNotice  Boolean       @default(true)
   poke        Boolean       @default(true)
   enable      Boolean       @default(true)
+  disableQ2TG Boolean       @default(false)
+  disableTG2Q Boolean       @default(false)
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])
