@@ -48,19 +48,19 @@ export default class InChatCommandsController {
         pair.enable = true;
         await message.reply({ message: "转发已启用" });
         return true;
-      case "/disableQQForward":
+      case "/disable_qq_forward":
         pair.disableQ2TG = true;
         await message.reply({ message: "QQ->TG已禁用" });
         return true;
-      case "/enableQQForward":
+      case "/enable_qq_forward":
         pair.disableQ2TG = false;
         await message.reply({ message: "QQ->TG已启用" });
         return true;
-      case "/disableTGForward":
+      case "/disable_tg_forward":
         pair.disableTG2Q = true;
         await message.reply({ message: "TG->QQ已禁用" });
         return true;
-      case "/enableTGForward":
+      case "/enable_tg_forward":
         pair.disableTG2Q = false;
         await message.reply({ message: "TG->QQ已启用" });
         return true;

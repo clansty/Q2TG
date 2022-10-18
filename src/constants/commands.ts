@@ -61,10 +61,10 @@ const groupInChatCommands = [
     command: "forwardon",
     description: "恢复消息转发",
   }),
-  new Api.BotCommand({ command: "disableQQForward", description: "停止从QQ转发至TG" }),
-  new Api.BotCommand({ command: "enableQQForward", description: "恢复从QQ转发至TG" }),
-  new Api.BotCommand({ command: "disableTGForward", description: "停止从TG转发至QQ" }),
-  new Api.BotCommand({ command: "enableTGForward", description: "恢复从TG转发至QQ" }),
+  new Api.BotCommand({ command: "disable_qq_forward", description: "停止从QQ转发至TG" }),
+  new Api.BotCommand({ command: "enable_qq_forward", description: "恢复从QQ转发至TG" }),
+  new Api.BotCommand({ command: "disable_tg_forward", description: "停止从TG转发至QQ" }),
+  new Api.BotCommand({ command: "enable_tg_forward", description: "恢复从TG转发至QQ" }),
 ];
 
 const personalInChatCommands = [
