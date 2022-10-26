@@ -59,6 +59,9 @@ export default class ConfigController {
           case '/migrate':
             await this.configService.migrateAllChats();
             return true;
+          case '/login':
+            await this.instance.login();
+            return true;
         }
       }
       else {

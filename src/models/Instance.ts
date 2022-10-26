@@ -141,10 +141,14 @@ export default class Instance {
       .then(() => this.log.info('初始化已完成'));
   }
 
+  public async login() {
+    await this.load();
+    await this.init();
+  }
+
   public static async start(instanceId: number) {
     const instance = new this(instanceId);
-    await instance.load();
-    await instance.init();
+    await instance.login();
     return instance;
   }
 
