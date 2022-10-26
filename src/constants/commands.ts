@@ -24,6 +24,10 @@ const personalPrivateCommands = [
     command: "addgroup",
     description: "添加新的群转发",
   }),
+  new Api.BotCommand({
+    command: "login",
+    description: "当 QQ 处于下线状态时，使用此命令重新登录 QQ",
+  }),
 ];
 
 // 服务器零号实例的管理员
