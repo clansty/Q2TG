@@ -10,7 +10,7 @@
       packages = nixpkgs.lib.mapAttrs
         (system: pkgs: {
           default = import ./default.nix { inherit pkgs; };
-          tgs-to-gif = pkgs.callPackage "${import ./nixos/clansty-flake.nix pkgs}/packages/tgs-to-gif" { };
+          tgs-to-gif = pkgs.callPackage "${import ./nixos/clansty-flake.nix}/packages/tgs-to-gif" { };
           prisma-patched = pkgs.callPackage ./nixos/prismaPatched.nix { };
         })
         nixpkgs.legacyPackages;
