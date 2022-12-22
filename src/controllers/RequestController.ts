@@ -2,7 +2,7 @@ import { getLogger, Logger } from 'log4js';
 import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { FriendRequestEvent, GroupInviteEvent } from 'oicq';
+import { FriendRequestEvent, GroupInviteEvent } from 'icqq';
 import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import { Button } from 'telegram/tl/custom/button';

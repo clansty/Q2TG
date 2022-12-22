@@ -7,13 +7,13 @@ import {
   LogLevel,
   Platform,
   PrivateMessageEvent,
-} from 'oicq';
+} from 'icqq';
 import Buffer from 'buffer';
 import { execSync } from 'child_process';
 import random from '../utils/random';
 import fs from 'fs';
 import fsP from 'fs/promises';
-import { Config } from 'oicq/lib/client';
+import { Config } from 'icqq/lib/client';
 import dataPath from '../helpers/dataPath';
 
 const LOG_LEVEL: LogLevel = 'warn';
@@ -60,7 +60,7 @@ export default class OicqClient extends Client {
 
       async function loginQrCodeHandler({ image }: { image: Buffer }) {
         await params.onQrCode(image);
-        client.qrcodeLogin();
+        client.login();
       }
 
       function loginErrorHandler({ message }: { code: number; message: string }) {

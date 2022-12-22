@@ -1,12 +1,12 @@
-import { getLogger } from "log4js";
-import { Friend, Group } from "oicq";
-import TelegramChat from "../client/TelegramChat";
-import getAboutText from "../utils/getAboutText";
-import { md5 } from "../utils/hashing";
-import { getAvatar } from "../utils/urls";
-import db from "./db";
+import { getLogger } from 'log4js';
+import { Friend, Group } from 'icqq';
+import TelegramChat from '../client/TelegramChat';
+import getAboutText from '../utils/getAboutText';
+import { md5 } from '../utils/hashing';
+import { getAvatar } from '../utils/urls';
+import db from './db';
 
-const log = getLogger("ForwardPair");
+const log = getLogger('ForwardPair');
 
 export class Pair {
   constructor(
@@ -17,8 +17,9 @@ export class Pair {
     private _poke: boolean,
     private _enable: boolean,
     private _disableQ2TG: boolean,
-    private _disableTG2Q: boolean
-  ) {}
+    private _disableTG2Q: boolean,
+  ) {
+  }
 
   // 更新 TG 群组的头像和简介
   public async updateInfo() {

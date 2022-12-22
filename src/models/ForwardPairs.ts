@@ -1,4 +1,4 @@
-import { Friend, Group } from 'oicq';
+import { Friend, Group } from 'icqq';
 import TelegramChat from '../client/TelegramChat';
 import OicqClient from '../client/OicqClient';
 import Telegram from '../client/Telegram';

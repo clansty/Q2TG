@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'icqq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
