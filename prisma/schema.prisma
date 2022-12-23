@@ -61,7 +61,7 @@ model Message {
   time       Int
   brief      String?
   seq        Int
-  rand       Int
+  rand       BigInt   @db.BigInt
   pktnum     Int
   tgChatId   BigInt   @db.BigInt
   tgMsgId    Int

@@ -53,7 +53,7 @@ export default class DeleteMessageService {
       });
       if (messageInfo) {
         try {
-          this.recallQqMessage(pair.qq, messageInfo.seq, messageInfo.rand,
+          this.recallQqMessage(pair.qq, messageInfo.seq, Number(messageInfo.rand),
             pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
             pair, isOthersMsg);
           await db.message.delete({
