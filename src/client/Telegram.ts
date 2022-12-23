@@ -30,16 +30,21 @@ export default class Telegram {
     return (this.client.session as TelegramSession).dbId;
   }
 
+  public get isOnline() {
+    return this.client.connected;
+  }
+
   private constructor(appName: string, sessionId?: number) {
     this.client = new TelegramClient(
       new TelegramSession(sessionId),
       parseInt(process.env.TG_API_ID),
       process.env.TG_API_HASH,
       {
-        connectionRetries: 5,
+        connectionRetries: 20,
         langCode: 'zh',
         deviceModel: `${appName} On ${os.hostname()}`,
         appVersion: 'rainbowcat',
+        useIPV6: true,
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
           ip: process.env.PROXY_IP,

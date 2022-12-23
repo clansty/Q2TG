@@ -20,6 +20,7 @@ import { MarkupLike } from 'telegram/define';
 import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
 import { QqBot } from '@prisma/client';
+import StatusReportController from '../controllers/StatusReportController';
 
 export default class Instance {
   private _owner = 0;
@@ -28,6 +29,7 @@ export default class Instance {
   private _botSessionId = 0;
   private _userSessionId = 0;
   private _qq: QqBot;
+  private _reportUrl: string;
 
   private readonly log: Logger;
 
@@ -47,6 +49,7 @@ export default class Instance {
   private inChatCommandsController: InChatCommandsController;
   private forwardController: ForwardController;
   private fileAndFlashPhotoController: FileAndFlashPhotoController;
+  private statusReportController: StatusReportController;
 
   private constructor(public readonly id: number) {
     this.log = getLogger(`Instance - ${this.id}`);
@@ -76,6 +79,7 @@ export default class Instance {
     this._userSessionId = dbEntry.userSessionId;
     this._isSetup = dbEntry.isSetup;
     this._workMode = dbEntry.workMode;
+    this._reportUrl = dbEntry.reportUrl;
   }
 
   private async init(botToken?: string) {
@@ -132,6 +136,7 @@ export default class Instance {
         });
         this.log.info('OICQ 登录完成');
       }
+      this.statusReportController = new StatusReportController(this, this.tgBot, this.tgUser, this.oicq);
       this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot);
       this.setupCommands()
         .then(() => this.log.info('命令设置成功'))
@@ -243,6 +248,10 @@ export default class Instance {
     return this._userSessionId;
   }
 
+  get reportUrl() {
+    return this._reportUrl;
+  }
+
   set owner(owner: number) {
     this._owner = owner;
     db.instance.update({
@@ -294,5 +303,13 @@ export default class Instance {
       where: { id: this.id },
     })
       .then(() => this.log.trace(id));
+  }
+
+  set reportUrl(reportUrl: string) {
+    db.instance.update({
+      data: { reportUrl },
+      where: { id: this.id },
+    })
+      .then(() => this.log.trace(reportUrl));
   }
 }
