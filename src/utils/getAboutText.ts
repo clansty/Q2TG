@@ -1,4 +1,4 @@
-import { Friend, Group } from 'icqq';
+import { Friend, Group } from 'oicq';
 
 export default async function getAboutText(entity: Friend | Group, html: boolean) {
   let text: string;

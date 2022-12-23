@@ -1,6 +1,6 @@
 import { WorkMode } from '../types/definitions';
 import db from './db';
-import { Platform } from 'icqq';
+import { Platform } from 'oicq';
 import ConfigController from '../controllers/ConfigController';
 import SetupController from '../controllers/SetupController';
 import ForwardController from '../controllers/ForwardController';
