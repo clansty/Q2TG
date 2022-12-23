@@ -36,7 +36,7 @@
     "lodash": "^4.17.21",
     "log4js": "^6.6.1",
     "nodejs-base64": "^2.0.0",
-    "oicq": "git+https://github.com/Clansty/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555",
+    "oicq": "https://files.catbox.moe/a5tcyl.tgz",
     "prompts": "^2.4.2",
     "sharp": "^0.30.7",
     "silk-sdk": "^0.2.2",

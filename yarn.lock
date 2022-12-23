@@ -314,6 +314,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.1.2":
+  version: 1.2.1
+  resolution: "axios@npm:1.2.1"
+  dependencies:
+    follow-redirects: ^1.15.0
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: c4dc4e119064c9aed09a3de309bedb797a139a6fb372223aafe3e0c10a7d4a14e4d3e9c9d309467fadb9d2b490b891ee3df96ef5b55716bb971910466ff9f0c5
+  languageName: node
+  linkType: hard
+
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
@@ -852,6 +863,16 @@ __metadata:
     debug:
       optional: true
   checksum: 6aa4e3e3cdfa3b9314801a1cd192ba756a53479d9d8cca65bf4db3a3e8834e62139245cd2f9566147c8dfe2efff1700d3e6aefd103de4004a7b99985e71dd533
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.0":
+  version: 1.15.2
+  resolution: "follow-redirects@npm:1.15.2"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: faa66059b66358ba65c234c2f2a37fcec029dc22775f35d9ad6abac56003268baf41e55f9ee645957b32c7d9f62baf1f0b906e68267276f54ec4b4c597c2b190
   languageName: node
   linkType: hard
 
@@ -1527,16 +1548,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@git+https://github.com/Clansty/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555":
-  version: 2.3.1
-  resolution: "oicq@https://github.com/Clansty/oicq.git#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555"
+"oicq@https://files.catbox.moe/a5tcyl.tgz":
+  version: 2.3.2-clansty
+  resolution: "oicq@https://files.catbox.moe/a5tcyl.tgz"
   dependencies:
-    axios: ^0.27.2
+    axios: ^1.1.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: 86fa401358d81de360784ac58317b4a0232e7a7379f62941ef5fb3e31a42647ad4b78f55841620b228e0dfd3c7fd0281b5ccea7e1e45d1c708f4857a90fe690a
+  checksum: 73dc95fa12188ce074687cdb4b35c7a982cd677fac2f80fb56203ac0862918aa83a4e514ea892e2f4633a6d9e9086bd774a74fd02aebb17c7528f9e04524844b
   languageName: node
   linkType: hard
 
@@ -1653,6 +1674,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
+  languageName: node
+  linkType: hard
+
 "pump@npm:^3.0.0":
   version: 3.0.0
   resolution: "pump@npm:3.0.0"
@@ -1685,7 +1713,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "git+https://github.com/Clansty/oicq#commit=6c3f34adc681e73c2511f1f49a79fb387dcd1555"
+    oicq: "https://files.catbox.moe/a5tcyl.tgz"
     prompts: ^2.4.2
     sharp: ^0.30.7
     silk-sdk: ^0.2.2
