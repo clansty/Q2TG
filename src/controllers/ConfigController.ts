@@ -60,7 +60,7 @@ export default class ConfigController {
             await this.configService.migrateAllChats();
             return true;
           case '/login':
-            await this.instance.login();
+            await this.oicq.login();
             return true;
         }
       }
