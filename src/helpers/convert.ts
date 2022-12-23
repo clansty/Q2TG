@@ -19,7 +19,7 @@ const cachedConvert = async (key: string, convert: (outputPath: string) => Promi
   return convertedPath;
 };
 
-export default {
+const convert = {
   // webp2png，这里 webpData 是方法因为不需要的话就不获取了
   png: (key: string, webpData: () => Promise<Buffer | Uint8Array | string>) =>
     cachedConvert(key + '.png', async (convertedPath) => {
@@ -43,4 +43,12 @@ export default {
     cachedConvert(key + '.webp', async (convertedPath) => {
       await sharp(await imageData()).webp().toFile(convertedPath);
     }),
+  customEmoji: (key: string, imageData: () => Promise<Buffer | Uint8Array | string>, useSmallSize: boolean) =>
+    useSmallSize ?
+      cachedConvert(key + '@50.png', async (convertedPath) => {
+        await sharp(await convert.png(key, imageData)).resize(50).toFile(convertedPath);
+      }) :
+      convert.png(key, imageData),
 };
+
+export default convert;

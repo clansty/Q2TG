@@ -11,6 +11,7 @@ import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
+import { BigInteger } from 'big-integer';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -185,5 +186,20 @@ export default class Telegram {
     })) as Api.Updates;
     const newChat = updates.chats[0];
     return new TelegramChat(this, this.client, newChat, this.waitForMessageHelper);
+  }
+
+  public async getCustomEmoji(documentId: BigInteger) {
+    const ids = await this.client.invoke(new Api.messages.GetCustomEmojiDocuments({
+      documentId: [documentId],
+    }));
+    const document = ids[0] as Api.Document;
+    return await this.client.downloadFile(new Api.InputDocumentFileLocation({
+      id: document.id,
+      accessHash: document.accessHash,
+      fileReference: document.fileReference,
+      thumbSize: '',
+    }), {
+      dcId: document.dcId,
+    });
   }
 }

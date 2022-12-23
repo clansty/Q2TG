@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { Group, GroupMessageEvent, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, MessageElem, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
@@ -397,7 +397,27 @@ export default class ForwardService {
       }
 
       if (message.message) {
-        chain.push(message.message);
+        if (message.entities) {
+          const emojiEntities = message.entities.filter(it => it instanceof Api.MessageEntityCustomEmoji) as Api.MessageEntityCustomEmoji[];
+          const isMessageAllEmojis = _.sum(emojiEntities.map(it => it.length)) === message.message.length;
+          const newChain = [] as (string | MessageElem)[];
+          let messageLeft = message.message;
+          for (let i = emojiEntities.length - 1; i >= 0; i--) {
+            newChain.unshift(messageLeft.substring(emojiEntities[i].offset + emojiEntities[i].length));
+            messageLeft = messageLeft.substring(0, emojiEntities[i].offset);
+            newChain.unshift({
+              type: 'image',
+              file: await convert.customEmoji(emojiEntities[i].documentId.toString(16),
+                () => this.tgBot.getCustomEmoji(emojiEntities[i].documentId),
+                !isMessageAllEmojis),
+              asface: true,
+            });
+          }
+          chain.push(messageLeft, ...newChain);
+        }
+        else {
+          chain.push(message.message);
+        }
         brief += message.message;
       }
 

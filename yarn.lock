@@ -188,12 +188,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sharp@npm:^0.30.4":
-  version: 0.30.4
-  resolution: "@types/sharp@npm:0.30.4"
+"@types/sharp@npm:^0.31.0":
+  version: 0.31.0
+  resolution: "@types/sharp@npm:0.31.0"
   dependencies:
     "@types/node": "*"
-  checksum: 3ebeaf55aa5ed2826a5bb4f13982a64b35691b6f38c4fd9d536ee7aed4d7e6b39529ae290f19343c5d8334419d69e147a28c214ca61adaed35ebf3ceea7cdf17
+  checksum: c7698de18183a0574bf2f703226a5a7dc32b8a7340b52790eff0f6775b8ad708b6782f48fcaaf4d1be15fd76215c81c3ea55595d55484bf7ce870923c8174294
   languageName: node
   linkType: hard
 
@@ -1702,7 +1702,7 @@ __metadata:
     "@types/lodash": ^4
     "@types/node": ^18.6.3
     "@types/prompts": ^2.0.14
-    "@types/sharp": ^0.30.4
+    "@types/sharp": ^0.31.0
     axios: ^0.27.2
     cli-progress: ^3.11.2
     date-and-time: ^2.4.1
@@ -1715,9 +1715,9 @@ __metadata:
     nodejs-base64: ^2.0.0
     oicq: "https://files.catbox.moe/a5tcyl.tgz"
     prompts: ^2.4.2
-    sharp: ^0.30.7
+    sharp: ^0.31.3
     silk-sdk: ^0.2.2
-    telegram: ^2.10.2
+    telegram: ^2.15.2
     tmp-promise: ^3.0.3
     ts-node: ^10.9.1
     tsc: ^2.0.4
@@ -1758,6 +1758,13 @@ __metadata:
   dependencies:
     readable-stream: ^3.6.0
   checksum: 8c56cc62c68513425ddfa721954875b382768f83fa20e6b31e365ee00cbe7a3d6296f66f7f1107b16cd3416d33aa9f1680475376400d62a081a88f81f0ea7f9c
+  languageName: node
+  linkType: hard
+
+"real-cancellable-promise@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "real-cancellable-promise@npm:1.1.1"
+  checksum: 8bc4d7e9739f5db4cc20168e26deef6cbccaf52c857f65b58c30c166649fca230c20354a714fa8262687857f2cc8b6f79ac7d19b6fe5006298ffc5782448f58a
   languageName: node
   linkType: hard
 
@@ -1818,14 +1825,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.7":
-  version: 7.3.7
-  resolution: "semver@npm:7.3.7"
+"semver@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
   dependencies:
     lru-cache: ^6.0.0
   bin:
     semver: bin/semver.js
-  checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
+  checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
   languageName: node
   linkType: hard
 
@@ -1836,20 +1843,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.30.7":
-  version: 0.30.7
-  resolution: "sharp@npm:0.30.7"
+"sharp@npm:^0.31.3":
+  version: 0.31.3
+  resolution: "sharp@npm:0.31.3"
   dependencies:
     color: ^4.2.3
     detect-libc: ^2.0.1
     node-addon-api: ^5.0.0
     node-gyp: latest
     prebuild-install: ^7.1.1
-    semver: ^7.3.7
+    semver: ^7.3.8
     simple-get: ^4.0.1
     tar-fs: ^2.1.1
     tunnel-agent: ^0.6.0
-  checksum: bbc63ca3c7ea8a5bff32cd77022cfea30e25a03f5bd031e935924bf6cf0e11e3388e8b0e22b3137bf8816aa73407f1e4fbeb190f3a35605c27ffca9f32b91601
+  checksum: 29fd1dfbc616c6389f53f366cec342b4353d9f2a37e98952ca273db38dca57dfa0f336322d6d763f0fae876042ead22fd86ffe26d70c32ade2458d421db60d04
   languageName: node
   linkType: hard
 
@@ -2084,9 +2091,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"telegram@npm:^2.10.2":
-  version: 2.10.2
-  resolution: "telegram@npm:2.10.2"
+"telegram@npm:^2.15.2":
+  version: 2.15.2
+  resolution: "telegram@npm:2.15.2"
   dependencies:
     "@cryptography/aes": ^0.1.1
     async-mutex: ^0.3.0
@@ -2098,6 +2105,7 @@ __metadata:
     node-localstorage: ^2.2.1
     pako: ^2.0.3
     path-browserify: ^1.0.1
+    real-cancellable-promise: ^1.1.1
     socks: ^2.6.2
     store2: ^2.13.0
     ts-custom-error: ^3.2.0
@@ -2108,7 +2116,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 46242e2eaea03f2af71c6af43fcf6e4a23680a1d7183d9e064f39338185ff00a5f26110617b81610006710239fc8001f123ef7ccdc3999e766c80fe7f7ff6e87
+  checksum: 1602a7bc74b47e752945eff9beb630f58db27172c5a9cda6a1ccf7b085c26470c9e7784a630309a97f680d25e87670f867d6847b5c1bd926f0b014ce70655af5
   languageName: node
   linkType: hard
 

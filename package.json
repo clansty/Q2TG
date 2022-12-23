@@ -19,7 +19,7 @@
     "@types/lodash": "^4",
     "@types/node": "^18.6.3",
     "@types/prompts": "^2.0.14",
-    "@types/sharp": "^0.30.4",
+    "@types/sharp": "^0.31.0",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^4.7.4"
@@ -38,9 +38,9 @@
     "nodejs-base64": "^2.0.0",
     "oicq": "https://files.catbox.moe/a5tcyl.tgz",
     "prompts": "^2.4.2",
-    "sharp": "^0.30.7",
+    "sharp": "^0.31.3",
     "silk-sdk": "^0.2.2",
-    "telegram": "^2.10.2",
+    "telegram": "^2.15.2",
     "tmp-promise": "^3.0.3"
   },
   "engines": {
