@@ -21,6 +21,7 @@ const LOG_LEVEL: LogLevel = 'warn';
 type MessageHandler = (event: PrivateMessageEvent | GroupMessageEvent) => Promise<boolean | void>
 
 interface CreateOicqParams {
+  id: number;
   uin: number;
   password: string;
   platform: Platform;
@@ -36,16 +37,26 @@ interface CreateOicqParams {
 export default class OicqClient extends Client {
   private readonly onMessageHandlers: Array<MessageHandler> = [];
 
-  private constructor(uin: number, conf?: Config) {
+  private constructor(uin: number, public readonly id: number, conf?: Config) {
     super(uin, conf);
   }
 
+  private static existedBots = {} as { [id: number]: OicqClient };
+
   public static create(params: CreateOicqParams) {
+    if (this.existedBots[params.id]) {
+      return Promise.resolve(this.existedBots[params.id]);
+    }
     return new Promise<OicqClient>(async (resolve, reject) => {
       async function loginDeviceHandler({ phone }: { url: string, phone: string }) {
         client.sendSmsCode();
         const code = await params.onVerifyDevice(phone);
-        client.submitSmsCode(code);
+        if (code === 'qrsubmit') {
+          client.login();
+        }
+        else {
+          client.submitSmsCode(code);
+        }
       }
 
       async function loginSliderHandler({ url }: { url: string }) {
@@ -83,9 +94,9 @@ export default class OicqClient extends Client {
         const device = {
           product: 'Q2TG',
           device: 'ANGELKAWAII2',
-          board: 'raincandy',
+          board: 'rainbowcat',
           brand: random.pick('GOOGLE', 'XIAOMI', 'HUAWEI', 'SAMSUNG', 'SONY'),
-          model: 'raincandy',
+          model: 'rainbowcat',
           wifi_ssid: random.pick('OpenWrt', `Redmi-${random.hex(4).toUpperCase()}`,
             `MiWifi-${random.hex(4).toUpperCase()}`, `TP-LINK-${random.hex(6).toUpperCase()}`),
           bootloader: random.pick('U-Boot', 'GRUB', 'gummiboot'),
@@ -100,7 +111,7 @@ export default class OicqClient extends Client {
         await fsP.writeFile(dataPath(`${params.uin}/device-${params.uin}.json`), JSON.stringify(device, null, 0), 'utf-8');
       }
 
-      const client = new this(params.uin, {
+      const client = new this(params.uin, params.id, {
         platform: params.platform,
         data_dir: dataPath(),
         log_level: LOG_LEVEL,
@@ -112,6 +123,8 @@ export default class OicqClient extends Client {
         .on('system.login.qrcode', loginQrCodeHandler)
         .on('system.login.error', loginErrorHandler)
         .on('system.online', successLoginHandler);
+
+      this.existedBots[params.id] = client;
       client.login(params.password);
     });
   }

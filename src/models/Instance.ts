@@ -1,6 +1,5 @@
 import { WorkMode } from '../types/definitions';
 import db from './db';
-import { Platform } from 'oicq';
 import ConfigController from '../controllers/ConfigController';
 import SetupController from '../controllers/SetupController';
 import ForwardController from '../controllers/ForwardController';
@@ -20,15 +19,15 @@ import OicqErrorNotifyController from '../controllers/OicqErrorNotifyController'
 import { MarkupLike } from 'telegram/define';
 import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
+import { QqBot } from '@prisma/client';
 
 export default class Instance {
   private _owner = 0;
-  private _qqUin = 0;
-  private _qqPassword = '';
-  private _qqPlatform = 0;
   private _isSetup = false;
   private _workMode = '';
-  private _botToken = '';
+  private _botSessionId = 0;
+  private _userSessionId = 0;
+  private _qq: QqBot;
 
   private readonly log: Logger;
 
@@ -56,6 +55,7 @@ export default class Instance {
   private async load() {
     const dbEntry = await db.instance.findFirst({
       where: { id: this.id },
+      include: { qqBot: true },
     });
 
     if (!dbEntry) {
@@ -71,19 +71,28 @@ export default class Instance {
     }
 
     this._owner = Number(dbEntry.owner);
-    this._qqUin = Number(dbEntry.qqUin);
-    this._qqPassword = dbEntry.qqPassword;
-    this._qqPlatform = dbEntry.qqPlatform;
+    this._qq = dbEntry.qqBot;
+    this._botSessionId = dbEntry.botSessionId;
+    this._userSessionId = dbEntry.userSessionId;
     this._isSetup = dbEntry.isSetup;
     this._workMode = dbEntry.workMode;
-    this._botToken = dbEntry.botToken;
   }
 
-  private async init() {
+  private async init(botToken?: string) {
     this.log.debug('正在登录 TG Bot');
-    this.tgBot = await Telegram.create({
-      botAuthToken: this.botToken,
-    }, `bot:${this.id}`);
+    if (this.botSessionId) {
+      this.tgBot = await Telegram.connect(this._botSessionId);
+    }
+    else {
+      const token = this.id === 0 ? process.env.TG_BOT_TOKEN : botToken;
+      if (!token) {
+        throw new Error('botToken 未指定');
+      }
+      this.tgBot = await Telegram.create({
+        botAuthToken: token,
+      });
+      this.botSessionId = this.tgBot.sessionId;
+    }
     this.log.info('TG Bot 登录完成');
     (async () => {
       if (!this.isSetup || !this._owner) {
@@ -95,14 +104,15 @@ export default class Instance {
       }
       else {
         this.log.debug('正在登录 TG UserBot');
-        this.tgUser = await Telegram.connect(`user:${this.id}`);
+        this.tgUser = await Telegram.connect(this._userSessionId);
         this.log.info('TG UserBot 登录完成');
         this._ownerChat = await this.tgBot.getChat(this.owner);
         this.log.debug('正在登录 OICQ');
         this.oicq = await OicqClient.create({
-          uin: this.qqUin,
-          password: this.qqPassword,
-          platform: this.qqPlatform,
+          id: this.qq.id,
+          uin: Number(this.qq.uin),
+          password: this.qq.password,
+          platform: this.qq.platform,
           onQrCode: async (file) => {
             await this.ownerChat.sendMessage({
               message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
@@ -115,10 +125,9 @@ export default class Instance {
             return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
           },
           onVerifySlider: async (url) => {
-            const res = await this.waitForOwnerInput(`收到滑块验证码 <code>${url}</code>\n` +
-              '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket'
-              );
-            return res;
+            return await this.waitForOwnerInput(`收到滑块验证码 <code>${url}</code>\n` +
+              '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket',
+            );
           },
         });
         this.log.info('OICQ 登录完成');
@@ -141,22 +150,20 @@ export default class Instance {
       .then(() => this.log.info('初始化已完成'));
   }
 
-  public async login() {
+  public async login(botToken?: string) {
     await this.load();
-    await this.init();
+    await this.init(botToken);
   }
 
-  public static async start(instanceId: number) {
+  public static async start(instanceId: number, botToken?: string) {
     const instance = new this(instanceId);
-    await instance.login();
+    await instance.login(botToken);
     return instance;
   }
 
   public static async createNew(botToken: string) {
-    const dbEntry = await db.instance.create({
-      data: { botToken },
-    });
-    return await this.start(dbEntry.id);
+    const dbEntry = await db.instance.create({ data: {} });
+    return await this.start(dbEntry.id, botToken);
   }
 
   private async setupCommands() {
@@ -200,16 +207,12 @@ export default class Instance {
     return this._owner;
   }
 
+  get qq() {
+    return this._qq;
+  }
+
   get qqUin() {
-    return this._qqUin;
-  }
-
-  get qqPassword() {
-    return this._qqPassword;
-  }
-
-  get qqPlatform() {
-    return this._qqPlatform as Platform;
+    return this.oicq.uin;
   }
 
   get isSetup() {
@@ -218,10 +221,6 @@ export default class Instance {
 
   get workMode() {
     return this._workMode as WorkMode;
-  }
-
-  get botToken() {
-    return this.id === 0 ? process.env.TG_BOT_TOKEN : this._botToken;
   }
 
   get botMe() {
@@ -236,6 +235,14 @@ export default class Instance {
     return this._ownerChat;
   }
 
+  get botSessionId() {
+    return this._botSessionId;
+  }
+
+  get userSessionId() {
+    return this._userSessionId;
+  }
+
   set owner(owner: number) {
     this._owner = owner;
     db.instance.update({
@@ -243,33 +250,6 @@ export default class Instance {
       where: { id: this.id },
     })
       .then(() => this.log.trace(owner));
-  }
-
-  set qqUin(qqUin: number) {
-    this._qqUin = qqUin;
-    db.instance.update({
-      data: { qqUin },
-      where: { id: this.id },
-    })
-      .then(() => this.log.trace(qqUin));
-  }
-
-  set qqPassword(qqPassword: string) {
-    this._qqPassword = qqPassword;
-    db.instance.update({
-      data: { qqPassword },
-      where: { id: this.id },
-    })
-      .then(() => this.log.trace(qqPassword));
-  }
-
-  set qqPlatform(qqPlatform: Platform) {
-    this._qqPlatform = qqPlatform;
-    db.instance.update({
-      data: { qqPlatform },
-      where: { id: this.id },
-    })
-      .then(() => this.log.trace(qqPlatform));
   }
 
   set isSetup(isSetup: boolean) {
@@ -288,5 +268,31 @@ export default class Instance {
       where: { id: this.id },
     })
       .then(() => this.log.trace(workMode));
+  }
+
+  set botSessionId(sessionId: number) {
+    this._botSessionId = sessionId;
+    db.instance.update({
+      data: { botSessionId: sessionId },
+      where: { id: this.id },
+    })
+      .then(() => this.log.trace(sessionId));
+  }
+
+  set userSessionId(sessionId: number) {
+    this._userSessionId = sessionId;
+    db.instance.update({
+      data: { userSessionId: sessionId },
+      where: { id: this.id },
+    })
+      .then(() => this.log.trace(sessionId));
+  }
+
+  set qqBotId(id: number) {
+    db.instance.update({
+      data: { qqBotId: id },
+      where: { id: this.id },
+    })
+      .then(() => this.log.trace(id));
   }
 }

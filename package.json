@@ -8,7 +8,7 @@
     "prisma": "prisma",
     "import": "ts-node tools/import"
   },
-  "bin": "build/src/index.js",
+  "bin": "build/index.js",
   "files": [
     "build"
   ],

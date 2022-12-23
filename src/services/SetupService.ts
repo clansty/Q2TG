@@ -9,6 +9,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import { WorkMode } from '../types/definitions';
 import TelegramChat from '../client/TelegramChat';
 import Instance from '../models/Instance';
+import db from '../models/db';
 
 export default class SetupService {
   private owner: TelegramChat;
@@ -79,11 +80,13 @@ export default class SetupService {
         return await this.owner.inlineDigitInput(5);
       },
       onError: (err) => this.log.error(err),
-    }, `user:${this.instance.id}`);
+    });
   }
 
   public async createOicq(uin: number, password: string, platform: Platform) {
+    const dbQQBot = await db.qqBot.create({ data: { uin, password, platform } });
     return await OicqClient.create({
+      id: dbQQBot.id,
       uin, password, platform,
       onQrCode: async (file) => {
         await this.owner.sendMessage({
@@ -101,12 +104,6 @@ export default class SetupService {
           '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket');
       },
     });
-  }
-
-  public saveOicqLoginInfo(uin: number, password: string, platform: Platform) {
-    this.instance.qqUin = uin;
-    this.instance.qqPassword = password;
-    this.instance.qqPlatform = platform;
   }
 
   public async finishConfig() {

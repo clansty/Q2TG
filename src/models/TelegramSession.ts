@@ -6,28 +6,31 @@ import { getLogger, Logger } from 'log4js';
 const PASS = () => 0;
 
 export default class TelegramSession extends MemorySession {
-  private dbId: number;
-  private readonly log: Logger;
+  private log: Logger;
 
-  constructor(private readonly sessionName: string) {
+  constructor(private _dbId?: number) {
     super();
-    this.log = getLogger(`TelegramSession - ${sessionName}`);
+    this.log = getLogger(`TelegramSession - ${_dbId}`);
+  }
+
+  public get dbId() {
+    return this._dbId;
   }
 
   async load() {
     this.log.trace('load');
-    const dbEntry = await db.session.findFirst({
-      where: { name: this.sessionName },
-      include: { entities: true },
-    });
-    if (!dbEntry) {
+    if (!this._dbId) {
       this.log.debug('Session 不存在，创建');
       // 创建并返回
-      const newDbEntry = await db.session.create({ data: { name: this.sessionName } });
-      this.dbId = newDbEntry.id;
+      const newDbEntry = await db.session.create({ data: {} });
+      this._dbId = newDbEntry.id;
+      this.log = getLogger(`TelegramSession - ${this._dbId}`);
       return;
     }
-    this.dbId = dbEntry.id;
+    const dbEntry = await db.session.findFirst({
+      where: { id: this._dbId },
+      include: { entities: true },
+    });
 
     const { authKey, dcId, port, serverAddress } = dbEntry;
 
@@ -54,7 +57,7 @@ export default class TelegramSession extends MemorySession {
     this.log.trace('setDC', dcId, serverAddress, port);
     super.setDC(dcId, serverAddress, port);
     db.session.update({
-      where: { id: this.dbId },
+      where: { id: this._dbId },
       data: { dcId, serverAddress, port },
     })
       .then(e => this.log.trace('DC update result', e))
@@ -65,7 +68,7 @@ export default class TelegramSession extends MemorySession {
     this.log.trace('authKey', value);
     this._authKey = value;
     db.session.update({
-      where: { id: this.dbId },
+      where: { id: this._dbId },
       data: { authKey: value?.getKey() || null },
     })
       .then(e => this.log.trace('authKey update result', e))
@@ -85,10 +88,10 @@ export default class TelegramSession extends MemorySession {
       db.entity.upsert({
         // id, hash, username, phone, name
         where: {
-          entityId_sessionId: { sessionId: this.dbId, entityId: e[0].toString() },
+          entityId_sessionId: { sessionId: this._dbId, entityId: e[0].toString() },
         },
         create: {
-          sessionId: this.dbId,
+          sessionId: this._dbId,
           entityId: e[0] && e[0].toString(),
           hash: e[1] && e[1].toString(),
           username: e[2] && e[2].toString(),

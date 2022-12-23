@@ -9,6 +9,7 @@ import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
+import db from '../models/db';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -86,8 +87,8 @@ export default class SetupController {
       let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
       password = md5Hex(password);
       this.oicq = await this.setupService.createOicq(uin, password, platform);
+      this.instance.qqBotId = this.oicq.id;
       await this.setupService.informOwner(`登录成功`);
-      this.setupService.saveOicqLoginInfo(uin, password, platform);
     }
     catch (e) {
       this.log.error('登录 OICQ 失败', e);
@@ -95,17 +96,22 @@ export default class SetupController {
       throw e;
     }
     // 登录 tg UserBot
-    try {
-      const phoneNumber = await this.setupService.waitForOwnerInput('创建 Telegram UserBot，请输入你的手机号码（需要带国家区号，例如：+86）');
-      await this.setupService.informOwner('正在登录，请稍候…');
-      this.tgUser = await this.setupService.createUserBot(phoneNumber);
-      await this.setupService.informOwner(`登录成功`);
+    if (this.instance.userSessionId) {
+      await this.setupService.informOwner('userSessionId 已经存在，跳过');
     }
-    catch (e) {
-      this.log.error('创建 UserBot 失败', e);
-      this.isInProgress = false;
-      throw e;
-    }
+    else
+      try {
+        const phoneNumber = await this.setupService.waitForOwnerInput('创建 Telegram UserBot，请输入你的手机号码（需要带国家区号，例如：+86）');
+        await this.setupService.informOwner('正在登录，请稍候…');
+        this.tgUser = await this.setupService.createUserBot(phoneNumber);
+        this.instance.userSessionId = this.tgUser.sessionId;
+        await this.setupService.informOwner(`登录成功`);
+      }
+      catch (e) {
+        this.log.error('创建 UserBot 失败', e);
+        this.isInProgress = false;
+        throw e;
+      }
   }
 
   private async finishSetup() {

@@ -1723,7 +1723,7 @@ __metadata:
     tsc: ^2.0.4
     typescript: ^4.7.4
   bin:
-    q2tg: build/src/index.js
+    q2tg: build/index.js
   languageName: unknown
   linkType: soft
 

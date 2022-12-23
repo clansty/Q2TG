@@ -12,7 +12,6 @@ datasource db {
 
 model Session {
   id            Int      @id @default(autoincrement())
-  name          String   @unique
   dcId          Int?
   port          Int?
   serverAddress String?
@@ -35,16 +34,24 @@ model Entity {
 }
 
 model Instance {
-  id          Int           @id @default(autoincrement())
-  owner       BigInt        @default(0)
-  qqUin       BigInt        @default(0)
-  qqPassword  String        @default("")
-  qqPlatform  Int           @default(0)
-  workMode    String        @default("")
-  isSetup     Boolean       @default(false)
-  botToken    String?
-  Message     Message[]
-  ForwardPair ForwardPair[]
+  id            Int           @id @default(autoincrement())
+  owner         BigInt        @default(0)
+  workMode      String        @default("")
+  isSetup       Boolean       @default(false)
+  Message       Message[]
+  ForwardPair   ForwardPair[]
+  botSessionId  Int?
+  userSessionId Int?
+  qqBotId       Int?
+  qqBot         QqBot?        @relation(fields: [qqBotId], references: [id], onDelete: Cascade)
+}
+
+model QqBot {
+  id       Int        @id @default(autoincrement())
+  uin      BigInt     @default(0)
+  password String     @default("")
+  platform Int        @default(0)
+  Instance Instance[]
 }
 
 model Message {

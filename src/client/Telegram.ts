@@ -24,7 +24,13 @@ export default class Telegram {
   private readonly onServiceMessageHandlers: Array<ServiceMessageHandler> = [];
   public me: Api.User;
 
-  private constructor(sessionId: string, appName: string) {
+  private static existedBots = {} as { [id: number]: Telegram };
+
+  public get sessionId() {
+    return (this.client.session as TelegramSession).dbId;
+  }
+
+  private constructor(appName: string, sessionId?: number) {
     this.client = new TelegramClient(
       new TelegramSession(sessionId),
       parseInt(process.env.TG_API_ID),
@@ -33,7 +39,7 @@ export default class Telegram {
         connectionRetries: 5,
         langCode: 'zh',
         deviceModel: `${appName} On ${os.hostname()}`,
-        appVersion: 'raincandy',
+        appVersion: 'rainbowcat',
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
           ip: process.env.PROXY_IP,
@@ -41,18 +47,24 @@ export default class Telegram {
         } : undefined,
       },
     );
-    this.client.logger.setLevel(LogLevel.WARN);
+    // this.client.logger.setLevel(LogLevel.WARN);
   }
 
-  public static async create(startArgs: UserAuthParams | BotAuthParams, sessionId: string, appName = 'Q2TG') {
-    const bot = new this(sessionId, appName);
+  public static async create(startArgs: UserAuthParams | BotAuthParams, appName = 'Q2TG') {
+    const bot = new this(appName);
     await bot.client.start(startArgs);
+    this.existedBots[bot.sessionId] = bot;
     await bot.config();
     return bot;
   }
 
-  public static async connect(sessionId: string, appName = 'Q2TG') {
-    const bot = new this(sessionId, appName);
+  public static async connect(sessionId: number, appName = 'Q2TG') {
+    if (this.existedBots[sessionId]) {
+      // 已经创建过就不会再次创建，可用于两个 instance 共享 user bot
+      return this.existedBots[sessionId];
+    }
+    const bot = new this(appName, sessionId);
+    this.existedBots[sessionId] = bot;
     await bot.client.connect();
     await bot.config();
     return bot;
