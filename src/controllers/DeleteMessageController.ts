@@ -36,6 +36,10 @@ export default class DeleteMessageController {
     if (message.senderId?.eq(this.instance.botMe.id)) return true;
     const pair = this.instance.forwardPairs.find(message.chat);
     if (!pair) return;
+    if (await this.deleteMessageService.isInvalidEdit(message, pair)) {
+      console.log('invalid edit');
+      return true;
+    }
     await this.deleteMessageService.telegramDeleteMessage(message.id, pair);
     return await this.onTelegramMessage(message);
   };

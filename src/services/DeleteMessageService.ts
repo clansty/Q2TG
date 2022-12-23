@@ -6,6 +6,7 @@ import { Friend, FriendRecallEvent, Group, GroupRecallEvent } from 'oicq';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import { consumer } from '../utils/highLevelFunces';
+import forwardHelper from '../helpers/forwardHelper';
 
 export default class DeleteMessageService {
   private readonly log: Logger;
@@ -146,5 +147,21 @@ export default class DeleteMessageService {
     catch (e) {
       this.log.error('处理 QQ 消息撤回失败', e);
     }
+  }
+
+  public async isInvalidEdit(message: Api.Message, pair: Pair) {
+    const messageInfo = await db.message.findFirst({
+      where: {
+        tgChatId: pair.tgId,
+        tgMsgId: message.id,
+        instanceId: this.instance.id,
+      },
+    });
+    if (!messageInfo) return false;
+    const isTextSame = messageInfo.tgMessageText === message.message;
+    if (forwardHelper.getMessageDocumentId(message)) {
+      return forwardHelper.getMessageDocumentId(message) === messageInfo.tgFileId && isTextSame;
+    }
+    return isTextSame;
   }
 }

@@ -4,6 +4,7 @@ import { base64decode } from 'nodejs-base64';
 import { getLogger } from 'log4js';
 import { Entity } from 'telegram/define';
 import { ForwardMessage } from 'oicq';
+import { Api } from 'telegram';
 
 const log = getLogger('ForwardHelper');
 
@@ -153,5 +154,16 @@ export default {
       result += `\n<b>共 ${count} 条消息记录</b>`;
     }
     return result;
+  },
+
+  getMessageDocumentId(message: Api.Message) {
+    if (message.document) {
+      return BigInt(message.document.id.toString());
+    }
+    if (message.file) {
+      const media = Reflect.get(message.file, 'media');
+      return BigInt(media.id.toString());
+    }
+    return null;
   },
 };
