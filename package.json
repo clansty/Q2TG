@@ -10,7 +10,8 @@
   },
   "bin": "build/index.js",
   "files": [
-    "build"
+    "build",
+    "assets"
   ],
   "devDependencies": {
     "@types/cli-progress": "^3.11.0",

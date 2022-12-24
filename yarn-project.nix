@@ -155,6 +155,7 @@ cacheEntries = {
 "nodejs-base64@npm:2.0.0" = { filename = "nodejs-base64-npm-2.0.0-6bc5adeae2-1e9fc06396.zip"; sha512 = "1e9fc06396bd77caba14f93eec40751f00c4570346ebbaf9ded746f8309d0adc8a18bf62c55a9e0288854df7eb61ee9942b316548fd1e185de59213ce4f0fbde"; };
 "tsc@npm:2.0.4" = { filename = "tsc-npm-2.0.4-e331b066cb-50b1024088.zip"; sha512 = "50b10240887424c66454687f0fca4e319713b35cb44f0dab228719eb4dd757251f83c3d79e60d29dfbe90c2d6f1272f793b83e75a9fca2c622b4213ad3eb8cb1"; };
 "typescript@npm:4.7.4" = { filename = "typescript-npm-4.7.4-65aa6ffb42-5750181b1c.zip"; sha512 = "5750181b1cd7e6482c4195825547e70f944114fb47e58e4aa7553e62f11b3f3173766aef9c281783edfd881f7b8299cf35e3ca8caebe73d8464528c907a164df"; };
+"@prisma/client@npm:4.6.0" = { filename = "@prisma-client-npm-4.6.0-fe27a80ce5-9ea358059c.zip"; sha512 = "9ea358059c01d5ed18b683a1bf4c713c08eb084622aadafa0b80d0439d5ea46e8930efa3fc72a915914f306f505bc7874954466ba13fdd385ca39e8009702e03"; };
 "@types/cli-progress@npm:3.11.0" = { filename = "@types-cli-progress-npm-3.11.0-889a906352-d440162233.zip"; sha512 = "d4401622333e888925b47c5d5bb0b89dddae17cc020f909a64ad7275b326bf3c6e9cd467f625a197fd958a1e49220d32f4a2b0bf2948fee330c719a9b985674e"; };
 "@types/fluent-ffmpeg@npm:2.1.20" = { filename = "@types-fluent-ffmpeg-npm-2.1.20-46c4294bd5-f810a12a42.zip"; sha512 = "f810a12a427f8e6568cec2ef250693e533112b66b7cd9ca9e10fe32b2aecb85623b8bb4ae5e51e47f79e27cdb969d3115720588b9f6fc7e4d17b4d4dc5e0d677"; };
 "@types/sharp@npm:0.31.0" = { filename = "@types-sharp-npm-0.31.0-a646a0f79c-c7698de181.zip"; sha512 = "c7698de18183a0574bf2f703226a5a7dc32b8a7340b52790eff0f6775b8ad708b6782f48fcaaf4d1be15fd76215c81c3ea55595d55484bf7ce870923c8174294"; };
@@ -165,6 +166,7 @@ cacheEntries = {
 "prompts@npm:2.4.2" = { filename = "prompts-npm-2.4.2-f5d25d5eea-d8fd1fe638.zip"; sha512 = "d8fd1fe63820be2412c13bfc5d0a01909acc1f0367e32396962e737cb2fc52d004f3302475d5ce7d18a1e8a79985f93ff04ee03007d091029c3f9104bffc007d"; };
 "file-type@npm:17.1.4" = { filename = "file-type-npm-17.1.4-72b08f1f60-07ae79cda0.zip"; sha512 = "07ae79cda01a38c2dedec85acfa7d5532c8334d4bc8542e0ab97e27d1bc496d325ea245bb546394f43ac19673fad6ef50fc38a9d70462ae2f5a28ab8721d1037"; };
 "silk-sdk@npm:0.2.2" = { filename = "silk-sdk-npm-0.2.2-2c0636bebf-e6314428f1.zip"; sha512 = "e6314428f1e406e59ffb400bb0493dfa056d1ffcf36afa60de59cfe22937ce70f5b7a08757510880755dbf1cb9137a298947641b10e7d1369bdd421674afdbec"; };
+"@prisma/engines-version@npm:4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3" = { filename = "@prisma-engines-version-npm-4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3-7777b7153b-88510cec37.zip"; sha512 = "88510cec375f1505953121a41fa464f26be4022859cfe40659e4cb15c7e8d22d163203a30d65f2e66c828287cf029eb92ab6ba7325c6b3f551f92fb52424477b"; };
 "@types/node@npm:17.0.21" = { filename = "@types-node-npm-17.0.21-7d68eb6a13-89dcd2fe82.zip"; sha512 = "89dcd2fe82f21d3634266f8384e9c865cf8af49685639fbdbd799bdd1040480fb1e8eeda2d3b9fce41edbe704d2a4be9f427118c4ae872e8d9bb7cbeb3c41a94"; };
 "log4js@npm:6.6.1" = { filename = "log4js-npm-6.6.1-00e7698906-68f29e7b8b.zip"; sha512 = "68f29e7b8b0efa2f987e65ee122fde0bc806dd7ad20f0a9f2da316696423e42381ba348bd6e2f6a2feba042a6ed33c14955210741f47ab897b3204aba8bcd84b"; };
 "oicq@https://files.catbox.moe/a5tcyl.tgz" = { filename = "oicq-https-9b8f0fd4d4-73dc95fa12.zip"; sha512 = "73dc95fa12188ce074687cdb4b35c7a982cd677fac2f80fb56203ac0862918aa83a4e514ea892e2f4633a6d9e9086bd774a74fd02aebb17c7528f9e04524844b"; };
@@ -400,8 +402,6 @@ cacheEntries = {
 "aggregate-error@npm:3.1.0" = { filename = "aggregate-error-npm-3.1.0-415a406f4e-1101a33f21.zip"; sha512 = "1101a33f21baa27a2fa8e04b698271e64616b886795fd43c31068c07533c7b3facfcaf4e9e0cab3624bd88f729a592f1c901a1a229c9e490eafce411a8644b79"; };
 "clean-stack@npm:2.2.0" = { filename = "clean-stack-npm-2.2.0-a8ce435a5c-2ac8cd2b2f.zip"; sha512 = "2ac8cd2b2f5ec986a3c743935ec85b07bc174d5421a5efc8017e1f146a1cf5f781ae962618f416352103b32c9cd7e203276e8c28241bbe946160cab16149fb68"; };
 "indent-string@npm:4.0.0" = { filename = "indent-string-npm-4.0.0-7b717435b2-824cfb9929.zip"; sha512 = "824cfb9929d031dabf059bebfe08cf3137365e112019086ed3dcff6a0a7b698cb80cf67ccccde0e25b9e2d7527aa6cc1fed1ac490c752162496caba3e6699612"; };
-"@prisma/client@npm:4.6.0" = { filename = "@prisma-client-npm-4.6.0-fe27a80ce5-9ea358059c.zip"; sha512 = "9ea358059c01d5ed18b683a1bf4c713c08eb084622aadafa0b80d0439d5ea46e8930efa3fc72a915914f306f505bc7874954466ba13fdd385ca39e8009702e03"; };
-"@prisma/engines-version@npm:4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3" = { filename = "@prisma-engines-version-npm-4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3-7777b7153b-88510cec37.zip"; sha512 = "88510cec375f1505953121a41fa464f26be4022859cfe40659e4cb15c7e8d22d163203a30d65f2e66c828287cf029eb92ab6ba7325c6b3f551f92fb52424477b"; };
 };
 
 in optionalOverride overrideAttrs project

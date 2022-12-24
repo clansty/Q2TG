@@ -47,6 +47,7 @@ in
         Restart = "on-failure";
         ExecStartPre = "${cfg.prisma-package}/bin/prisma db push --accept-data-loss --skip-generate --schema ${cfg.package}/libexec/q2tg/node_modules/.prisma/client/schema.prisma";
         ExecStart = "${cfg.package}/bin/q2tg";
+        WorkingDirectory = "${cfg.package}/libexec/q2tg";
       };
     };
   };
