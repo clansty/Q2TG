@@ -20,6 +20,11 @@ const cachedConvert = async (key: string, convert: (outputPath: string) => Promi
 };
 
 const convert = {
+  cached: cachedConvert,
+  cachedBuffer: (key: string, buf: () => Promise<Buffer | Uint8Array | string>) =>
+    cachedConvert(key, async (convertedPath) => {
+      await fsP.writeFile(convertedPath, await buf());
+    }),
   // webp2png，这里 webpData 是方法因为不需要的话就不获取了
   png: (key: string, webpData: () => Promise<Buffer | Uint8Array | string>) =>
     cachedConvert(key + '.png', async (convertedPath) => {

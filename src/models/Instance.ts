@@ -148,7 +148,7 @@ export default class Instance {
       this.requestController = new RequestController(this, this.tgBot, this.oicq);
       this.configController = new ConfigController(this, this.tgBot, this.tgUser, this.oicq);
       this.deleteMessageController = new DeleteMessageController(this, this.tgBot, this.tgUser, this.oicq);
-      this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.oicq);
+      this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.tgUser, this.oicq);
       this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()
