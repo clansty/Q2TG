@@ -36,6 +36,6 @@ COPY prisma/ ./prisma/
 COPY assets/ ./assets/
 COPY --from=build /app/build/ /app/build/
 
-RUN yarn add prisma@4.2.1
+RUN yarn add prisma@4.6.0
 
 CMD [ "yarn", "start" ]

@@ -25,7 +25,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@prisma/client": "git+https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7",
+    "@prisma/client": "4.6.0",
     "axios": "^0.27.2",
     "cli-progress": "^3.11.2",
     "date-and-time": "^2.4.1",

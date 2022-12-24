@@ -2,7 +2,7 @@
   description = "Flake that configures Q2TG";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/b225d54ffcfe905e45d60292db259dbee04324f9";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils }:

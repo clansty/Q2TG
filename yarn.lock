@@ -72,24 +72,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@git+https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7":
-  version: 4.2.1
-  resolution: "@prisma/client@https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7"
+"@prisma/client@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@prisma/client@npm:4.6.0"
   dependencies:
-    "@prisma/engines-version": 4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826
+    "@prisma/engines-version": 4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3
   peerDependencies:
     prisma: "*"
   peerDependenciesMeta:
     prisma:
       optional: true
-  checksum: 6f0c726bb3cc4c0287f471408a7fd8a2c4dc3eed6ed17f7e971878b72bf372eeda12f38937e225300a32f56eb2705a5e7bff6d166bb12a31410db135d6c67101
+  checksum: 9ea358059c01d5ed18b683a1bf4c713c08eb084622aadafa0b80d0439d5ea46e8930efa3fc72a915914f306f505bc7874954466ba13fdd385ca39e8009702e03
   languageName: node
   linkType: hard
 
-"@prisma/engines-version@npm:4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826":
-  version: 4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826
-  resolution: "@prisma/engines-version@npm:4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826"
-  checksum: 65975c69a361b56a85cf3652c8d7aec7549abe574158e423a64bc0be4bee83fe72ac2abd60133f776f3d410f97e7dc8c5dc516791ec963703cc6f914d378efc4
+"@prisma/engines-version@npm:4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3":
+  version: 4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3
+  resolution: "@prisma/engines-version@npm:4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3"
+  checksum: 88510cec375f1505953121a41fa464f26be4022859cfe40659e4cb15c7e8d22d163203a30d65f2e66c828287cf029eb92ab6ba7325c6b3f551f92fb52424477b
   languageName: node
   linkType: hard
 
@@ -1695,7 +1695,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "q2tg@workspace:."
   dependencies:
-    "@prisma/client": "git+https://github.com/Clansty/prisma.git#commit=9d3dcbc81ab4724ec947fd554ae31ed44cea80b7"
+    "@prisma/client": 4.6.0
     "@types/cli-progress": ^3.11.0
     "@types/date-and-time": ^0.13.0
     "@types/fluent-ffmpeg": ^2.1.20
