@@ -252,12 +252,18 @@ export default class {
     await this.updateStatusMessage();
     const { fileTypeFromFile } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
     for (const [fileKey, filePath] of Object.entries(this.filesMap)) {
-      const type = fileKey.endsWith('.tgs') ? {
+      let type = fileKey.endsWith('.tgs') ? {
         ext: 'tgs',
         mime: 'application/x-tgsticker',
       } : await fileTypeFromFile(filePath);
+      if(!type){
+        type = {
+          ext: 'bin',
+          mime: 'application/octet-stream',
+        }
+      }
       let media: Api.TypeInputMedia;
-      if (['webp', 'tgs'].includes(type.ext)) {
+      if (['.webp', '.tgs'].includes(path.extname(filePath))) {
         // 贴纸
         media = new Api.InputMediaUploadedDocument({
           file: await importSession.uploadFile(new CustomFile(
