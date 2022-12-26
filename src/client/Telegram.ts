@@ -202,4 +202,12 @@ export default class Telegram {
       dcId: document.dcId,
     });
   }
+
+  public async getInputPeerUserFromMessage(chatId: EntityLike, userId: BigInteger, msgId: number) {
+    const inputPeerOfChat = await this.client.getInputEntity(chatId);
+    return new Api.InputUserFromMessage({
+      peer: inputPeerOfChat,
+      userId, msgId,
+    });
+  }
 }

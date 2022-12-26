@@ -126,7 +126,7 @@ export default {
 
   getUserDisplayName(user: Entity) {
     if (!user) {
-      return '未知会话';
+      return '未知';
     }
     if ('firstName' in user) {
       return user.firstName +
@@ -138,7 +138,7 @@ export default {
     else if ('id' in user) {
       return user.id.toString();
     }
-    return '未知会话';
+    return '未知';
   },
 
   generateForwardBrief(messages: ForwardMessage[]) {

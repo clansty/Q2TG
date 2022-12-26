@@ -1548,16 +1548,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@https://files.catbox.moe/a5tcyl.tgz":
-  version: 2.3.2-clansty
-  resolution: "oicq@https://files.catbox.moe/a5tcyl.tgz"
+"oicq@https://files.catbox.moe/1hv1p1.tgz":
+  version: 2.3.3-clansty
+  resolution: "oicq@https://files.catbox.moe/1hv1p1.tgz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: 73dc95fa12188ce074687cdb4b35c7a982cd677fac2f80fb56203ac0862918aa83a4e514ea892e2f4633a6d9e9086bd774a74fd02aebb17c7528f9e04524844b
+  checksum: 1ac901319005191fa3974f35efedca40fda12589e564d0f38065314eccf761f08adc6004d623d25b29edb45418e327790f8e21c343fadc45312c0b3be0ee0284
   languageName: node
   linkType: hard
 
@@ -1713,7 +1713,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "https://files.catbox.moe/a5tcyl.tgz"
+    oicq: "https://files.catbox.moe/1hv1p1.tgz"
     prompts: ^2.4.2
     sharp: ^0.31.3
     silk-sdk: ^0.2.2

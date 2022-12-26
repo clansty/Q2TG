@@ -16,6 +16,7 @@ import Instance from '../models/Instance';
 import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import forwardHelper from '../helpers/forwardHelper';
+import helper from '../helpers/forwardHelper';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
@@ -62,6 +63,8 @@ export default class ForwardController {
             instanceId: this.instance.id,
             tgMessageText: tgMessage.message,
             tgFileId: forwardHelper.getMessageDocumentId(tgMessage),
+            nick: event.nickname,
+            tgSenderId: BigInt(this.tgBot.me.id.toString()),
           },
         });
       }
@@ -96,6 +99,8 @@ export default class ForwardController {
               instanceId: this.instance.id,
               tgMessageText: message.message,
               tgFileId: forwardHelper.getMessageDocumentId(message),
+              nick: helper.getUserDisplayName(message.sender),
+              tgSenderId: BigInt(message.senderId.toString()),
             },
           });
         }

@@ -21,6 +21,7 @@ import { Button } from 'telegram/tl/custom/button';
 import { CustomFile } from 'telegram/client/uploads';
 import { QqBot } from '@prisma/client';
 import StatusReportController from '../controllers/StatusReportController';
+import HugController from '../controllers/HugController';
 
 export default class Instance {
   private _owner = 0;
@@ -50,6 +51,7 @@ export default class Instance {
   private forwardController: ForwardController;
   private fileAndFlashPhotoController: FileAndFlashPhotoController;
   private statusReportController: StatusReportController;
+  private hugController: HugController;
 
   private constructor(public readonly id: number) {
     this.log = getLogger(`Instance - ${this.id}`);
@@ -149,6 +151,9 @@ export default class Instance {
       this.configController = new ConfigController(this, this.tgBot, this.tgUser, this.oicq);
       this.deleteMessageController = new DeleteMessageController(this, this.tgBot, this.tgUser, this.oicq);
       this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.tgUser, this.oicq);
+      if (this.workMode === 'group') {
+        this.hugController = new HugController(this, this.tgBot, this.oicq);
+      }
       this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()

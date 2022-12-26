@@ -70,6 +70,8 @@ model Message {
   instance      Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   tgFileId      BigInt?  @db.BigInt
   tgMessageText String?
+  nick          String? // /抱 的时候会用到
+  tgSenderId    BigInt?  @db.BigInt
 
   @@index([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
   @@index([tgChatId, tgMsgId, instanceId])
