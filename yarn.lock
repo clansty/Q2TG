@@ -1548,9 +1548,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@https://files.catbox.moe/1hv1p1.tgz":
+"oicq@https://0w.al/AhKp.tar.gz":
   version: 2.3.3-clansty
-  resolution: "oicq@https://files.catbox.moe/1hv1p1.tgz"
+  resolution: "oicq@https://0w.al/AhKp.tar.gz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
@@ -1713,7 +1713,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "https://files.catbox.moe/1hv1p1.tgz"
+    oicq: "https://0w.al/AhKp.tar.gz"
     prompts: ^2.4.2
     sharp: ^0.31.3
     silk-sdk: ^0.2.2
