@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { Group, GroupMessageEvent, MessageElem, PrivateMessageEvent, Quotable, segment, Sendable } from 'oicq';
+import { Group, GroupMessageEvent, MessageElem, PrivateMessageEvent, PttElem, Quotable, segment, Sendable } from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
@@ -152,7 +152,12 @@ export default class ForwardService {
           case 'record': {
             const temp = await createTempFile({ postfix: '.ogg' });
             tempFiles.push(temp);
-            await silk.decode(await fetchFile(elem.url), temp.path);
+            url = elem.url;
+            if (!url) {
+              const refetchMessage = await this.oicq.getMsg(event.message_id);
+              url = (refetchMessage.message.find(it => it.type === 'record') as PttElem).url;
+            }
+            await silk.decode(await fetchFile(url), temp.path);
             files.push(temp.path);
             break;
           }
