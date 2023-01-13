@@ -16,4 +16,5 @@ runCommand "fonts" { } ''
   cp ${repo}/SF-Mono/SF-Mono-RegularItalic.otf $out/SFMonoItalic.otf
   cp ${repo}/SF-Mono/SF-Mono-Semibold.otf $out/SFMonoBold.otf
   cp ${repo}/SF-Mono/SF-Mono-SemiboldItalic.otf $out/SFMonoBoldItalic.otf
+  cp ${repo}/PingFang/PingFang.ttc $out/PingFang.ttc
 ''
