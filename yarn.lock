@@ -3346,7 +3346,7 @@ __metadata:
     nodejs-base64: ^2.0.0
     oicq: "https://0w.al/AhKp.tar.gz"
     prompts: ^2.4.2
-    quote-api: "https://github.com/LyoSU/quote-api/archive/6e27746bb3e946205cb60607a85239747b4640ef.tar.gz"
+    quote-api: "https://github.com/Clansty/quote-api/archive/8d2a51e512a6d33e8b5948e39c7c9f3d886bc3d6.tar.gz"
     sharp: ^0.31.3
     silk-sdk: ^0.2.2
     telegram: ^2.15.2
@@ -3375,9 +3375,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quote-api@https://github.com/LyoSU/quote-api/archive/6e27746bb3e946205cb60607a85239747b4640ef.tar.gz":
+"quote-api@https://github.com/Clansty/quote-api/archive/8d2a51e512a6d33e8b5948e39c7c9f3d886bc3d6.tar.gz":
   version: 0.12.1
-  resolution: "quote-api@https://github.com/LyoSU/quote-api/archive/6e27746bb3e946205cb60607a85239747b4640ef.tar.gz"
+  resolution: "quote-api@https://github.com/Clansty/quote-api/archive/8d2a51e512a6d33e8b5948e39c7c9f3d886bc3d6.tar.gz"
   dependencies:
     canvas: "git+https://github.com/Automattic/node-canvas#198080580a0e3938c48daae357b88a1638a9ddcd"
     dotenv: ^7.0.0
@@ -3398,7 +3398,7 @@ __metadata:
     sharp: ^0.30.5
     smartcrop-sharp: ^2.0.4
     telegraf: ^3.38.0
-  checksum: 87dcc4211fdb911f6ed77d4cb874e6f9afea9f64522932f409f3c238dccd3266ea968c8434b4db5258695b92790256cca3f96d4fa8dfc584bb9aca1ecca315f2
+  checksum: f8500c306f1a601e326026d120adfc8933350e0840e8d870703c759689156383e4a0fb98b121333fb5f11160413a055dc88a2dcabf3152f0b1d42f1dcf87012a
   languageName: node
   linkType: hard
 
