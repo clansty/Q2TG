@@ -24,6 +24,10 @@ with pkgs.lib;
       type = types.package;
       default = self.packages.${pkgs.system}.prisma-patched;
     };
+    quotly-fonts = mkOption {
+      type = types.package;
+      default = self.packages.${pkgs.system}.fontsSf;
+    };
     tg.api-id = mkOption {
       type = types.int;
     };

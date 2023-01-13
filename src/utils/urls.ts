@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Friend, Group } from 'oicq';
 
-export function getAvatarUrl(room: number | Friend | Group): string {
+export function getAvatarUrl(room: number | bigint | Friend | Group): string {
   if (!room) return '';
   if (room instanceof Friend) {
     room = room.user_id;

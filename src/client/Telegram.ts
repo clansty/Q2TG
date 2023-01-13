@@ -12,6 +12,7 @@ import TelegramChat from './TelegramChat';
 import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
 import { BigInteger } from 'big-integer';
+import { IterMessagesParams } from 'telegram/client/messages';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -208,6 +209,25 @@ export default class Telegram {
     return new Api.InputUserFromMessage({
       peer: inputPeerOfChat,
       userId, msgId,
+    });
+  }
+
+  public getMessage(entity: EntityLike | undefined, getMessagesParams?: Partial<IterMessagesParams>) {
+    return this.client.getMessages(entity, getMessagesParams);
+  }
+
+  public downloadEntityPhoto(entity: EntityLike, isBig = false) {
+    return this.client.downloadProfilePhoto(entity, { isBig });
+  }
+
+  public downloadThumb(document: Api.Document, thumbSize = 'm') {
+    return this.client.downloadFile(new Api.InputDocumentFileLocation({
+      id: document.id,
+      accessHash: document.accessHash,
+      fileReference: document.fileReference,
+      thumbSize,
+    }), {
+      dcId: document.dcId,
     });
   }
 }

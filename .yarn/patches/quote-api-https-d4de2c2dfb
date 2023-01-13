@@ -1,0 +1,72 @@
+diff --git a/utils/emoji-image.js b/utils/emoji-image.js
+index db5562bac077015e6fec7d974c222ca088900dfe..dc4db3f75b828530107f22620f786a50aa5fd546 100644
+--- a/utils/emoji-image.js
++++ b/utils/emoji-image.js
+@@ -1,6 +1,6 @@
+ const path = require('path')
+ const fs = require('fs')
+-const loadImageFromUrl = require('./image-load-url')
++const loadImageFromUrl = require('./image-load-path')
+ const EmojiDbLib = require('emoji-db')
+ const promiseAllStepN = require('./promise-concurrent')
+
+diff --git a/utils/index.js b/utils/index.js
+index 94ee3989f4e1604319ca2bac0634a72a50d6c707..ba5ef66320a9873345f7ec915e2cf8a293fa9417 100644
+--- a/utils/index.js
++++ b/utils/index.js
+@@ -1,6 +1,6 @@
+ module.exports = {
+   QuoteGenerate: require('./quote-generate'),
+-  loadImageFromUrl: require('./image-load-url'),
++  loadImageFromUrl: require('./image-load-path'),
+   loadImageFromPath: require('./image-load-path'),
+   promiseAllStepN: require('./promise-concurrent'),
+   userName: require('./user-name')
+diff --git a/utils/quote-generate.js b/utils/quote-generate.js
+index 09fb7c9c2969a7b491e0ea457f2880f87ccf8af0..0d1c6726799688c88512f05cb875280e77f1e88f 100644
+--- a/utils/quote-generate.js
++++ b/utils/quote-generate.js
+@@ -2,7 +2,7 @@ const fs = require('fs')
+ const { createCanvas, registerFont } = require('canvas')
+ const EmojiDbLib = require('emoji-db')
+ const { loadImage } = require('canvas')
+-const loadImageFromUrl = require('./image-load-url')
++const loadImageFromUrl = require('./image-load-path')
+ const sharp = require('sharp')
+ const Jimp = require('jimp')
+ const smartcrop = require('smartcrop-sharp')
+@@ -15,7 +15,7 @@ const emojiDb = new EmojiDbLib({ useDefaultDb: true })
+
+ function loadFont () {
+   console.log('font load start')
+-  const fontsDir = 'assets/fonts/'
++  const fontsDir = process.env.QUOTLY_FONTS + '/'
+
+   fs.readdir(fontsDir, (_err, files) => {
+     files.forEach((file) => {
+@@ -405,18 +405,18 @@ class QuoteGenerate {
+       }
+
+       let fontType = ''
+-      let fontName = 'NotoSans'
++      let fontName = 'SFPro'
+       let fillStyle = fontColor
+
++      if (styledWord.style.includes('monospace')) {
++        fontName = 'SFMono'
++        fillStyle = '#5887a7'
++      }
+       if (styledWord.style.includes('bold')) {
+-        fontType += 'bold '
++        fontName += 'Bold'
+       }
+       if (styledWord.style.includes('italic')) {
+-        fontType += 'italic '
+-      }
+-      if (styledWord.style.includes('monospace')) {
+-        fontName = 'SFNSMono'
+-        fillStyle = '#5887a7'
++        fontName += 'Italic'
+       }
+       if (styledWord.style.includes('mention')) {
+         fillStyle = '#6ab7ec'

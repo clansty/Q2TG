@@ -15,11 +15,18 @@
         doCheck = false;
       });
     })
+    pixman
+    cairo
+    pango
+    giflib
+    libjpeg
+    libpng
+    librsvg
   ]);
 
   nativeBuildInputs = attrs.buildInputs ++ (with pkgs; [
     python3
     pkg-config
-    (callPackage ./nixos/prismaPatched.nix {})
+    (callPackage ./nixos/prismaPatched.nix { })
   ]);
 })

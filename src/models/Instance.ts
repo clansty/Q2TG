@@ -22,6 +22,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import { QqBot } from '@prisma/client';
 import StatusReportController from '../controllers/StatusReportController';
 import HugController from '../controllers/HugController';
+import QuotLyController from '../controllers/QuotLyController';
 
 export default class Instance {
   private _owner = 0;
@@ -52,6 +53,7 @@ export default class Instance {
   private fileAndFlashPhotoController: FileAndFlashPhotoController;
   private statusReportController: StatusReportController;
   private hugController: HugController;
+  private quotLyController: QuotLyController;
 
   private constructor(public readonly id: number) {
     this.log = getLogger(`Instance - ${this.id}`);
@@ -155,6 +157,10 @@ export default class Instance {
         this.hugController = new HugController(this, this.tgBot, this.oicq);
       }
       this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
+      if (this.workMode === 'group') {
+        // 希望那个 /q 也被转发
+        this.quotLyController = new QuotLyController(this, this.tgBot, this.oicq);
+      }
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()
       .then(() => this.log.info('初始化已完成'));

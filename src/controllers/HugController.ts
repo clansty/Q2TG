@@ -72,7 +72,7 @@ export default class {
           qqRoomId: pair.qqRoomId,
           qqSenderId: event.source.user_id,
           seq: event.source.seq,
-          rand: event.source.rand,
+          // rand: event.source.rand,
         },
       });
       if (!sourceMessage) {
