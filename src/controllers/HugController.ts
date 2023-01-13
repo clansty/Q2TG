@@ -23,7 +23,7 @@ type ActionSubjectQq = {
 
 type ActionSubject = ActionSubjectTg | ActionSubjectQq;
 
-const COMMAND_REGEX = /^\/([\u4e00-\u9fa5][\u4e00-\u9fa5\w]*)|\$(\w[\u4e00-\u9fa5\w]*)/; // /抱 /$rua
+const COMMAND_REGEX = /^\/([^\w\s$]\S*)|\$(\w\S*)/; // /抱 /$rua
 
 export default class {
   private readonly log: Logger;
