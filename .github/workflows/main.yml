@@ -16,7 +16,7 @@ jobs:
         uses: mtoohey31/cache-flake-attrs@v2
         with:
           key: ${{ runner.os }}-nix-${{ hashFiles('./flake.lock', './flake.nix', './yarn.lock') }}
-          flake_paths: .#packages.x86_64-linux.default
+          flake_paths: .#packages.x86_64-linux.docker.copyTo
 
       - name: Build and push
         run: |

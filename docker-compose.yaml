@@ -12,7 +12,7 @@ services:
     volumes:
       - ./postgresql:/var/lib/postgresql/data
   q2tg:
-    image: ghcr.io/clansty/q2tg:raincandy
+    image: ghcr.io/clansty/q2tg:rainbowcat
     container_name: main_q2tg
     restart: unless-stopped
     depends_on:
