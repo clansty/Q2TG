@@ -43,7 +43,7 @@ nix2container.buildImage {
       "TGS_TO_GIF=${flakePkgs.tgs-to-gif}/bin/tgs-to-gif"
       "FFMPEG_PATH=${pkgs.ffmpeg}/bin/ffmpeg"
       "FFPROBE_PATH=${pkgs.ffmpeg}/bin/ffprobe"
-      "QUOTLY_FONTS=${flakePkgs.fontsSf}"
+      "FONTCONFIG_PATH=${flakePkgs.fontsSf}"
     ];
     Volumes = {
       "/app/data" = { };

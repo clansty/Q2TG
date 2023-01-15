@@ -40,7 +40,7 @@ in
         TGS_TO_GIF = "${cfg.tgs-to-gif-package}/bin/tgs-to-gif";
         FFMPEG_PATH = "${cfg.ffmpeg-package}/bin/ffmpeg";
         FFPROBE_PATH = "${cfg.ffmpeg-package}/bin/ffprobe";
-        QUOTLY_FONTS = cfg.quotly-fonts;
+        FONTCONFIG_PATH = cfg.quotly-fonts;
       };
       serviceConfig = {
         User = "q2tg";

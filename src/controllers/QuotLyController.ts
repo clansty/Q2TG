@@ -130,7 +130,7 @@ export default class {
     };
     let messageFrom: MessageFrom;
     let quoteMessage: {
-      entities?: Api.TypeMessageEntity[]
+      entities?: any[]
       media?: Media[] | Media
       mediaType?: 'sticker'
       voice?: { waveform?: any }
@@ -190,7 +190,51 @@ export default class {
         last_name: sender.lastName,
         photo: photo ? { url: photo } : null,
       };
-      quoteMessage.entities = originTgMessage.entities;
+      quoteMessage.entities = originTgMessage.entities?.map?.(it => {
+        let type = '';
+        let custom_emoji_id = '';
+        switch (it.className) {
+          case 'MessageEntityBold':
+            type = 'bold';
+            break;
+          case 'MessageEntityItalic':
+            type = 'italic';
+            break;
+          case 'MessageEntityStrike':
+            type = 'strikethrough';
+            break;
+          case 'MessageEntityUnderline':
+            type = 'underline';
+            break;
+          case 'MessageEntitySpoiler':
+            type = 'spoiler';
+            break;
+          case 'MessageEntityCode':
+          case 'MessageEntityPre':
+            type = 'code';
+            break;
+          case 'MessageEntityMention':
+          case 'MessageEntityMentionName':
+          case 'InputMessageEntityMentionName':
+          case 'MessageEntityHashtag':
+          case 'MessageEntityEmail':
+          case 'MessageEntityPhone':
+          case 'MessageEntityBotCommand':
+          case 'MessageEntityUrl':
+          case 'MessageEntityTextUrl':
+            type = 'mention';
+            break;
+          case 'MessageEntityCustomEmoji':
+            type = 'custom_emoji';
+            custom_emoji_id = it.documentId.toString();
+            break;
+        }
+        return {
+          type, custom_emoji_id,
+          offset: it.offset,
+          length: it.length,
+        };
+      });
     }
 
     if (originTgMessage.voice) {

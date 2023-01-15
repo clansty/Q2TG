@@ -22,7 +22,8 @@ pkgs.mkShell
       })
     ];
 
-    QUOTLY_FONTS = flakePkgs.fontsSf;
+    PANGO_LANGUAGE = "en,zh_cn";
+    FONTCONFIG_PATH = flakePkgs.fontsSf;
     PRISMA_MIGRATION_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/migration-engine";
     PRISMA_QUERY_ENGINE_BINARY = "${pkgs.prisma-engines}/bin/query-engine";
     PRISMA_QUERY_ENGINE_LIBRARY = "${pkgs.prisma-engines}/lib/libquery_engine.node";
