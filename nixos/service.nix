@@ -41,6 +41,7 @@ in
         FFMPEG_PATH = "${cfg.ffmpeg-package}/bin/ffmpeg";
         FFPROBE_PATH = "${cfg.ffmpeg-package}/bin/ffprobe";
         FONTCONFIG_PATH = cfg.quotly-fonts;
+        IPV6 = "1";
       };
       serviceConfig = {
         User = "q2tg";

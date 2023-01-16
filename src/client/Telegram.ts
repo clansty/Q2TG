@@ -46,7 +46,7 @@ export default class Telegram {
         langCode: 'zh',
         deviceModel: `${appName} On ${os.hostname()}`,
         appVersion: 'rainbowcat',
-        useIPV6: true,
+        useIPV6: !!process.env.IPV6,
         proxy: process.env.PROXY_IP ? {
           socksType: 5,
           ip: process.env.PROXY_IP,
