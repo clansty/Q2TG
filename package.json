@@ -39,7 +39,7 @@
     "nodejs-base64": "^2.0.0",
     "oicq": "https://0w.al/AhKp.tar.gz",
     "prompts": "^2.4.2",
-    "quote-api": "https://github.com/Clansty/quote-api/archive/7ed021c0159f61cadc6ebe73e8da6e05695945aa.tar.gz",
+    "quote-api": "https://github.com/Clansty/quote-api/archive/7d9b4c56ab1e9f3cdf1cd7e108ec25821d89ad70.tar.gz",
     "sharp": "^0.31.3",
     "silk-sdk": "^0.2.2",
     "telegram": "^2.15.2",

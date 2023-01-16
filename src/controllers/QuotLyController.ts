@@ -190,51 +190,54 @@ export default class {
         last_name: sender.lastName,
         photo: photo ? { url: photo } : null,
       };
-      quoteMessage.entities = originTgMessage.entities?.map?.(it => {
-        let type = '';
-        let custom_emoji_id = '';
-        switch (it.className) {
-          case 'MessageEntityBold':
-            type = 'bold';
-            break;
-          case 'MessageEntityItalic':
-            type = 'italic';
-            break;
-          case 'MessageEntityStrike':
-            type = 'strikethrough';
-            break;
-          case 'MessageEntityUnderline':
-            type = 'underline';
-            break;
-          case 'MessageEntitySpoiler':
-            type = 'spoiler';
-            break;
-          case 'MessageEntityCode':
-          case 'MessageEntityPre':
-            type = 'code';
-            break;
-          case 'MessageEntityMention':
-          case 'MessageEntityMentionName':
-          case 'InputMessageEntityMentionName':
-          case 'MessageEntityHashtag':
-          case 'MessageEntityEmail':
-          case 'MessageEntityPhone':
-          case 'MessageEntityBotCommand':
-          case 'MessageEntityUrl':
-          case 'MessageEntityTextUrl':
-            type = 'mention';
-            break;
-          case 'MessageEntityCustomEmoji':
-            type = 'custom_emoji';
-            custom_emoji_id = it.documentId.toString();
-            break;
-        }
-        return {
-          type, custom_emoji_id,
-          offset: it.offset,
-          length: it.length,
-        };
-      });
+      if (originTgMessage.entities)
+        quoteMessage.entities = await Promise.all(originTgMessage.entities?.map?.(async it => {
+          let type = '';
+          let emoji = '';
+          switch (it.className) {
+            case 'MessageEntityBold':
+              type = 'bold';
+              break;
+            case 'MessageEntityItalic':
+              type = 'italic';
+              break;
+            case 'MessageEntityStrike':
+              type = 'strikethrough';
+              break;
+            case 'MessageEntityUnderline':
+              type = 'underline';
+              break;
+            case 'MessageEntitySpoiler':
+              type = 'spoiler';
+              break;
+            case 'MessageEntityCode':
+            case 'MessageEntityPre':
+              type = 'code';
+              break;
+            case 'MessageEntityMention':
+            case 'MessageEntityMentionName':
+            case 'InputMessageEntityMentionName':
+            case 'MessageEntityHashtag':
+            case 'MessageEntityEmail':
+            case 'MessageEntityPhone':
+            case 'MessageEntityBotCommand':
+            case 'MessageEntityUrl':
+            case 'MessageEntityTextUrl':
+              type = 'mention';
+              break;
+            case 'MessageEntityCustomEmoji':
+              type = 'custom_emoji';
+              emoji = await convert.customEmoji(it.documentId.toString(16),
+                () => this.tgBot.getCustomEmoji(it.documentId),
+                false);
+              break;
+          }
+          return {
+            type, emoji,
+            offset: it.offset,
+            length: it.length,
+          };
+        }));
     }
 
     if (originTgMessage.voice) {
