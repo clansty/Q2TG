@@ -15,6 +15,7 @@ import fs from 'fs';
 import fsP from 'fs/promises';
 import { Config } from 'oicq/lib/client';
 import dataPath from '../helpers/dataPath';
+import os from 'os';
 
 const LOG_LEVEL: LogLevel = 'warn';
 
@@ -101,7 +102,7 @@ export default class OicqClient extends Client {
             `MiWifi-${random.hex(4).toUpperCase()}`, `TP-LINK-${random.hex(6).toUpperCase()}`),
           bootloader: random.pick('U-Boot', 'GRUB', 'gummiboot'),
           android_id: random.hex(16),
-          proc_version: `${execSync('uname -s').toString().replace('\n', '')} version ${execSync('uname -r').toString().replace('\n', '')}`,
+          proc_version: `${os.type()} version ${os.release()}`,
           mac_address: `8c:85:90:${random.hex(2)}:${random.hex(2)}:${random.hex(2)}`.toUpperCase(),
           ip_address: `192.168.${random.int(1, 200)}.${random.int(10, 250)}`,
           incremental: random.int(0, 4294967295),
