@@ -48,12 +48,42 @@ const convert = {
     cachedConvert(key + '.webp', async (convertedPath) => {
       await sharp(await imageData()).webp().toFile(convertedPath);
     }),
-  customEmoji: (key: string, imageData: () => Promise<Buffer | Uint8Array | string>, useSmallSize: boolean) =>
-    useSmallSize ?
-      cachedConvert(key + '@50.png', async (convertedPath) => {
-        await sharp(await convert.png(key, imageData)).resize(50).toFile(convertedPath);
-      }) :
-      convert.png(key, imageData),
+  customEmoji: async (key: string, imageData: () => Promise<Buffer | Uint8Array | string>, useSmallSize: boolean) => {
+    if (useSmallSize) {
+      const pathPng = path.join(CACHE_PATH, key + '@50.png');
+      const pathGif = path.join(CACHE_PATH, key + '@50.gif');
+      if (fs.existsSync(pathPng)) return pathPng;
+      if (fs.existsSync(pathGif)) return pathGif;
+    }
+    else {
+      const pathPng = path.join(CACHE_PATH, key + '.png');
+      const pathGif = path.join(CACHE_PATH, key + '.gif');
+      if (fs.existsSync(pathPng)) return pathPng;
+      if (fs.existsSync(pathGif)) return pathGif;
+    }
+    // file not found
+    const data = await imageData() as Buffer;
+    const { fileTypeFromBuffer } = await (Function('return import("file-type")')() as Promise<typeof import('file-type')>);
+    const fileType = (await fileTypeFromBuffer(data))?.mime || 'image/';
+    let pathPngOrig: string, pathGifOrig: string;
+    if (fileType.startsWith('image/')) {
+      pathPngOrig = await convert.png(key, () => Promise.resolve(data));
+    }
+    else {
+      pathGifOrig = await convert.tgs2gif(key, () => Promise.resolve(data));
+    }
+    if (!useSmallSize) return pathPngOrig || pathGifOrig;
+    if (pathPngOrig) {
+      return await cachedConvert(key + '@50.png', async (convertedPath) => {
+        await sharp(pathPngOrig).resize(50).toFile(convertedPath);
+      });
+    }
+    else {
+      return await cachedConvert(key + '@50.gif', async (convertedPath) => {
+        await sharp(pathGifOrig).resize(50).toFile(convertedPath);
+      });
+    }
+  },
 };
 
 export default convert;
