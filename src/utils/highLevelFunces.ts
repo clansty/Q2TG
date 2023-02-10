@@ -9,6 +9,18 @@ export function debounce<TArgs extends any[], TRet>(fn: (...originArgs: TArgs) =
   };
 }
 
+export function throttle<TArgs extends any[], TRet>(fn: (...originArgs: TArgs) => TRet, time = 500) {
+  let timer: NodeJS.Timeout;
+  return function (...args) {
+    if (timer == null) {
+      fn.apply(this, args);
+      timer = setTimeout(() => {
+        timer = null;
+      }, time);
+    }
+  };
+}
+
 export function consumer<TArgs extends any[], TRet>(fn: (...originArgs: TArgs) => TRet, time = 100) {
   const tasks: Function[] = [];
   let timer: NodeJS.Timeout;
