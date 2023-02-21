@@ -4,7 +4,13 @@ nix2container.buildImage {
   maxLayers = 8;
   # optimizations
   layers = with pkgs;[
-    (nix2container.buildLayer { deps = [ bash ]; })
+    (nix2container.buildLayer {
+      copyToRoot = pkgs.buildEnv {
+        name = "root";
+        paths = [ pkgs.bash pkgs.coreutils ];
+        pathsToLink = [ "/bin" ];
+      };
+    })
     (nix2container.buildLayer { deps = [ nodejs ]; })
     # deps of sharp
     (nix2container.buildLayer {
@@ -27,7 +33,7 @@ nix2container.buildImage {
       (
         pkgs.writeScript "start" ''
           #!${pkgs.bash}/bin/bash
-          ${pkgs.coreutils}/bin/mkdir -p /tmp /root/.cache
+          mkdir -p /tmp /root/.cache
           ${flakePkgs.prisma-patched}/bin/prisma db push --accept-data-loss --skip-generate --schema ${flakePkgs.default}/libexec/q2tg/node_modules/.prisma/client/schema.prisma
           ${flakePkgs.default}/bin/q2tg
         ''
