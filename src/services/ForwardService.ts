@@ -236,9 +236,13 @@ export default class ForwardService {
           if (quote) {
             replyTo = quote.tgMsgId;
           }
+          else{
+            message+='\n\n<i>*回复消息找不到</i>'
+          }
         }
         catch (e) {
           this.log.error('查找回复消息失败', e);
+          message+='\n\n<i>*查找回复消息失败</i>'
         }
       }
 
@@ -435,9 +439,25 @@ export default class ForwardService {
               time: quote.time,
             };
           }
+          else {
+            source = {
+              message: '回复消息找不到',
+              seq: 1,
+              time: Math.floor(new Date().getTime() / 1000),
+              rand: 1,
+              user_id: this.oicq.uin,
+            };
+          }
         }
         catch (e) {
           this.log.error('查找回复消息失败', e);
+          source = {
+            message: '查找回复消息失败',
+            seq: 1,
+            time: Math.floor(new Date().getTime() / 1000),
+            rand: 1,
+            user_id: this.oicq.uin,
+          };
         }
       }
 
