@@ -295,22 +295,11 @@ export default class ForwardService {
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
-        // 将 webp 转换为 png，防止 macOS 不识别
-        if (message.document?.mimeType === 'image/webp') {
-          const convertedPath = await convert.png(message.document.id.toString(16), () => message.downloadMedia({}));
-          chain.push({
-            type: 'image',
-            file: convertedPath,
-            asface: true,
-          });
-        }
-        else {
-          chain.push({
-            type: 'image',
-            file: await message.downloadMedia({}),
-            asface: !!message.sticker,
-          });
-        }
+        chain.push({
+          type: 'image',
+          file: await message.downloadMedia({}),
+          asface: !!message.sticker,
+        });
         brief += '[图片]';
       }
       else if (message.video || message.videoNote || message.gif) {
