@@ -46,8 +46,12 @@ export default class ForwardController {
       if (!pair) return;
       if (!pair.enable) return;
       if (pair.disableQ2TG) return;
-      const tgMessage = await this.forwardService.forwardFromQq(event, pair);
-      if (tgMessage) {
+      let tgMessages: Api.Message | Api.Message[] = await this.forwardService.forwardFromQq(event, pair);
+      if (!tgMessages) return;
+      if (!Array.isArray(tgMessages)) {
+        tgMessages = [tgMessages];
+      }
+      for (const tgMessage of tgMessages) {
         // 更新数据库
         await db.message.create({
           data: {
