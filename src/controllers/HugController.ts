@@ -23,7 +23,7 @@ type ActionSubjectQq = {
 
 type ActionSubject = ActionSubjectTg | ActionSubjectQq;
 
-const COMMAND_REGEX = /^\/([^\w\s$]\S*)|\$(\w\S*)/; // /抱 /$rua
+const COMMAND_REGEX = /^\/([^\w\s$]\S*)|^\/\$(\w\S*)/; // /抱 /$rua
 
 export default class {
   private readonly log: Logger;
