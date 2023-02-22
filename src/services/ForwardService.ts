@@ -23,6 +23,7 @@ import lottie from '../constants/lottie';
 import _ from 'lodash';
 import emoji from '../constants/emoji';
 import convert from '../helpers/convert';
+import { CustomFile } from 'telegram/client/uploads';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -98,7 +99,11 @@ export default class ForwardService {
             if ('url' in elem)
               url = elem.url;
             try {
-              if (elem.type === 'image' && elem.asface && !(elem.file as string).toLowerCase().endsWith('.gif')) {
+              if (elem.type === 'image' && elem.asface
+                && !(elem.file as string).toLowerCase().endsWith('.gif')
+                // 防止在 TG 中一起发送多个 sticker 失败
+                && event.message.filter(it => it.type === 'image').length === 1
+              ) {
                 useSticker(await convert.webp(elem.file as string, () => fetchFile(elem.url)));
               }
               else {
