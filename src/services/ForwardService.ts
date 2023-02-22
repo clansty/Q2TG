@@ -229,20 +229,28 @@ export default class ForwardService {
             where: {
               qqRoomId: pair.qqRoomId,
               seq: event.source.seq,
-              rand: event.source.rand,
+              // rand: event.source.rand,
+              qqSenderId: event.source.user_id,
               instanceId: this.instance.id,
             },
           });
           if (quote) {
             replyTo = quote.tgMsgId;
           }
-          else{
-            message+='\n\n<i>*回复消息找不到</i>'
+          else {
+            message += '\n\n<i>*回复消息找不到</i>';
+            this.log.error('回复消息找不到', {
+              qqRoomId: pair.qqRoomId,
+              seq: event.source.seq,
+              rand: event.source.rand,
+              qqSenderId: event.source.user_id,
+              instanceId: this.instance.id,
+            });
           }
         }
         catch (e) {
           this.log.error('查找回复消息失败', e);
-          message+='\n\n<i>*查找回复消息失败</i>'
+          message += '\n\n<i>*查找回复消息失败</i>';
         }
       }
 
