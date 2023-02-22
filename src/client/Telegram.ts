@@ -54,7 +54,7 @@ export default class Telegram {
         } : undefined,
       },
     );
-    // this.client.logger.setLevel(LogLevel.WARN);
+    this.client.logger.setLevel(LogLevel.WARN);
   }
 
   public static async create(startArgs: UserAuthParams | BotAuthParams, appName = 'Q2TG') {
