@@ -16,12 +16,21 @@ import db from './models/db';
     log.error('UnhandledException: ', error);
   });
   const instanceEntries = await db.instance.findMany();
+
+  const instances = [] as Instance[];
   if (!instanceEntries.length) {
-    await Instance.start(0);
+    instances.push(await Instance.start(0));
   }
   else {
     for (const instanceEntry of instanceEntries) {
-      await Instance.start(instanceEntry.id);
+      instances.push(await Instance.start(instanceEntry.id));
     }
   }
+
+  setTimeout(async () => {
+    log.info('开始加载 MapInstance')
+    for (const instance of instances.filter(it => it.workMode === 'group')) {
+      await instance.forwardPairs.initMapInstance(instances.filter(it => it.workMode === 'personal'));
+    }
+  }, 15 * 1000);
 })();

@@ -1,5 +1,15 @@
 import Telegram from '../client/Telegram';
-import { Group, GroupMessageEvent, MessageElem, PrivateMessageEvent, PttElem, Quotable, segment, Sendable } from 'oicq';
+import {
+  Group,
+  GroupMessageEvent,
+  MessageElem, MessageRet,
+  MiraiElem,
+  PrivateMessageEvent,
+  PttElem,
+  Quotable,
+  segment,
+  Sendable,
+} from 'oicq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
@@ -23,7 +33,7 @@ import lottie from '../constants/lottie';
 import _ from 'lodash';
 import emoji from '../constants/emoji';
 import convert from '../helpers/convert';
-import { CustomFile } from 'telegram/client/uploads';
+import { QQMessageSent } from '../types/definitions';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -39,6 +49,16 @@ export default class ForwardService {
 
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
+      const messageMirai = event.message.find(it => it.type === 'mirai') as MiraiElem;
+      if (messageMirai) {
+        try {
+          const miraiData = JSON.parse(messageMirai.data);
+          if (miraiData.q2tgSkip) return;
+        }
+        catch {
+        }
+      }
+
       const tempFiles: FileResult[] = [];
       let message = '', files: FileLike[] = [], buttons: ButtonLike[] = [], replyTo = 0;
       let messageHeader = '', sender = '';
@@ -295,20 +315,20 @@ export default class ForwardService {
     }
   }
 
-  async forwardFromTelegram(message: Api.Message, pair: Pair) {
+  async forwardFromTelegram(message: Api.Message, pair: Pair): Promise<Array<QQMessageSent>> {
     try {
       const tempFiles: FileResult[] = [];
       const chain: Sendable = [];
       const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '';
-      this.instance.workMode === 'group' && chain.push(helper.getUserDisplayName(message.sender) +
+      const messageHeader = helper.getUserDisplayName(message.sender) +
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
           (message.fwdFrom?.fromName ||
             helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
           '') +
-        ': \n');
+        ': \n';
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
@@ -474,24 +494,60 @@ export default class ForwardService {
         }
       }
 
-      // 防止发送空白消息，也就是除了发送者啥都没有的消息
-      if (this.instance.workMode === 'group' && chain.length === 1) {
+      // 防止发送空白消息
+      if (chain.length === 0) {
         return [];
       }
 
       const notChainableElements = chain.filter(element => typeof element === 'object' && NOT_CHAINABLE_ELEMENTS.includes(element.type));
       const chainableElements = chain.filter(element => typeof element !== 'object' || !NOT_CHAINABLE_ELEMENTS.includes(element.type));
-      const qqMessages = [];
-      if (chainableElements.length) {
-        if (this.instance.workMode === 'group') {
-          chainableElements.push({
-            type: 'mirai',
-            data: JSON.stringify({ id: senderId }, undefined, 0),
-          });
+
+      // MapInstance
+      if (!notChainableElements.length // notChainableElements 无法附加 mirai 信息，要防止被来回转发
+        && chainableElements.length
+        && this.instance.workMode
+        && pair.instanceMapForTg[senderId]
+      ) {
+        try {
+          const messageSent = await pair.instanceMapForTg[senderId].sendMsg([
+            ...chainableElements,
+            {
+              type: 'mirai',
+              data: JSON.stringify({
+                id: senderId,
+                eqq: { type: 'tg', tgUid: senderId, noSplitSender: true },
+                q2tgSkip: true,
+              }, undefined, 0),
+            },
+          ]);
+          tempFiles.forEach(it => it.cleanup());
+          return [{
+            ...messageSent,
+            senderId: pair.instanceMapForTg[senderId].client.uin,
+            brief,
+          }];
         }
+        catch (e) {
+          this.log.error('使用 MapInstance 发送消息失败', e);
+        }
+      }
+
+      if (this.instance.workMode === 'group') {
+        chainableElements.unshift(messageHeader);
+      }
+      const qqMessages = [] as Array<QQMessageSent>;
+      if (chainableElements.length) {
+        chainableElements.push({
+          type: 'mirai',
+          data: JSON.stringify({
+            id: senderId,
+            eqq: { type: 'tg', tgUid: senderId, noSplitSender: this.instance.workMode === 'personal' },
+          }, undefined, 0),
+        });
         qqMessages.push({
           ...await pair.qq.sendMsg(chainableElements, source),
           brief,
+          senderId: this.oicq.uin,
         });
       }
       if (notChainableElements.length) {
@@ -499,6 +555,7 @@ export default class ForwardService {
           qqMessages.push({
             ...await pair.qq.sendMsg(notChainableElement, source),
             brief,
+            senderId: this.oicq.uin,
           });
         }
       }

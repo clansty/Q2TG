@@ -7,6 +7,7 @@ import { Entity } from 'telegram/define';
 import { BigInteger } from 'big-integer';
 import { Pair } from './Pair';
 import { getLogger, Logger } from 'log4js';
+import Instance from './Instance';
 
 export default class ForwardPairs {
   private pairs: Pair[] = [];
@@ -73,6 +74,23 @@ export default class ForwardPairs {
     }
     else {
       return this.pairs.find(e => e.tg.id.eq(target.id));
+    }
+  }
+
+  public async initMapInstance(instances: Instance[]) {
+    for (const forwardPair of this.pairs) {
+      for (const instance of instances) {
+        const instanceTgUserId = instance.userMe.id.toString();
+        if (forwardPair.instanceMapForTg[instanceTgUserId]) continue;
+        try {
+          const group = instance.oicq.getChat(forwardPair.qqRoomId) as Group;
+          if (!group) continue;
+          forwardPair.instanceMapForTg[instanceTgUserId] = group;
+          this.log.info('MapInstance', { group: forwardPair.qqRoomId, tg: instanceTgUserId, qq: instance.qqUin });
+        }
+        catch {
+        }
+      }
     }
   }
 }

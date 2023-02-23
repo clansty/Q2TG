@@ -92,7 +92,7 @@ export default class ForwardController {
           await db.message.create({
             data: {
               qqRoomId: pair.qqRoomId,
-              qqSenderId: this.oicq.uin,
+              qqSenderId: qqMessageSent.senderId,
               time: qqMessageSent.time,
               brief: qqMessageSent.brief,
               seq: qqMessageSent.seq,
