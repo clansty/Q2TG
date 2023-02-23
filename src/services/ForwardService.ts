@@ -515,7 +515,7 @@ export default class ForwardService {
               type: 'mirai',
               data: JSON.stringify({
                 id: senderId,
-                eqq: { type: 'tg', tgUid: senderId, noSplitSender: true },
+                eqq: { type: 'tg', tgUid: senderId, noSplitSender: true, version: 2 },
                 q2tgSkip: true,
               }, undefined, 0),
             },
@@ -541,7 +541,7 @@ export default class ForwardService {
           type: 'mirai',
           data: JSON.stringify({
             id: senderId,
-            eqq: { type: 'tg', tgUid: senderId, noSplitSender: this.instance.workMode === 'personal' },
+            eqq: { type: 'tg', tgUid: senderId, noSplitSender: this.instance.workMode === 'personal', version: 2 },
           }, undefined, 0),
         });
         qqMessages.push({
