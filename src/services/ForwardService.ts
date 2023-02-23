@@ -519,7 +519,7 @@ export default class ForwardService {
                 q2tgSkip: true,
               }, undefined, 0),
             },
-          ]);
+          ], source);
           tempFiles.forEach(it => it.cleanup());
           return [{
             ...messageSent,
