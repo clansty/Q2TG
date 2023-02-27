@@ -104,7 +104,7 @@ export default class ForwardController {
               tgMessageText: message.message,
               tgFileId: forwardHelper.getMessageDocumentId(message),
               nick: helper.getUserDisplayName(message.sender),
-              tgSenderId: BigInt(message.senderId.toString()),
+              tgSenderId: BigInt((message.senderId || message.sender?.id).toString()),
             },
           });
         }

@@ -17,13 +17,14 @@ export default class DeleteMessageService {
   }
 
   // 500ms 内只撤回一条消息，防止频繁导致一部分消息没有成功撤回。不过这样的话，会得不到返回的结果
-  private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number, pair: Pair, isOthersMsg: boolean) => {
+  private recallQqMessage = consumer(async (qq: Friend | Group, seq: number, rand: number, timeOrPktnum: number, pair: Pair, isOthersMsg: boolean, noSendError = false) => {
     try {
       const result = await qq.recallMsg(seq, rand, timeOrPktnum);
       if (!result) throw new Error('撤回失败');
     }
     catch (e) {
       this.log.error('撤回失败', e);
+      if (noSendError) return;
       const tipMsg = await pair.tg.sendMessage({
         message: '<i>撤回 QQ 中对应的消息失败' +
           (this.instance.workMode === 'group' ? '，QQ Bot 需要是管理员' : '') +
@@ -54,9 +55,14 @@ export default class DeleteMessageService {
       });
       if (messageInfo) {
         try {
+          const mapQq = pair.instanceMapForTg[messageInfo.tgSenderId.toString()];
+          mapQq && this.recallQqMessage(mapQq, messageInfo.seq, Number(messageInfo.rand), messageInfo.pktnum, pair, false, true);
+          // 假如 mapQQ 是普通成员，机器人是管理员，上面撤回失败了也可以由机器人撤回
+          // 所以撤回两次
+          // 不知道哪次会成功，所以就都不发失败提示了
           this.recallQqMessage(pair.qq, messageInfo.seq, Number(messageInfo.rand),
             pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
-            pair, isOthersMsg);
+            pair, isOthersMsg, !!mapQq);
           await db.message.delete({
             where: { id: messageInfo.id },
           });

@@ -24,7 +24,6 @@ export default class DeleteMessageController {
   private onTelegramMessage = async (message: Api.Message) => {
     const pair = this.instance.forwardPairs.find(message.chat);
     if (!pair) return false;
-    // TODO: 可以做成 DeleteMessageController 之类
     if (message.message?.startsWith('/rm')) {
       // 撤回消息
       await this.deleteMessageService.handleTelegramMessageRm(message, pair);
@@ -37,7 +36,6 @@ export default class DeleteMessageController {
     const pair = this.instance.forwardPairs.find(message.chat);
     if (!pair) return;
     if (await this.deleteMessageService.isInvalidEdit(message, pair)) {
-      console.log('invalid edit');
       return true;
     }
     await this.deleteMessageService.telegramDeleteMessage(message.id, pair);
