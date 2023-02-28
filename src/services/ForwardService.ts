@@ -77,6 +77,25 @@ export default class ForwardService {
           messageHeader = '';
         }
       };
+      const useForward = async (resId: string) => {
+        try {
+          const messages = await pair.qq.getForwardMsg(resId);
+          message = helper.generateForwardBrief(messages);
+          const hash = md5Hex(resId);
+          buttons.push(Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`));
+          // 传到 Cloudflare
+          axios.post(`${process.env.CRV_API}/add`, {
+            auth: process.env.CRV_KEY,
+            key: hash,
+            data: messages,
+          })
+            .then(data => this.log.trace('上传消息记录到 Cloudflare', data.data))
+            .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
+        }
+        catch (e) {
+          message = '[<i>转发多条消息（无法获取）</i>]';
+        }
+      };
       for (const elem of event.message) {
         let url: string;
         switch (elem.type) {
@@ -191,7 +210,15 @@ export default class ForwardService {
             break;
           }
           case 'json': {
-            message = helper.htmlEscape(helper.processJson(elem.data));
+            const result = helper.processJson(elem.data);
+            switch (result.type) {
+              case 'text':
+                message = helper.htmlEscape(result.text);
+                break;
+              case 'forward':
+                await useForward(result.resId);
+                break;
+            }
             break;
           }
           case 'xml': {
@@ -211,23 +238,7 @@ export default class ForwardService {
                 }
                 break;
               case 'forward':
-                try {
-                  const messages = await pair.qq.getForwardMsg(result.resId);
-                  message = helper.generateForwardBrief(messages);
-                  const hash = md5Hex(result.resId);
-                  buttons.push(Button.url('📃查看', `${process.env.CRV_API}/?hash=${hash}`));
-                  // 传到 Cloudflare
-                  axios.post(`${process.env.CRV_API}/add`, {
-                    auth: process.env.CRV_KEY,
-                    key: hash,
-                    data: messages,
-                  })
-                    .then(data => this.log.trace('上传消息记录到 Cloudflare', data.data))
-                    .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
-                }
-                catch (e) {
-                  message = '[<i>转发多条消息（无法获取）</i>]';
-                }
+                await useForward(result.resId);
                 break;
             }
             break;

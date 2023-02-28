@@ -52,11 +52,25 @@ export default {
       try {
         const title = base64decode(jsonObj.meta.mannounce.title);
         const content = base64decode(jsonObj.meta.mannounce.text);
-        return title + '\n\n' + content;
+        return { type: 'text', text: title + '\n\n' + content };
       }
       catch (err) {
         log.error('解析群公告时出错', err);
-        return '[群公告]';
+        return { type: 'text', text: '[群公告]' };
+      }
+    }
+    else if (jsonObj.app === 'com.tencent.multimsg') {
+      try {
+        const resId = jsonObj.meta?.detail?.resid;
+        const fileName = jsonObj.meta?.detail?.uniseq;
+        if (resId) {
+          return { type: 'forward', resId };
+        }
+        else {
+          return { type: 'text', text: '[解析转发消息时出错：没有 resId]' };
+        }
+      }
+      catch (err) {
       }
     }
     let appurl: string;
@@ -76,11 +90,11 @@ export default {
     else if (jsonAppLinkRegex.test(json))
       appurl = json.match(jsonAppLinkRegex)[1].replace(/\\\//g, '/');
     if (appurl) {
-      return appurl;
+      return { type: 'text', text: appurl };
     }
     else {
       // TODO 记录无法解析的 JSON
-      return '[JSON]';
+      return { type: 'text', text: '[JSON]' };
     }
   },
 
