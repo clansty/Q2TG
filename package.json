@@ -43,7 +43,9 @@
     "sharp": "^0.31.3",
     "silk-sdk": "^0.2.2",
     "telegram": "^2.15.2",
-    "tmp-promise": "^3.0.3"
+    "tmp-promise": "^3.0.3",
+    "undici": "^5.20.0",
+    "zincsearch-node": "^2.1.0"
   },
   "engines": {
     "node": "^14.13.1 || >=16.0.0"

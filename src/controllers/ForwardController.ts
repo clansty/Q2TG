@@ -17,6 +17,7 @@ import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import forwardHelper from '../helpers/forwardHelper';
 import helper from '../helpers/forwardHelper';
+import ZincSearch from 'zincsearch-node';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
@@ -71,6 +72,10 @@ export default class ForwardController {
             tgSenderId: BigInt(this.tgBot.me.id.toString()),
           },
         });
+        await this.forwardService.addToZinc(pair.dbId, tgMessage.id, {
+          text: event.raw_message,
+          nick: event.nickname,
+        });
       }
     }
     catch (e) {
@@ -106,6 +111,10 @@ export default class ForwardController {
               nick: helper.getUserDisplayName(message.sender),
               tgSenderId: BigInt((message.senderId || message.sender?.id).toString()),
             },
+          });
+          await this.forwardService.addToZinc(pair.dbId, message.id, {
+            text: qqMessageSent.brief,
+            nick: helper.getUserDisplayName(message.sender),
           });
         }
       }

@@ -10,14 +10,23 @@ import { getAvatar } from '../utils/urls';
 import db from '../models/db';
 import { Friend, Group } from 'oicq';
 import { format } from 'date-and-time';
+import ZincSearch from 'zincsearch-node';
 
 export default class InChatCommandsService {
   private readonly log: Logger;
+  private readonly zincSearch: ZincSearch;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
     this.log = getLogger(`InChatCommandsService - ${instance.id}`);
+    if (process.env.ZINC_URL) {
+      this.zincSearch = new ZincSearch({
+        url: process.env.ZINC_URL,
+        user: process.env.ZINC_USERNAME,
+        password: process.env.ZINC_PASSWORD,
+      });
+    }
   }
 
   public async info(message: Api.Message, pair: Pair) {
@@ -115,5 +124,25 @@ export default class InChatCommandsService {
         message: `<i>错误</i>\n${e.message}`,
       });
     }
+  }
+
+  public async search(keywords: string[], pair: Pair) {
+    const queries = keywords.map((txt) => `text:${txt}`);
+    const result = await this.zincSearch.search({
+      index: `q2tg-${pair.dbId}`,
+      query: { term: queries.join(' '), terms: [] },
+      search_type: 'match',
+      sort_fields: ['-_score'],
+      max_results: 5,
+    });
+    if (!result.hits?.hits?.length) {
+      return '没有结果';
+    }
+    const rpy = result.hits.hits.map((hit, index) => {
+      const id = hit._id!;
+      const link = `https://t.me/c/${pair.tgId}/${id}`;
+      return `${index + 1}. ${link} score:${hit._score!.toFixed(3)}`;
+    });
+    return rpy.join('\n');
   }
 }

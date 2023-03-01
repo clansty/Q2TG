@@ -53,6 +53,10 @@ const inChatCommands = [
     command: 'info',
     description: '查看本群或选定消息的详情',
   }),
+  new Api.BotCommand({
+    command: 'search',
+    description: '搜索消息',
+  }),
 ];
 
 const groupInChatCommands = [
