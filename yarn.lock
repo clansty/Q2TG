@@ -3030,16 +3030,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@https://0w.al/Hzix.tgz":
-  version: 2.3.5-clansty
-  resolution: "oicq@https://0w.al/Hzix.tgz"
+"oicq@https://0w.al/d5Pz.tgz":
+  version: 2.3.6-clansty
+  resolution: "oicq@https://0w.al/d5Pz.tgz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: fbc55beb6660acf89f7ae4bea1f6ab10683fc0d9496ceea4755c1ff868b87ccf574d58d7c5dd99b14fbd2775d038e872cb67ee6fec95eddf0d4d696728e6bbca
+  checksum: 9823ac6e702fdc78ef65a955e0285a64f0347b4cdb2b7256f9d880062d957e0803646cad314db62e3c505f2d3590a939523d4ac7581dc804a954c3845a488215
   languageName: node
   linkType: hard
 
@@ -3353,7 +3353,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "https://0w.al/Hzix.tgz"
+    oicq: "https://0w.al/d5Pz.tgz"
     prompts: ^2.4.2
     quote-api: "https://github.com/Clansty/quote-api/archive/7d9b4c56ab1e9f3cdf1cd7e108ec25821d89ad70.tar.gz"
     sharp: ^0.31.3
