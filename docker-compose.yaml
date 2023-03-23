@@ -11,12 +11,23 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - ./postgresql:/var/lib/postgresql/data
+  zinclabs:
+    volumes:
+      - './zinc/data:/data'
+    environment:
+      - ZINC_DATA_PATH=/data
+      - ZINC_FIRST_ADMIN_USER=admin
+      - ZINC_FIRST_ADMIN_PASSWORD=password
+    container_name: zincsearch
+    image: 'public.ecr.aws/zinclabs/zinc:latest'
+    restart: unless-stopped
   q2tg:
     image: ghcr.io/clansty/q2tg:rainbowcat
     container_name: main_q2tg
     restart: unless-stopped
     depends_on:
       - postgres
+      - zinclabs
     volumes:
       - ./data:/app/data
     environment:
@@ -26,6 +37,9 @@ services:
       - DATABASE_URL=postgres://user:password@postgres/db_name
       - CRV_API=
       - CRV_KEY=
+      - ZINC_URL=http://zinclabs:4080
+      - ZINC_USERNAME=admin
+      - ZINC_PASSWORD=password
       # 如果需要通过代理联网，那么设置下面两个变量
       #- PROXY_IP=
       #- PROXY_PORT=
