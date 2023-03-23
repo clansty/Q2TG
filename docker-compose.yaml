@@ -18,6 +18,8 @@ services:
       - ZINC_DATA_PATH=/data
       - ZINC_FIRST_ADMIN_USER=admin
       - ZINC_FIRST_ADMIN_PASSWORD=password
+      - ZINC_PLUGIN_GSE_ENABLE=true
+      - ZINC_PLUGIN_GSE_DICT_EMBED=big
     container_name: zincsearch
     image: 'public.ecr.aws/zinclabs/zinc:latest'
     restart: unless-stopped
