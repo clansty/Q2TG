@@ -28,6 +28,7 @@
   "dependencies": {
     "@prisma/client": "4.6.0",
     "axios": "^0.27.2",
+    "baidu-aip-sdk": "^4.16.10",
     "cli-progress": "^3.11.2",
     "date-and-time": "^2.4.1",
     "dotenv": "^16.0.1",

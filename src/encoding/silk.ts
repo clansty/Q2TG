@@ -50,4 +50,19 @@ export default {
     await conventPcmToOgg(path, outputPath);
     cleanup();
   },
+
+  conventOggToPcm16000: (oggPath: string, tmpFilePath: string): Promise<void> => {
+    return new Promise(resolve => {
+      ffmpeg(oggPath)
+        .outputFormat('s16le')
+        .outputOptions([
+          '-ar', '16000',
+          '-ac', '1',
+          '-acodec', 'pcm_s16le',
+        ])
+        .on('end', async () => {
+          resolve();
+        }).save(tmpFilePath);
+    });
+  },
 };
