@@ -42,6 +42,10 @@ services:
       - ZINC_URL=http://zinclabs:4080
       - ZINC_USERNAME=admin
       - ZINC_PASSWORD=password
+      # 要支持转发时自动识别语音，请设置以下参数
+      - BAIDU_APP_ID=
+      - BAIDU_API_KEY=
+      - BAIDU_SECRET_KEY=
       # 如果需要通过代理联网，那么设置下面两个变量
       #- PROXY_IP=
       #- PROXY_PORT=
