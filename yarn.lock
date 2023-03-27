@@ -3383,16 +3383,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@https://0w.al/rSPE.tgz":
-  version: 2.3.9-clansty
-  resolution: "oicq@https://0w.al/rSPE.tgz"
+"oicq@https://0w.al/MYKJ.tgz":
+  version: 2.3.10-clansty
+  resolution: "oicq@https://0w.al/MYKJ.tgz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: e9ea9e3df458dcc87e09ae9415b82a80bb38e649f961ed64dbcb4072bd13609a24564cb7f5b187805ce86bee3bee96d9ba10d0f8c9c181b54de5e4061b29fc52
+  checksum: 39d9d77e6a8b6c2576fc012f9404c4a642ffdaff2c8694feb47d7d5c831254009fb4dddfbb5ab7b5929d24c30311655b5d80d41d610193c73f00ddab5244d4b5
   languageName: node
   linkType: hard
 
@@ -3721,12 +3721,12 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "https://0w.al/rSPE.tgz"
+    oicq: "https://0w.al/MYKJ.tgz"
     prompts: ^2.4.2
     quote-api: "https://github.com/Clansty/quote-api/archive/7d9b4c56ab1e9f3cdf1cd7e108ec25821d89ad70.tar.gz"
     sharp: ^0.31.3
     silk-sdk: ^0.2.2
-    telegram: ^2.15.2
+    telegram: ^2.15.10
     tmp-promise: ^3.0.3
     ts-node: ^10.9.1
     tsc: ^2.0.4
@@ -4469,9 +4469,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"telegram@npm:^2.15.2":
-  version: 2.15.2
-  resolution: "telegram@npm:2.15.2"
+"telegram@npm:^2.15.10":
+  version: 2.15.10
+  resolution: "telegram@npm:2.15.10"
   dependencies:
     "@cryptography/aes": ^0.1.1
     async-mutex: ^0.3.0
@@ -4494,7 +4494,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 1602a7bc74b47e752945eff9beb630f58db27172c5a9cda6a1ccf7b085c26470c9e7784a630309a97f680d25e87670f867d6847b5c1bd926f0b014ce70655af5
+  checksum: e9fe6b43b9b04cc4dad5ca7460feff70d91365661f7af23f025e2bc78c1c997740faa65165450e22897146dd6e5c032e898fb60c13e9ff026301ea6384faa97d
   languageName: node
   linkType: hard
 

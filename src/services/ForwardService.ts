@@ -1,5 +1,6 @@
 import Telegram from '../client/Telegram';
 import {
+  Forwardable,
   Group,
   GroupMessageEvent,
   MessageElem, MessageRet,
@@ -36,6 +37,8 @@ import convert from '../helpers/convert';
 import { QQMessageSent } from '../types/definitions';
 import ZincSearch from 'zincsearch-node';
 import { speech as AipSpeechClient } from 'baidu-aip-sdk';
+import random from '../utils/random';
+import { escapeXml } from 'oicq/lib/common';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -366,7 +369,7 @@ export default class ForwardService {
       const chain: Sendable = [];
       const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
-      let brief = '';
+      let brief = '', isSpoilerPhoto = false;
       const messageHeader = helper.getUserDisplayName(message.sender) +
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
@@ -377,12 +380,50 @@ export default class ForwardService {
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
-        chain.push({
-          type: 'image',
-          file: await message.downloadMedia({}),
-          asface: !!message.sticker,
-        });
-        brief += '[图片]';
+        if ('spoiler' in message.media && message.media.spoiler) {
+          isSpoilerPhoto = true;
+          const msgList: Forwardable[] = [{
+            user_id: this.oicq.uin,
+            nickname: messageHeader.substring(0, messageHeader.length - 3),
+            message: {
+              type: 'image',
+              file: await message.downloadMedia({}),
+              asface: !!message.sticker,
+            },
+          }];
+          if (message.message) {
+            msgList.push({
+              user_id: this.oicq.uin,
+              nickname: messageHeader.substring(0, messageHeader.length - 3),
+              message: message.message,
+            });
+          }
+          const fake = await pair.qq.makeForwardMsg(msgList);
+          chain.push({
+            type: 'xml',
+            id: 60,
+            data: `<?xml version="1.0" encoding="utf-8"?>` +
+              `<msg serviceID="35" templateID="1" action="viewMultiMsg" brief="[Spoiler 图片]"
+ m_resid="${fake.resid}" m_fileName="${random.fakeUuid().toUpperCase()}" tSum="${fake.tSum}"
+ sourceMsgId="0" url="" flag="3" adverSign="0" multiMsgFlag="0"><item layout="1"
+ advertiser_id="0" aid="0"><title size="34" maxLines="2" lineSpace="12"
+>${escapeXml(messageHeader.substring(0, messageHeader.length - 2))}</title
+><title size="26" color="#777777" maxLines="2" lineSpace="12">Spoiler 图片</title
+>${message.message ? `<title color="#303133" size="26">${escapeXml(message.message)}</title>` : ''
+              }<hr hidden="false" style="0" /><summary size="26" color="#777777">请谨慎查看</summary
+></item><source name="Q2TG" icon="" action="" appid="-1" /></msg>`.replaceAll('\n', ''),
+          });
+          console.log(chain);
+          brief += '[Spoiler 图片]';
+        }
+        else {
+          chain.push({
+            type: 'image',
+            file: await message.downloadMedia({}),
+            asface: !!message.sticker,
+          });
+          brief += '[图片]';
+        }
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
@@ -488,7 +529,7 @@ export default class ForwardService {
         brief += '[文件]';
       }
 
-      if (message.message) {
+      if (message.message && !isSpoilerPhoto) {
         if (message.entities) {
           const emojiEntities = message.entities.filter(it => it instanceof Api.MessageEntityCustomEmoji) as Api.MessageEntityCustomEmoji[];
           const isMessageAllEmojis = _.sum(emojiEntities.map(it => it.length)) === message.message.length;
@@ -593,7 +634,7 @@ export default class ForwardService {
         }
       }
 
-      if (this.instance.workMode === 'group') {
+      if (this.instance.workMode === 'group' && !isSpoilerPhoto) {
         chainableElements.unshift(messageHeader);
       }
       const qqMessages = [] as Array<QQMessageSent>;
@@ -621,6 +662,7 @@ export default class ForwardService {
         }
       }
       tempFiles.forEach(it => it.cleanup());
+      console.log(qqMessages);
       return qqMessages;
     }
     catch (e) {
