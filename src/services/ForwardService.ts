@@ -427,8 +427,8 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        if (file.size.gt(50 * 1024 * 1024)) {
-          chain.push('[视频大于 50MB]');
+        if (file.size.gt(200 * 1024 * 1024)) {
+          chain.push('[视频大于 200MB]');
         }
         else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
