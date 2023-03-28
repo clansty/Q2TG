@@ -249,12 +249,12 @@ export default class {
         quoteMessage.media = { url: await convert.cachedBuffer(`${originTgMessage.document.id.toString(16)}.webp`, () => originTgMessage.downloadMedia({})) };
       }
       else {
-        quoteMessage.media = { url: await convert.cachedBuffer(`${originTgMessage.document.id.toString(16)}.jpg`, () => originTgMessage.downloadMedia({})) };
+        quoteMessage.media = { url: await convert.cachedBuffer(`${originTgMessage.photo.id.toString(16)}.jpg`, () => originTgMessage.downloadMedia({})) };
       }
     }
     else if (originTgMessage.video || originTgMessage.videoNote || originTgMessage.gif) {
       const file = originTgMessage.video || originTgMessage.videoNote || originTgMessage.gif;
-      quoteMessage.media = { url: await convert.cachedBuffer(`${originTgMessage.document.id.toString(16)}-thumb.webp`, () => this.tgBot.downloadThumb(file)) };
+      quoteMessage.media = { url: await convert.cachedBuffer(`${file.id.toString(16)}-thumb.webp`, () => this.tgBot.downloadThumb(file)) };
     }
     else if (originTgMessage.sticker) {
       quoteMessage.media = { url: await convert.cachedBuffer(`${originTgMessage.document.id.toString(16)}.tgs`, () => originTgMessage.downloadMedia({})) };
