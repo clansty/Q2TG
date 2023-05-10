@@ -3383,16 +3383,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oicq@https://0w.al/HHKidHGi4XcTKKCnt8rwJ7Mz.tgz":
-  version: 2.3.11-clansty
-  resolution: "oicq@https://0w.al/HHKidHGi4XcTKKCnt8rwJ7Mz.tgz"
+"oicq@https://0w.al/RNnS.tgz":
+  version: 2.3.14-clansty
+  resolution: "oicq@https://0w.al/RNnS.tgz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
     long: ^4.0.0
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
-  checksum: e97a31ce3d13c39e6532e39fc539cebf4331c9c67305b93617ea47ad95359580b0220c2b0b2eb3ee645c524b5d77954e526ec122798b85d3c47ba0052f6b70b5
+  checksum: d7710fa58f0119c6e94a148598d692c1f327f231e21f6f40fd9f7e2a9d71fe7fabe0ea07835c4f762d57002e6ac4922c948790f25e679547d50ef93b1e157d35
   languageName: node
   linkType: hard
 
@@ -3721,7 +3721,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
-    oicq: "https://0w.al/HHKidHGi4XcTKKCnt8rwJ7Mz.tgz"
+    oicq: "https://0w.al/RNnS.tgz"
     prompts: ^2.4.2
     quote-api: "https://github.com/Clansty/quote-api/archive/7d9b4c56ab1e9f3cdf1cd7e108ec25821d89ad70.tar.gz"
     sharp: ^0.31.3
