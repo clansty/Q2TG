@@ -2348,9 +2348,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"icqq@npm:^0.4.7":
-  version: 0.4.7
-  resolution: "icqq@npm:0.4.7"
+"icqq@https://files.catbox.moe/03ktyz.tgz":
+  version: 0.4.7.1-clansty
+  resolution: "icqq@https://files.catbox.moe/03ktyz.tgz"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
@@ -2358,7 +2358,7 @@ __metadata:
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
     triptrap: ^0.0.17
-  checksum: 37e81b0b23bf2bfb924c2c196fa6a5bde7dbd94e61a43c593f5c2b94c683474df8ab9ec429e180c2416c65ee200b6125e045457b0a0503161acf66a3ce5682c0
+  checksum: 072df1060ca489cbfb3d94c5de2093320180adab07f5a532e5b7cabe19f74b8873c89c7ba82849e2d7689c4ba18dfa3492c482799d95f8a1bd7dd0b5262be6d3
   languageName: node
   linkType: hard
 
@@ -3695,7 +3695,7 @@ __metadata:
     eviltransform: ^0.2.2
     file-type: ^17.1.4
     fluent-ffmpeg: ^2.1.2
-    icqq: ^0.4.7
+    icqq: "https://files.catbox.moe/03ktyz.tgz"
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
