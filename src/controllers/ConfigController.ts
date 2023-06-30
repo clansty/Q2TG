@@ -9,7 +9,7 @@ import {
   MemberDecreaseEvent,
   MemberIncreaseEvent,
   PrivateMessageEvent,
-} from 'oicq';
+} from 'icqq';
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
 

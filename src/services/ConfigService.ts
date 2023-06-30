@@ -1,5 +1,5 @@
 import Telegram from '../client/Telegram';
-import { Friend, FriendInfo, Group, GroupInfo } from 'oicq';
+import { Friend, FriendInfo, Group, GroupInfo } from 'icqq';
 import { Button } from 'telegram/tl/custom/button';
 import { getLogger, Logger } from 'log4js';
 import { getAvatar } from '../utils/urls';

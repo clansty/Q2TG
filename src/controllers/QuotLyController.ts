@@ -2,7 +2,7 @@ import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { getLogger, Logger } from 'log4js';
-import { GroupMessageEvent, PrivateMessageEvent } from 'oicq';
+import { GroupMessageEvent, PrivateMessageEvent } from 'icqq';
 import { Api } from 'telegram';
 import quotly from 'quote-api/methods/generate.js';
 import { CustomFile } from 'telegram/client/uploads';

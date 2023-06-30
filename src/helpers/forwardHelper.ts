@@ -3,7 +3,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import { base64decode } from 'nodejs-base64';
 import { getLogger } from 'log4js';
 import { Entity } from 'telegram/define';
-import { ForwardMessage } from 'oicq';
+import { ForwardMessage } from 'icqq';
 import { Api } from 'telegram';
 
 const log = getLogger('ForwardHelper');

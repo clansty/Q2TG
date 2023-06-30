@@ -53,6 +53,7 @@ model QqBot {
   password String     @default("")
   platform Int        @default(0)
   Instance Instance[]
+  signApi  String?
 }
 
 model Message {

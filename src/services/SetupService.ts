@@ -1,7 +1,7 @@
 import Telegram from '../client/Telegram';
 import { getLogger, Logger } from 'log4js';
 import { BigInteger } from 'big-integer';
-import { Platform } from 'oicq';
+import { Platform } from 'icqq';
 import { MarkupLike } from 'telegram/define';
 import OicqClient from '../client/OicqClient';
 import { Button } from 'telegram/tl/custom/button';

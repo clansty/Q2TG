@@ -2,7 +2,7 @@ import Telegram from '../client/Telegram';
 import { getLogger, Logger } from 'log4js';
 import { Api } from 'telegram';
 import db from '../models/db';
-import { Friend, FriendRecallEvent, Group, GroupRecallEvent } from 'oicq';
+import { Friend, FriendRecallEvent, Group, GroupRecallEvent } from 'icqq';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import { consumer } from '../utils/highLevelFunces';

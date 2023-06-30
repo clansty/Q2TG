@@ -3,7 +3,7 @@ import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Pair } from '../models/Pair';
 import { Api } from 'telegram';
-import { GroupMessage, PrivateMessage } from 'oicq';
+import { GroupMessage, PrivateMessage } from 'icqq';
 import db from '../models/db';
 import { format } from 'date-and-time';
 import lottie from '../constants/lottie';

@@ -1,5 +1,5 @@
 import { getLogger } from 'log4js';
-import { Friend, Group } from 'oicq';
+import { Friend, Group } from 'icqq';
 import TelegramChat from '../client/TelegramChat';
 import getAboutText from '../utils/getAboutText';
 import { md5 } from '../utils/hashing';

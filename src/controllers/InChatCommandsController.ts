@@ -4,7 +4,7 @@ import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
-import { Group } from 'oicq';
+import { Group } from 'icqq';
 import RecoverMessageHelper from '../helpers/RecoverMessageHelper';
 
 export default class InChatCommandsController {
