@@ -84,9 +84,15 @@ export default class SetupController {
         [Button.text('macOS', true, true)],
       ]);
       const platform = setupHelper.convertTextToPlatform(platformText);
+
+      let signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
+        [Button.text('不需要签名服务器', true, true)],
+      ]);
+      signApi = setupHelper.checkSignApiAddress(signApi)
+
       let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
       password = md5Hex(password);
-      this.oicq = await this.setupService.createOicq(uin, password, platform);
+      this.oicq = await this.setupService.createOicq(uin, password, platform, signApi);
       this.instance.qqBotId = this.oicq.id;
       await this.setupService.informOwner(`登录成功`);
     }
