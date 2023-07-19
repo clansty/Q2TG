@@ -35,7 +35,7 @@
     "eviltransform": "^0.2.2",
     "file-type": "^17.1.4",
     "fluent-ffmpeg": "^2.1.2",
-    "icqq": "https://files.catbox.moe/03ktyz.tgz",
+    "icqq": "^0.4.11",
     "lodash": "^4.17.21",
     "log4js": "^6.6.1",
     "nodejs-base64": "^2.0.0",
