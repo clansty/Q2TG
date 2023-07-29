@@ -2348,9 +2348,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"icqq@npm:^0.4.11":
-  version: 0.4.11
-  resolution: "icqq@npm:0.4.11"
+"icqq@npm:^0.4.12":
+  version: 0.4.12
+  resolution: "icqq@npm:0.4.12"
   dependencies:
     axios: ^1.1.2
     log4js: ^6.3.0
@@ -2358,7 +2358,7 @@ __metadata:
     pngjs: ^6.0.0
     probe-image-size: ^7.2.2
     triptrap: ^0.0.17
-  checksum: e18d3d5c16e2caf0e4b46db5fe84ce2a9a2e50d98347e07cff69cb873a8144c46f9cc57da211c6c187c1e4fd1f81dfd8c28fb8f354b4695e362e04c5d3d2c647
+  checksum: 77ce5647645872ada9512910b0911439db67e8d3c8a8a63ee908e71fbba1bfbedec95063c79c98aa00f34991c1bd725665d6e9ebf3feef3985958246201268b5
   languageName: node
   linkType: hard
 
@@ -3695,7 +3695,7 @@ __metadata:
     eviltransform: ^0.2.2
     file-type: ^17.1.4
     fluent-ffmpeg: ^2.1.2
-    icqq: ^0.4.11
+    icqq: ^0.4.12
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0

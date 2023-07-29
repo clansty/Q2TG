@@ -54,6 +54,7 @@ model QqBot {
   platform Int        @default(0)
   Instance Instance[]
   signApi  String?
+  signVer  String?
 }
 
 model Message {

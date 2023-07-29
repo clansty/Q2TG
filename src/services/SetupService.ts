@@ -83,11 +83,11 @@ export default class SetupService {
     });
   }
 
-  public async createOicq(uin: number, password: string, platform: Platform, signApi: string) {
-    const dbQQBot = await db.qqBot.create({ data: { uin, password, platform, signApi } });
+  public async createOicq(uin: number, password: string, platform: Platform, signApi: string, signVer: string) {
+    const dbQQBot = await db.qqBot.create({ data: { uin, password, platform, signApi, signVer } });
     return await OicqClient.create({
       id: dbQQBot.id,
-      uin, password, platform, signApi,
+      uin, password, platform, signApi, signVer, 
       onQrCode: async (file) => {
         await this.owner.sendMessage({
           message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
