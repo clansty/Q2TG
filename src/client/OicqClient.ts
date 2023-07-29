@@ -50,6 +50,8 @@ export default class OicqClient extends Client {
 
   private static existedBots = {} as { [id: number]: OicqClient };
 
+  private isOnMessageCreated = false;
+
   public static create(params: CreateOicqParams) {
     if (this.existedBots[params.id]) {
       return Promise.resolve(this.existedBots[params.id]);
@@ -91,7 +93,12 @@ export default class OicqClient extends Client {
         client.offTrap('system.login.qrcode', loginQrCodeHandler);
         client.offTrap('system.login.error', loginErrorHandler);
         client.offTrap('system.online', successLoginHandler);
-        client.trap('message', client.onMessage);
+
+        if (!client.isOnMessageCreated) {
+          client.trap('message', client.onMessage);
+          client.isOnMessageCreated = true;
+        };
+        
         resolve(client);
       };
 
