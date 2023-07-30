@@ -122,6 +122,7 @@ export default class Instance {
           password: this.qq.password,
           platform: this.qq.platform,
           signApi: this.qq.signApi,
+          signVer: this._qq.signVer,
           onQrCode: async (file) => {
             await this.ownerChat.sendMessage({
               message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
