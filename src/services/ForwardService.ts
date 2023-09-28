@@ -161,6 +161,8 @@ export default class ForwardService {
             try {
               if (elem.type === 'image' && elem.asface
                 && !(elem.file as string).toLowerCase().endsWith('.gif')
+                // 同时存在文字消息就不作为 sticker 发送
+                && !event.message.some(it => it.type === 'text')
                 // 防止在 TG 中一起发送多个 sticker 失败
                 && event.message.filter(it => it.type === 'image').length === 1
               ) {
