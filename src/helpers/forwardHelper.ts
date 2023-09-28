@@ -5,6 +5,7 @@ import { getLogger } from 'log4js';
 import { Entity } from 'telegram/define';
 import { ForwardMessage } from 'icqq';
 import { Api } from 'telegram';
+import { imageSize } from 'image-size';
 
 const log = getLogger('ForwardHelper');
 
@@ -21,6 +22,18 @@ export default {
       return new CustomFile(filename, file.length, '', file);
     }
     const type = await fileTypeFromBuffer(file);
+    // The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20
+    if (type.ext === 'png' || type.ext === 'jpg') {
+      const dimensions = imageSize(file);
+      const aspectRatio = dimensions.width / dimensions.height;
+      if (aspectRatio > 20 || aspectRatio < 1 / 20
+        || dimensions.width + dimensions.height > 10000
+        || file.length > 1024 * 1024 * 10
+      ) {
+        // 让 Telegram 服务器下载
+        return url
+      }
+    }
     if (allowWebp) {
       return new CustomFile(`image.${type.ext}`, file.length, '', file);
     }
