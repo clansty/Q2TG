@@ -23,6 +23,13 @@ services:
     container_name: zincsearch
     image: 'public.ecr.aws/zinclabs/zinc:latest'
     restart: unless-stopped
+  sign:
+    image: xzhouqd/qsign:core-1.1.9
+    restart: unless-stopped
+    environment:
+      # 需要与下方的 SIGN_VER 同步
+      # 配置请参考 https://hub.docker.com/r/xzhouqd/qsign
+      - BASE_PATH=/srv/qsign/qsign/txlib/8.9.71
   q2tg:
     image: ghcr.io/clansty/q2tg:rainbowcat
     container_name: main_q2tg
@@ -30,6 +37,7 @@ services:
     depends_on:
       - postgres
       - zinclabs
+      - sign
     volumes:
       - ./data:/app/data
     environment:
@@ -42,6 +50,8 @@ services:
       - ZINC_URL=http://zinclabs:4080
       - ZINC_USERNAME=admin
       - ZINC_PASSWORD=password
+      - SIGN_API=http://sign:8080/sign?key=114514
+      - SIGN_VER=8.9.71 # 与上方 sign 容器的配置同步
       # 要支持转发时自动识别语音，请设置以下参数
       - BAIDU_APP_ID=
       - BAIDU_API_KEY=

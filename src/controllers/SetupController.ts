@@ -85,13 +85,18 @@ export default class SetupController {
       ]);
       const platform = setupHelper.convertTextToPlatform(platformText);
 
-      let signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
-        [Button.text('不需要签名服务器', true, true)],
-      ]);
-      signApi = setupHelper.checkSignApiAddress(signApi);
+      let signApi: string;
 
-      let signVer = ""
-      if (signApi !== "") {
+      if (!process.env.SIGN_API) {
+        signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
+          [Button.text('不需要签名服务器', true, true)],
+        ]);
+        signApi = setupHelper.checkSignApiAddress(signApi);
+      }
+
+      let signVer: string;
+
+      if (signApi && !process.env.SIGN_VER) {
         signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本,当前支持安卓(8.9.63、8.9.68、8.9.70)、Tim(3.5.1、3.5.2)', [
           [Button.text('8.9.63', true, true)],
           [Button.text('8.9.68', true, true)],
@@ -99,7 +104,7 @@ export default class SetupController {
           [Button.text('3.5.1', true, true)],
           [Button.text('3.5.2', true, true)],
         ]);
-      };
+      }
 
       let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
       password = md5Hex(password);
