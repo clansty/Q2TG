@@ -5,7 +5,9 @@ QQ 群与 Telegram 群相互转发的 bot
 
 请看 [Wiki](https://github.com/Clansty/Q2TG/wiki/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2)
 
-v2.x 版本同时需要机器人账号以及登录 Telegram 个人账号，需要自己注册 Telegram API ID，并且还需要配置一些辅助服务。如果没有条件，可以使用 [v1.x](https://github.com/Clansty/Q2TG/tree/main) 版本
+v2.x 版本同时需要机器人账号以及登录 Telegram 个人账号，需要自己注册 Telegram API ID，并且还需要配置一些辅助服务。
+
+如果你主要使用群组模式并且不想使用个人账号登录 UserBot，可以使用去除 UserBot 的 [Nofated095/Q2TG]([https://github.com/Clansty/Q2TG/tree/main](https://github.com/Nofated095/Q2TG)) 版本。一些功能例如撤回检测将无法使用
 
 ## 支持的消息类型
 
