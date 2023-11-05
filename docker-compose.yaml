@@ -1,4 +1,10 @@
 version: "3.8"
+
+volumes:
+  postgresql:
+  zinc-data:
+  q2tg:
+
 services:
   # 如果有现成的 Postgresql 实例，可以删除这一小节
   postgres:
@@ -10,10 +16,10 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
-      - ./postgresql:/var/lib/postgresql/data
+      - postgresql:/var/lib/postgresql/data
   zinclabs:
     volumes:
-      - './zinc/data:/data'
+      - 'zinc-data:/data'
     environment:
       - ZINC_DATA_PATH=/data
       - ZINC_FIRST_ADMIN_USER=admin
@@ -39,7 +45,7 @@ services:
       - zinclabs
       - sign
     volumes:
-      - ./data:/app/data
+      - q2tg:/app/data
     environment:
       - NODE_OPTIONS=--openssl-legacy-provider
       - TG_API_ID=
