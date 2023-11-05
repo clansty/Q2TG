@@ -21,6 +21,7 @@
     "@types/node": "^18.6.3",
     "@types/prompts": "^2.0.14",
     "@types/sharp": "^0.31.1",
+    "prisma": "4.6.0",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^4.7.4"

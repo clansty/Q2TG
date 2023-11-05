@@ -545,6 +545,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/engines@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@prisma/engines@npm:4.6.0"
+  checksum: d964ab9641153410d1e4b5c81dfb4be309964b133eb891140cf8636a7e8bfd33228f92b83a3b700b1b97eaa0b58aa5ad113836e8d76ff3cc901b500938736214
+  languageName: node
+  linkType: hard
+
 "@tokenizer/token@npm:^0.3.0":
   version: 0.3.0
   resolution: "@tokenizer/token@npm:0.3.0"
@@ -3603,6 +3610,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prisma@npm:4.6.0":
+  version: 4.6.0
+  resolution: "prisma@npm:4.6.0"
+  dependencies:
+    "@prisma/engines": 4.6.0
+  bin:
+    prisma: build/index.js
+    prisma2: build/index.js
+  checksum: eee15955638c67dcdff8d0338a1cad5f4b3fc62f6894336543d6f3d09456295f5e23916f7bedbb396a5ca5d7be5fa62dc52d49e95f971ad3968e6d650d9934ea
+  languageName: node
+  linkType: hard
+
 "probe-image-size@npm:^7.2.2":
   version: 7.2.3
   resolution: "probe-image-size@npm:7.2.3"
@@ -3711,6 +3730,7 @@ __metadata:
     lodash: ^4.17.21
     log4js: ^6.6.1
     nodejs-base64: ^2.0.0
+    prisma: 4.6.0
     prompts: ^2.4.2
     quote-api: "https://github.com/Clansty/quote-api/archive/7d9b4c56ab1e9f3cdf1cd7e108ec25821d89ad70.tar.gz"
     sharp: ^0.31.3

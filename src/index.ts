@@ -28,7 +28,7 @@ import db from './models/db';
   }
 
   setTimeout(async () => {
-    log.info('开始加载 MapInstance')
+    log.info('开始加载 MapInstance');
     for (const instance of instances.filter(it => it.workMode === 'group')) {
       await instance.forwardPairs.initMapInstance(instances.filter(it => it.workMode === 'personal'));
     }

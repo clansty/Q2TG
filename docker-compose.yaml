@@ -9,7 +9,6 @@ services:
   # 如果有现成的 Postgresql 实例，可以删除这一小节
   postgres:
     image: postgres:14-alpine
-    container_name: postgresql_q2tg
     restart: unless-stopped
     environment:
       POSTGRES_DB: db_name
@@ -38,7 +37,6 @@ services:
       - BASE_PATH=/srv/qsign/qsign/txlib/8.9.71
   q2tg:
     image: ghcr.io/clansty/q2tg:rainbowcat
-    container_name: main_q2tg
     restart: unless-stopped
     depends_on:
       - postgres

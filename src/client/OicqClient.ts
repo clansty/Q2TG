@@ -21,7 +21,7 @@ import { randomBytes } from 'crypto';
 import { escapeXml, gzip, timestamp } from 'icqq/lib/common';
 import { pb } from 'icqq/lib/core';
 
-const LOG_LEVEL: LogLevel = 'info';
+const LOG_LEVEL: LogLevel = process.env.LOG_LEVEL as LogLevel || 'info';
 
 type MessageHandler = (event: PrivateMessageEvent | GroupMessageEvent) => Promise<boolean | void>
 
@@ -97,8 +97,8 @@ export default class OicqClient extends Client {
         if (!client.isOnMessageCreated) {
           client.trap('message', client.onMessage);
           client.isOnMessageCreated = true;
-        };
-        
+        }
+
         resolve(client);
       };
 
@@ -131,8 +131,8 @@ export default class OicqClient extends Client {
         log_level: LOG_LEVEL,
         ffmpeg_path: process.env.FFMPEG_PATH,
         ffprobe_path: process.env.FFPROBE_PATH,
-        sign_api_addr: params.signApi,
-        ver: params.signVer,
+        sign_api_addr: params.signApi || process.env.SIGN_API,
+        ver: params.signVer || process.env.SIGN_VER,
       });
       client.on('system.login.device', loginDeviceHandler);
       client.on('system.login.slider', loginSliderHandler);
