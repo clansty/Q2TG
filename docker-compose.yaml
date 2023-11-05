@@ -41,6 +41,7 @@ services:
     volumes:
       - ./data:/app/data
     environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
       - TG_API_ID=
       - TG_API_HASH=
       - TG_BOT_TOKEN=
