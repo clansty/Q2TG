@@ -81,7 +81,6 @@ export default class SetupController {
         [Button.text('安卓手机', true, true)],
         [Button.text('安卓平板', true, true)],
         [Button.text('iPad', true, true)],
-        [Button.text('macOS', true, true)],
       ]);
       const platform = setupHelper.convertTextToPlatform(platformText);
 

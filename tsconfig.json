@@ -4,8 +4,9 @@
     "target": "ESNext",
     "esModuleInterop": true,
     "sourceMap": false,
-    "moduleResolution": "Node",
-    "outDir": "build"
+    "moduleResolution": "node",
+    "outDir": "build",
+    "skipLibCheck" : true
   },
   "exclude": [
     "node_modules"
