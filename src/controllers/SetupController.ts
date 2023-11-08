@@ -10,6 +10,7 @@ import OicqClient from '../client/OicqClient';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
 import db from '../models/db';
+import { CustomFile } from 'telegram/client/uploads';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -72,51 +73,73 @@ export default class SetupController {
       throw e;
     }
     // 登录 oicq
-    try {
-      let uin = NaN;
-      while (isNaN(uin)) {
-        uin = Number(await this.setupService.waitForOwnerInput('请输入要登录 QQ 号'));
-      }
-      const platformText = await this.setupService.waitForOwnerInput('请选择登录协议', [
-        [Button.text('安卓手机', true, true)],
-        [Button.text('安卓平板', true, true)],
-        [Button.text('iPad', true, true)],
-      ]);
-      const platform = setupHelper.convertTextToPlatform(platformText);
-
-      let signApi: string;
-
-      if (!process.env.SIGN_API) {
-        signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
-          [Button.text('不需要签名服务器', true, true)],
-        ]);
-        signApi = setupHelper.checkSignApiAddress(signApi);
-      }
-
-      let signVer: string;
-
-      if (signApi && !process.env.SIGN_VER) {
-        signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本,当前支持安卓(8.9.63、8.9.68、8.9.70)、Tim(3.5.1、3.5.2)', [
-          [Button.text('8.9.63', true, true)],
-          [Button.text('8.9.68', true, true)],
-          [Button.text('8.9.70', true, true)],
-          [Button.text('3.5.1', true, true)],
-          [Button.text('3.5.2', true, true)],
-        ]);
-      }
-
-      let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
-      password = md5Hex(password);
-      this.oicq = await this.setupService.createOicq(uin, password, platform, signApi, signVer);
-      this.instance.qqBotId = this.oicq.id;
-      await this.setupService.informOwner(`登录成功`);
+    if (this.instance.qq) {
+      await this.setupService.informOwner('正在登录已设置好的 QQ');
+      this.oicq = await OicqClient.create({
+        id: this.instance.qq.id,
+        uin: Number(this.instance.qq.uin),
+        password: this.instance.qq.password,
+        platform: this.instance.qq.platform,
+        signApi: this.instance.qq.signApi,
+        signVer: this.instance.qq.signVer,
+        onQrCode: async (file) => {
+        },
+        onVerifyDevice: async (phone) => {
+          return await this.setupService.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
+        },
+        onVerifySlider: async (url) => {
+          return await this.setupService.waitForOwnerInput(`收到滑块验证码 <code>${url}</code>\n` +
+            '请使用<a href="https://github.com/mzdluo123/TxCaptchaHelper/releases">此软件</a>验证并输入 Ticket',
+          );
+        },
+      });
     }
-    catch (e) {
-      this.log.error('登录 OICQ 失败', e);
-      await this.setupService.informOwner(`登录失败\n${e.message}`);
-      this.isInProgress = false;
-      throw e;
-    }
+    else
+      try {
+        let uin = NaN;
+        while (isNaN(uin)) {
+          uin = Number(await this.setupService.waitForOwnerInput('请输入要登录 QQ 号'));
+        }
+        const platformText = await this.setupService.waitForOwnerInput('请选择登录协议', [
+          [Button.text('安卓手机', true, true)],
+          [Button.text('安卓平板', true, true)],
+          [Button.text('iPad', true, true)],
+        ]);
+        const platform = setupHelper.convertTextToPlatform(platformText);
+
+        let signApi: string;
+
+        if (!process.env.SIGN_API) {
+          signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
+            [Button.text('不需要签名服务器', true, true)],
+          ]);
+          signApi = setupHelper.checkSignApiAddress(signApi);
+        }
+
+        let signVer: string;
+
+        if (signApi && !process.env.SIGN_VER) {
+          signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本,当前支持安卓(8.9.63、8.9.68、8.9.70)、Tim(3.5.1、3.5.2)', [
+            [Button.text('8.9.63', true, true)],
+            [Button.text('8.9.68', true, true)],
+            [Button.text('8.9.70', true, true)],
+            [Button.text('3.5.1', true, true)],
+            [Button.text('3.5.2', true, true)],
+          ]);
+        }
+
+        let password = await this.setupService.waitForOwnerInput('请输入密码', undefined, true);
+        password = md5Hex(password);
+        this.oicq = await this.setupService.createOicq(uin, password, platform, signApi, signVer);
+        this.instance.qqBotId = this.oicq.id;
+        await this.setupService.informOwner(`登录成功`);
+      }
+      catch (e) {
+        this.log.error('登录 OICQ 失败', e);
+        await this.setupService.informOwner(`登录失败\n${e.message}`);
+        this.isInProgress = false;
+        throw e;
+      }
     // 登录 tg UserBot
     if (this.instance.userSessionId) {
       await this.setupService.informOwner('userSessionId 已经存在，跳过');
