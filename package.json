@@ -44,7 +44,7 @@
     "quote-api": "https://github.com/Clansty/quote-api/archive/8a47aa84e6920afd00fb8a2d56e816dbcb6c1283.tar.gz",
     "sharp": "^0.32.6",
     "silk-sdk": "^0.2.2",
-    "telegram": "^2.15.10",
+    "telegram": "^2.19.10",
     "tmp-promise": "^3.0.3",
     "undici": "^5.20.0",
     "zincsearch-node": "^2.1.0"

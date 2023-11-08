@@ -66,7 +66,7 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2
   telegram:
-    specifier: ^2.15.10
+    specifier: ^2.19.10
     version: 2.19.10
   tmp-promise:
     specifier: ^3.0.3
