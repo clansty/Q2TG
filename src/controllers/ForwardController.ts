@@ -47,6 +47,20 @@ export default class ForwardController {
       if (!pair) return;
       if (!pair.enable) return;
       if (pair.disableQ2TG) return;
+      // 如果是多张图片的话，是一整条消息，只过一次，所以不受这个判断影响
+      let existed = event.message_type === 'private' && await db.message.findFirst({
+        where: {
+          qqRoomId: pair.qqRoomId,
+          qqSenderId: event.sender.user_id,
+          seq: event.seq,
+          rand: event.rand,
+          pktnum: event.pktnum,
+          time: event.time,
+          instanceId: this.instance.id,
+        },
+      });
+      if (existed) return;
+      // 开始转发过程
       let tgMessages: Api.Message | Api.Message[] = await this.forwardService.forwardFromQq(event, pair);
       if (!tgMessages) return;
       if (!Array.isArray(tgMessages)) {
@@ -57,7 +71,7 @@ export default class ForwardController {
         await db.message.create({
           data: {
             qqRoomId: pair.qqRoomId,
-            qqSenderId: event.user_id,
+            qqSenderId: event.sender.user_id,
             time: event.time,
             brief: event.raw_message,
             seq: event.seq,
