@@ -120,6 +120,7 @@ export default class SetupController {
     // 登录 tg UserBot
     if (this.instance.userSessionId) {
       await this.setupService.informOwner('userSessionId 已经存在，跳过');
+      this.tgUser = await Telegram.connect(this.instance.userSessionId);
     }
     else
       try {
