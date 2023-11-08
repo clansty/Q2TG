@@ -13,8 +13,8 @@ import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
 import { BigInteger } from 'big-integer';
 import { IterMessagesParams } from 'telegram/client/messages';
-import { PromisedWebSockets } from 'telegram/extensions';
-import { ConnectionTCPObfuscated } from 'telegram/network';
+import { PromisedNetSockets, PromisedWebSockets } from 'telegram/extensions';
+import { ConnectionTCPFull, ConnectionTCPObfuscated } from 'telegram/network';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -55,8 +55,8 @@ export default class Telegram {
           port: parseInt(process.env.PROXY_PORT),
         } : undefined,
         autoReconnect: true,
-        networkSocket: PromisedWebSockets,
-        connection: ConnectionTCPObfuscated,
+        networkSocket: process.env.TG_CONNECTION === 'websocket' ? PromisedWebSockets : PromisedNetSockets,
+        connection: process.env.TG_CONNECTION === 'websocket' ? ConnectionTCPObfuscated : ConnectionTCPFull,
       },
     );
     // this.client.logger.setLevel(LogLevel.WARN);

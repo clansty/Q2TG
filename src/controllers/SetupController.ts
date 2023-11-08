@@ -9,8 +9,6 @@ import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
-import db from '../models/db';
-import { CustomFile } from 'telegram/client/uploads';
 
 export default class SetupController {
   private readonly setupService: SetupService;

@@ -56,5 +56,6 @@ COPY prisma /app/
 RUN pnpm exec prisma generate
 COPY --from=build /app/build /app/build
 
+ENV TG_CONNECTION=websocket
 ENV DATA_DIR=/app/data
 CMD pnpm start
