@@ -87,15 +87,7 @@ export default class SetupService {
     const dbQQBot = await db.qqBot.create({ data: { uin, password, platform, signApi, signVer } });
     return await OicqClient.create({
       id: dbQQBot.id,
-      uin, password, platform, signApi, signVer, 
-      onQrCode: async (file) => {
-        await this.owner.sendMessage({
-          message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
-          file: new CustomFile('qrcode.png', file.length, '', file),
-          buttons: Button.text('我已扫码', true, true),
-        });
-        await this.waitForOwnerInput();
-      },
+      uin, password, platform, signApi, signVer,
       onVerifyDevice: async (phone) => {
         return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
       },

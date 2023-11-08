@@ -80,8 +80,6 @@ export default class SetupController {
         platform: this.instance.qq.platform,
         signApi: this.instance.qq.signApi,
         signVer: this.instance.qq.signVer,
-        onQrCode: async (file) => {
-        },
         onVerifyDevice: async (phone) => {
           return await this.setupService.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
         },

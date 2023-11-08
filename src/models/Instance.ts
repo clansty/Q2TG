@@ -123,14 +123,6 @@ export default class Instance {
           platform: this.qq.platform,
           signApi: this.qq.signApi,
           signVer: this.qq.signVer,
-          onQrCode: async (file) => {
-            await this.ownerChat.sendMessage({
-              message: '请使用已登录这个账号的手机 QQ 扫描这个二维码授权',
-              file: new CustomFile('qrcode.png', file.length, '', file),
-              buttons: Button.text('我已扫码', true, true),
-            });
-            await this.waitForOwnerInput();
-          },
           onVerifyDevice: async (phone) => {
             return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
           },

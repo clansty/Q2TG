@@ -36,8 +36,6 @@ interface CreateOicqParams {
   onVerifyDevice: (phone: string) => Promise<string>;
   // 当滑块时调用此方法，返回 ticker，也可以返回假值改用扫码登录
   onVerifySlider: (url: string) => Promise<string>;
-  // 扫码后返回
-  onQrCode: (image: Buffer) => Promise<void>;
 }
 
 // OicqExtended??
@@ -78,11 +76,6 @@ export default class OicqClient extends Client {
         }
       };
 
-      const loginQrCodeHandler = async ({ image }: { image: Buffer }) => {
-        await params.onQrCode(image);
-        client.qrcodeLogin();
-      };
-
       const loginErrorHandler = ({ message }: { code: number; message: string }) => {
         reject(message);
       };
@@ -90,7 +83,6 @@ export default class OicqClient extends Client {
       const successLoginHandler = () => {
         client.offTrap('system.login.device', loginDeviceHandler);
         client.offTrap('system.login.slider', loginSliderHandler);
-        client.offTrap('system.login.qrcode', loginQrCodeHandler);
         client.offTrap('system.login.error', loginErrorHandler);
         client.offTrap('system.online', successLoginHandler);
 
@@ -136,7 +128,6 @@ export default class OicqClient extends Client {
       });
       client.on('system.login.device', loginDeviceHandler);
       client.on('system.login.slider', loginSliderHandler);
-      client.on('system.login.qrcode', loginQrCodeHandler);
       client.on('system.login.error', loginErrorHandler);
       client.on('system.online', successLoginHandler);
 
