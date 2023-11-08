@@ -113,6 +113,7 @@ export default class SetupController {
     }
     catch (e) {
       this.log.error('登录 OICQ 失败', e);
+      await this.setupService.informOwner(`登录失败\n${e.message}`);
       this.isInProgress = false;
       throw e;
     }
@@ -130,6 +131,7 @@ export default class SetupController {
       }
       catch (e) {
         this.log.error('创建 UserBot 失败', e);
+        await this.setupService.informOwner(`登录失败\n${e.message}`);
         this.isInProgress = false;
         throw e;
       }
