@@ -19,10 +19,21 @@ export default class TelegramSession extends MemorySession {
 
   async load() {
     this.log.trace('load');
+    if (process.env.TG_INITIAL_DCID) {
+      this._dcId = Number(process.env.TG_INITIAL_DCID);
+    }
+    if (process.env.TG_INITIAL_SERVER) {
+      this._serverAddress = process.env.TG_INITIAL_SERVER;
+    }
     if (!this._dbId) {
       this.log.debug('Session 不存在，创建');
       // 创建并返回
-      const newDbEntry = await db.session.create({ data: {} });
+      const newDbEntry = await db.session.create({
+        data: {
+          dcId: process.env.TG_INITIAL_DCID ? Number(process.env.TG_INITIAL_DCID) : null,
+          serverAddress: process.env.TG_INITIAL_SERVER,
+        },
+      });
       this._dbId = newDbEntry.id;
       this.log = getLogger(`TelegramSession - ${this._dbId}`);
       return;
