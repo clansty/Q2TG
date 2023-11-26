@@ -36,8 +36,8 @@ dependencies:
     specifier: ^2.1.2
     version: 2.1.2
   icqq:
-    specifier: ^0.6.2
-    version: 0.6.2
+    specifier: ^0.6.3
+    version: 0.6.3
   image-size:
     specifier: ^1.0.2
     version: 1.0.2
@@ -1754,8 +1754,8 @@ packages:
       safer-buffer: 2.1.2
     dev: false
 
-  /icqq@0.6.2:
-    resolution: {integrity: sha512-fwB/tXWKu9m/p986hiK4cRg5KSRGY20AEB8KRWNWnlmDADIkEwZdHO9iOe5cIcry0mOpgbWxLdr6RlhLMwd+Lw==}
+  /icqq@0.6.3:
+    resolution: {integrity: sha512-E5raVPlKbrNvVyTbn+jyET4+F1xz8DShBKnooaFzBLo14a7Sjwa89fdUUaTrApUaSiChz017nNzFMc62zIr2Kw==}
     engines: {node: '>= v14'}
     dependencies:
       axios: 1.6.0
