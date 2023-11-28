@@ -53,6 +53,8 @@ export default class Telegram {
           socksType: 5,
           ip: process.env.PROXY_IP,
           port: parseInt(process.env.PROXY_PORT),
+          ...(process.env.PROXY_USERNAME && { username: process.env.PROXY_USERNAME }),
+          ...(process.env.PROXY_PASSWORD && { password: process.env.PROXY_PASSWORD }),
         } : undefined,
         autoReconnect: true,
         networkSocket: process.env.TG_CONNECTION === 'websocket' ? PromisedWebSockets : PromisedNetSockets,
