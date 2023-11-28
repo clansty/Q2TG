@@ -64,3 +64,6 @@ services:
       # 如果需要通过代理联网，那么设置下面两个变量
       #- PROXY_IP=
       #- PROXY_PORT=
+      # 代理联网认证，有需要请修改下面两个变量
+      #- PROXY_USERNAME=
+      #- PROXY_PASSWORD=
