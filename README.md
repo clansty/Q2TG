@@ -1,6 +1,8 @@
 # Q2TG
 QQ 群与 Telegram 群相互转发的 bot
 
+交流 https://t.me/+XkF-96lLnFU3ZTM1
+
 ## 安装方法
 
 请看 [Wiki](https://github.com/Clansty/Q2TG/wiki/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2)
