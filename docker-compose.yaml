@@ -57,6 +57,8 @@ services:
       - SIGN_API=http://sign:8080/sign?key=114514
       - SIGN_VER=8.9.71 # 与上方 sign 容器的配置同步
       - TG_CONNECTION=tcp # 连接 Telegram 的方式，也可以改成 websocket
+      # 要关闭文件上传提示，请取消注释以下变量 https://github.com/clansty/Q2TG/issues/153
+      #- DISABLE_FILE_UPLOAD_TIP=1
       # 要支持转发时自动识别语音，请设置以下参数
       - BAIDU_APP_ID=
       - BAIDU_API_KEY=

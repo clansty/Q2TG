@@ -368,7 +368,7 @@ export default class ForwardService {
   public async forwardFromTelegram(message: Api.Message, pair: Pair): Promise<Array<QQMessageSent>> {
     try {
       const tempFiles: FileResult[] = [];
-      const chain: Sendable = [];
+      let chain: Sendable = [];
       const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '', isSpoilerPhoto = false;
@@ -529,6 +529,9 @@ export default class ForwardService {
           }
         }
         brief += '[文件]';
+        if (process.env.DISABLE_FILE_UPLOAD_TIP) {
+          chain = [];
+        }
       }
 
       if (message.message && !isSpoilerPhoto) {
