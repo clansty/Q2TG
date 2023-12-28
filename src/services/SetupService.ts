@@ -83,11 +83,11 @@ export default class SetupService {
     });
   }
 
-  public async createOicq(uin: number, password: string, platform: Platform, signApi: string, signVer: string) {
-    const dbQQBot = await db.qqBot.create({ data: { uin, password, platform, signApi, signVer } });
+  public async createOicq(uin: number, password: string, platform: Platform, signApi: string) {
+    const dbQQBot = await db.qqBot.create({ data: { uin, password, platform, signApi } });
     return await OicqClient.create({
       id: dbQQBot.id,
-      uin, password, platform, signApi, signVer,
+      uin, password, platform, signApi,
       onVerifyDevice: async (phone) => {
         return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
       },

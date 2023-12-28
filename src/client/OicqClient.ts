@@ -31,7 +31,6 @@ interface CreateOicqParams {
   password: string;
   platform: Platform;
   signApi?: string;
-  signVer?: string;
   // 当需要验证手机时调用此方法，应该返回收到的手机验证码
   onVerifyDevice: (phone: string) => Promise<string>;
   // 当滑块时调用此方法，返回 ticker，也可以返回假值改用扫码登录
@@ -124,7 +123,6 @@ export default class OicqClient extends Client {
         ffmpeg_path: process.env.FFMPEG_PATH,
         ffprobe_path: process.env.FFPROBE_PATH,
         sign_api_addr: params.signApi || process.env.SIGN_API,
-        ver: params.signVer || process.env.SIGN_VER,
       });
       client.on('system.login.device', loginDeviceHandler);
       client.on('system.login.slider', loginSliderHandler);
