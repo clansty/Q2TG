@@ -672,6 +672,11 @@ export default class ForwardService {
     }
     catch (e) {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);
+
+      if (process.env.DISABLE_FORWARD_FAILED_MESSAGE) {
+        return;
+      }
+
       try {
         await message.reply({
           message: `<i>转发失败：${e.message}</i>\n${e}`,
