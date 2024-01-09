@@ -17,7 +17,7 @@
     "@types/date-and-time": "^0.13.0",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.14.201",
-    "@types/node": "^18.6.3",
+    "@types/node": "^20.10.7",
     "@types/prompts": "^2.4.8",
     "@types/sharp": "^0.31.1",
     "ts-node": "^10.9.1",
