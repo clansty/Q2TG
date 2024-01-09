@@ -21,7 +21,7 @@ import { randomBytes } from 'crypto';
 import { escapeXml, gzip, timestamp } from 'icqq/lib/common';
 import { pb } from 'icqq/lib/core';
 
-const LOG_LEVEL: LogLevel = process.env.LOG_LEVEL as LogLevel || 'info';
+const LOG_LEVEL: LogLevel = process.env.LOG_LEVEL as LogLevel || 'warn';
 
 type MessageHandler = (event: PrivateMessageEvent | GroupMessageEvent) => Promise<boolean | void>
 

@@ -415,7 +415,6 @@ export default class ForwardService {
               }<hr hidden="false" style="0" /><summary size="26" color="#777777">请谨慎查看</summary
 ></item><source name="Q2TG" icon="" action="" appid="-1" /></msg>`.replaceAll('\n', ''),
           });
-          console.log(chain);
           brief += '[Spoiler 图片]';
         }
         else {
@@ -667,7 +666,6 @@ export default class ForwardService {
         }
       }
       tempFiles.forEach(it => it.cleanup());
-      console.log(qqMessages);
       return qqMessages;
     }
     catch (e) {

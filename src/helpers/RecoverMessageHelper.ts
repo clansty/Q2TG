@@ -46,7 +46,6 @@ export default class {
     await this.getMessages();
     this.currentStatus = 'getMedia';
     await this.messagesToTxt();
-    console.log(this.importTxt, this.filesMap);
     this.currentStatus = 'uploadMessage';
     await this.updateStatusMessage();
     await this.importMessagesAndMedia();
