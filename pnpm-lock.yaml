@@ -3803,7 +3803,7 @@ packages:
     dev: false
 
   git/github.com+Automattic/node-canvas/198080580a0e3938c48daae357b88a1638a9ddcd:
-    resolution: {commit: 198080580a0e3938c48daae357b88a1638a9ddcd, repo: git@github.com:Automattic/node-canvas.git, type: git}
+    resolution: {tarball: https://codeload.github.com/Automattic/node-canvas/tar.gz/198080580a0e3938c48daae357b88a1638a9ddcd}
     name: canvas
     version: 2.8.0
     engines: {node: '>=6'}
