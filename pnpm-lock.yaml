@@ -39,8 +39,8 @@ dependencies:
     specifier: ^0.6.7
     version: 0.6.7
   image-size:
-    specifier: ^1.0.2
-    version: 1.0.2
+    specifier: ^1.1.1
+    version: 1.1.1
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -1994,9 +1994,9 @@ packages:
       '@types/node': 16.9.1
     dev: false
 
-  /image-size@1.0.2:
-    resolution: {integrity: sha512-xfOoWjceHntRb3qFCrh5ZFORYH8XCdYpASltMhZ/Q0KZiOwjdE/Yl2QCiWdwD+lygV5bMCvauzgu5PxBX/Yerg==}
-    engines: {node: '>=14.0.0'}
+  /image-size@1.1.1:
+    resolution: {integrity: sha512-541xKlUw6jr/6gGuk92F+mYM5zaFAc5ahphvkqvNe2bQ6gVBkd6bfrmVJ2t4KDAfikAYZyIqTnktX3i6/aQDrQ==}
+    engines: {node: '>=16.x'}
     hasBin: true
     dependencies:
       queue: 6.0.2
