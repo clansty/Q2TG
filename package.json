@@ -24,7 +24,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@prisma/client": "5.5.2",
+    "@prisma/client": "5.7.1",
     "axios": "^0.27.2",
     "baidu-aip-sdk": "^4.16.10",
     "big-integer": "^1.6.51",
