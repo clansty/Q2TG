@@ -26,7 +26,7 @@
   "dependencies": {
     "@prisma/client": "5.7.1",
     "axios": "^0.27.2",
-    "baidu-aip-sdk": "^4.16.10",
+    "baidu-aip-sdk": "^4.16.15",
     "big-integer": "^1.6.51",
     "cli-progress": "^3.11.2",
     "date-and-time": "^2.4.1",
