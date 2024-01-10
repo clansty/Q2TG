@@ -123,6 +123,7 @@ export default class Instance {
           platform: this.qq.platform,
           signApi: this.qq.signApi,
           signVer: this.qq.signVer,
+          signDockerId: this.qq.signDockerId,
           onVerifyDevice: async (phone) => {
             return await this.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
           },

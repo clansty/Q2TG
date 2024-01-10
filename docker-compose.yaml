@@ -44,6 +44,7 @@ services:
       - sign
     volumes:
       - q2tg:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TG_API_ID=
       - TG_API_HASH=

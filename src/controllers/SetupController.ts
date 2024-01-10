@@ -80,6 +80,7 @@ export default class SetupController {
         platform: this.instance.qq.platform,
         signApi: this.instance.qq.signApi,
         signVer: this.instance.qq.signVer,
+        signDockerId: this.instance.qq.signDockerId,
         onVerifyDevice: async (phone) => {
           return await this.setupService.waitForOwnerInput(`请输入手机 ${phone} 收到的验证码`);
         },
@@ -147,7 +148,7 @@ export default class SetupController {
         await this.setupService.informOwner('正在登录，请稍候…');
         this.tgUser = await this.setupService.createUserBot(phoneNumber);
         this.instance.userSessionId = this.tgUser.sessionId;
-        await this.setupService.informOwner(`登录成功`);
+        await this.setupService.informOwner(`登录成功\n请使用下面的菜单开始创建转发！`);
       }
       catch (e) {
         this.log.error('创建 UserBot 失败', e);

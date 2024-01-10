@@ -48,13 +48,14 @@ model Instance {
 }
 
 model QqBot {
-  id       Int        @id @default(autoincrement())
-  uin      BigInt     @default(0)
-  password String     @default("")
-  platform Int        @default(0)
-  Instance Instance[]
-  signApi  String?
-  signVer  String?
+  id           Int        @id @default(autoincrement())
+  uin          BigInt     @default(0)
+  password     String     @default("")
+  platform     Int        @default(0)
+  Instance     Instance[]
+  signApi      String?
+  signVer      String?
+  signDockerId String?
 }
 
 model Message {

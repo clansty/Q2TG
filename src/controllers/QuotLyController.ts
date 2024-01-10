@@ -290,6 +290,7 @@ export default class {
     const qqMessage = await pair.qq.sendMsg({
       type: 'image',
       file: image,
+      asface: true
     });
     await db.message.create({
       data: {

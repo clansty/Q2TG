@@ -15,11 +15,11 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
     "@types/date-and-time": "^0.13.0",
+    "@types/dockerode": "^3.3.23",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.14.201",
     "@types/node": "^20.10.7",
     "@types/prompts": "^2.4.9",
-    "@types/sharp": "^0.32.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
@@ -30,6 +30,7 @@
     "big-integer": "^1.6.51",
     "cli-progress": "^3.11.2",
     "date-and-time": "^2.4.1",
+    "dockerode": "^4.0.2",
     "dotenv": "^16.0.1",
     "eviltransform": "^0.2.2",
     "file-type": "^19.0.0",

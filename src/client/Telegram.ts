@@ -6,13 +6,13 @@ import { DeletedMessage, DeletedMessageEvent } from 'telegram/events/DeletedMess
 import { EntityLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
 import CallbackQueryHelper from '../helpers/CallbackQueryHelper';
-import { CallbackQuery } from 'telegram/events/CallbackQuery';
+import { CallbackQuery, CallbackQueryEvent } from 'telegram/events/CallbackQuery';
 import os from 'os';
 import TelegramChat from './TelegramChat';
 import TelegramSession from '../models/TelegramSession';
 import { LogLevel } from 'telegram/extensions/Logger';
 import { BigInteger } from 'big-integer';
-import { IterMessagesParams } from 'telegram/client/messages';
+import { EditMessageParams, IterMessagesParams } from 'telegram/client/messages';
 import { PromisedNetSockets, PromisedWebSockets } from 'telegram/extensions';
 import { ConnectionTCPFull, ConnectionTCPObfuscated } from 'telegram/network';
 
@@ -174,7 +174,7 @@ export default class Telegram {
     );
   }
 
-  public registerCallback(cb: () => any) {
+  public registerCallback(cb: (event: CallbackQueryEvent) => any) {
     return this.callbackQueryHelper.registerCallback(cb);
   }
 

@@ -21,10 +21,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 COPY package.json pnpm-lock.yaml /app/
 
 FROM build-env AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --prod --frozen-lockfile
 
 FROM build-env AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
 COPY src tsconfig.json /app/
 COPY prisma /app/
 RUN pnpm exec prisma generate

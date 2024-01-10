@@ -39,6 +39,8 @@ import ZincSearch from 'zincsearch-node';
 import { speech as AipSpeechClient } from 'baidu-aip-sdk';
 import random from '../utils/random';
 import { escapeXml } from 'icqq/lib/common';
+import Docker from 'dockerode';
+import ReplyKeyboardHide = Api.ReplyKeyboardHide;
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -47,6 +49,7 @@ export default class ForwardService {
   private readonly log: Logger;
   private readonly zincSearch: ZincSearch;
   private readonly speechClient: AipSpeechClient;
+  private readonly restartSignCallbackHandle?: Buffer;
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
@@ -65,6 +68,24 @@ export default class ForwardService {
         process.env.BAIDU_API_KEY,
         process.env.BAIDU_SECRET_KEY,
       );
+    }
+    if (oicq.signDockerId) {
+      const socket = new Docker({ socketPath: '/var/run/docker.sock' });
+      const container = socket.getContainer(oicq.signDockerId);
+      this.restartSignCallbackHandle = tgBot.registerCallback(async (event) => {
+        const message = await event.edit({
+          message: event.messageId,
+          text: '正在重启签名服务...',
+          buttons: new ReplyKeyboardHide({}),
+        });
+        await container.restart();
+        await event.answer({
+          message: '已发送重启指令',
+        });
+        await message.reply({
+          message: '已发送重启指令\n你需要稍后重新发送一下消息',
+        });
+      });
     }
   }
 
@@ -672,7 +693,10 @@ export default class ForwardService {
       this.log.error('从 TG 到 QQ 的消息转发失败', e);
       try {
         await message.reply({
-          message: `<i>转发失败：${e.message}</i>\n${e}`,
+          message: `<i>转发失败：${e.message}</i>`,
+          buttons: (e.message === '签名api异常' && this.restartSignCallbackHandle) ?
+            Button.inline('重启签名服务', this.restartSignCallbackHandle) :
+            undefined,
         });
       }
       catch {

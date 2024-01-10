@@ -36,13 +36,15 @@ interface CreateOicqParams {
   onVerifyDevice: (phone: string) => Promise<string>;
   // 当滑块时调用此方法，返回 ticker，也可以返回假值改用扫码登录
   onVerifySlider: (url: string) => Promise<string>;
+  signDockerId?: string;
 }
 
 // OicqExtended??
 export default class OicqClient extends Client {
   private readonly onMessageHandlers: Array<MessageHandler> = [];
 
-  private constructor(uin: number, public readonly id: number, conf?: Config) {
+  private constructor(uin: number, public readonly id: number, conf?: Config,
+                      public readonly signDockerId?: string) {
     super(conf);
   }
 
@@ -125,7 +127,7 @@ export default class OicqClient extends Client {
         ffprobe_path: process.env.FFPROBE_PATH,
         sign_api_addr: params.signApi || process.env.SIGN_API,
         ver: params.signVer || process.env.SIGN_VER,
-      });
+      }, params.signDockerId);
       client.on('system.login.device', loginDeviceHandler);
       client.on('system.login.slider', loginSliderHandler);
       client.on('system.login.error', loginErrorHandler);
