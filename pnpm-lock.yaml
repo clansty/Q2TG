@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.27.2
     version: 0.27.2
   baidu-aip-sdk:
-    specifier: ^4.16.10
-    version: 4.16.13
+    specifier: ^4.16.15
+    version: 4.16.15
   big-integer:
     specifier: ^1.6.51
     version: 1.6.51
@@ -971,8 +971,8 @@ packages:
       - debug
     dev: false
 
-  /baidu-aip-sdk@4.16.13:
-    resolution: {integrity: sha512-fZR9FNC8zTSrthlkA1wQwQNybeIL2irdWRdRj6mRbN1t/08tPPJkfOSCVXYwlusThxwjajm8wHWjU4D9sBtgUg==}
+  /baidu-aip-sdk@4.16.15:
+    resolution: {integrity: sha512-uuIbP49QPVKTx9ZbEHtxzTVnh5Zwa7/QA+AvgrHWuhztMzORRw9TsQ5WaO6Wa9ETkOrhMOaKwDZgkfRxFSN32A==}
     dependencies:
       debug: 2.6.9
       iconv-lite: 0.4.24
