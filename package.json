@@ -32,7 +32,7 @@
     "date-and-time": "^2.4.1",
     "dotenv": "^16.0.1",
     "eviltransform": "^0.2.2",
-    "file-type": "^17.1.4",
+    "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "icqq": "^0.6.7",
     "image-size": "^1.1.1",

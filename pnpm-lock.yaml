@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2
   file-type:
-    specifier: ^17.1.4
-    version: 17.1.6
+    specifier: ^19.0.0
+    version: 19.0.0
   fluent-ffmpeg:
     specifier: ^2.1.2
     version: 2.1.2
@@ -1572,9 +1572,9 @@ packages:
       token-types: 4.2.1
     dev: false
 
-  /file-type@17.1.6:
-    resolution: {integrity: sha512-hlDw5Ev+9e883s0pwUsuuYNu4tD7GgpUnOvykjv1Gya0ZIjuKumthDRua90VUn6/nlRKAjcxLUnHNTIUWwWIiw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+  /file-type@19.0.0:
+    resolution: {integrity: sha512-s7cxa7/leUWLiXO78DVVfBVse+milos9FitauDLG1pI7lNaJ2+5lzPnr2N24ym+84HVwJL6hVuGfgVE+ALvU8Q==}
+    engines: {node: '>=18'}
     dependencies:
       readable-web-to-node-stream: 3.0.2
       strtok3: 7.0.0
