@@ -116,12 +116,14 @@ export default class SetupController {
         let signVer: string;
 
         if (signApi && !process.env.SIGN_VER) {
-          signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本,当前支持安卓(8.9.63、8.9.68、8.9.70)、Tim(3.5.1、3.5.2)', [
-            [Button.text('8.9.63', true, true)],
-            [Button.text('8.9.68', true, true)],
-            [Button.text('8.9.70', true, true)],
-            [Button.text('3.5.1', true, true)],
-            [Button.text('3.5.2', true, true)],
+          signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本', [
+            [Button.text('8.9.63', true, true),
+              Button.text('8.9.68', true, true)],
+            [Button.text('8.9.70', true, true),
+              Button.text('8.9.71', true, true),
+              Button.text('8.9.73', true, true)],
+            [Button.text('8.9.78', true, true),
+              Button.text('8.9.83', true, true)],
           ]);
         }
 
