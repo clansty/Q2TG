@@ -95,8 +95,8 @@ devDependencies:
     specifier: ^20.10.7
     version: 20.10.7
   '@types/prompts':
-    specifier: ^2.4.8
-    version: 2.4.8
+    specifier: ^2.4.9
+    version: 2.4.9
   '@types/sharp':
     specifier: ^0.32.0
     version: 0.32.0
@@ -787,10 +787,10 @@ packages:
       undici-types: 5.26.5
     dev: true
 
-  /@types/prompts@2.4.8:
-    resolution: {integrity: sha512-fPOEzviubkEVCiLduO45h+zFHB0RZX8tFt3C783sO5cT7fUXf3EEECpD26djtYdh4Isa9Z9tasMQuZnYPtvYzw==}
+  /@types/prompts@2.4.9:
+    resolution: {integrity: sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==}
     dependencies:
-      '@types/node': 18.18.8
+      '@types/node': 20.10.7
       kleur: 3.0.3
     dev: true
 
