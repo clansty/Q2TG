@@ -75,11 +75,11 @@ dependencies:
     specifier: ^3.0.3
     version: 3.0.3
   undici:
-    specifier: ^5.20.0
-    version: 5.27.2
+    specifier: ^6.3.0
+    version: 6.3.0
   zincsearch-node:
     specifier: ^2.1.0
-    version: 2.1.1(undici@5.27.2)
+    version: 2.1.1(undici@6.3.0)
 
 devDependencies:
   '@types/cli-progress':
@@ -3463,9 +3463,9 @@ packages:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
     dev: true
 
-  /undici@5.27.2:
-    resolution: {integrity: sha512-iS857PdOEy/y3wlM3yRp+6SNQQ6xU0mmZcwRSriqk+et/cwWAtwmIGf6WkoDN2EK/AMdCO/dfXzIwi+rFMrjjQ==}
-    engines: {node: '>=14.0'}
+  /undici@6.3.0:
+    resolution: {integrity: sha512-zkSMOXs2topAR1LF0PxAaNNvhdX4LYEcmRMJLMh3mjgfZpBtc/souXOp4aYiR5Q46HrBPA2/8DkEZhD3eNFE1Q==}
+    engines: {node: '>=18.0'}
     dependencies:
       '@fastify/busboy': 2.0.0
     dev: false
@@ -3717,13 +3717,13 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /zincsearch-node@2.1.1(undici@5.27.2):
+  /zincsearch-node@2.1.1(undici@6.3.0):
     resolution: {integrity: sha512-erRhljqQVK96HE7KWfMFQaFsiere3+DrInZY2g5pHpz5ea/78G1z4Exky2vsLvLZ+D320D2JINcc2BVedY+6aQ==}
     peerDependencies:
       undici: '>=5.10.0'
     dependencies:
       typescript: 4.9.5
-      undici: 5.27.2
+      undici: 6.3.0
     dev: false
 
   '@github.com/Clansty/quote-api/archive/37a0e48a434b94bb04c04c7d86d9f0d2295df869.tar.gz':
