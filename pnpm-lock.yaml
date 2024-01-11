@@ -15,8 +15,8 @@ dependencies:
     specifier: ^4.16.15
     version: 4.16.15
   big-integer:
-    specifier: ^1.6.51
-    version: 1.6.51
+    specifier: ^1.6.52
+    version: 1.6.52
   cli-progress:
     specifier: ^3.11.2
     version: 3.12.0
@@ -1015,8 +1015,8 @@ packages:
       tweetnacl: 0.14.5
     dev: false
 
-  /big-integer@1.6.51:
-    resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==}
+  /big-integer@1.6.52:
+    resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
     dev: false
 
@@ -3268,7 +3268,7 @@ packages:
     dependencies:
       '@cryptography/aes': 0.1.1
       async-mutex: 0.3.2
-      big-integer: 1.6.51
+      big-integer: 1.6.52
       buffer: 6.0.3
       htmlparser2: 6.1.0
       mime: 3.0.0

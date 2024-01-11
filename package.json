@@ -27,7 +27,7 @@
     "@prisma/client": "5.8.0",
     "axios": "^1.6.5",
     "baidu-aip-sdk": "^4.16.15",
-    "big-integer": "^1.6.51",
+    "big-integer": "^1.6.52",
     "cli-progress": "^3.11.2",
     "date-and-time": "^3.1.0",
     "dockerode": "^4.0.2",
