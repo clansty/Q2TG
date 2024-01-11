@@ -22,6 +22,7 @@ import ZincSearch from 'zincsearch-node';
 export default class ForwardController {
   private readonly forwardService: ForwardService;
   private readonly log: Logger;
+  private readonly queues = new Map<number, Promise<void>>();
 
   constructor(
     private readonly instance: Instance,
@@ -41,6 +42,25 @@ export default class ForwardController {
   }
 
   private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
+    const targetId = event.message_type === 'private' ? event.friend.user_id : event.group.group_id;
+    if (!this.queues.has(targetId)) {
+      this.queues.set(targetId, Promise.resolve());
+    }
+    const lastPromise = this.queues.get(targetId);
+    const newPromise = lastPromise.then(() => this.onQqMessageTask(event));
+
+    this.queues.set(targetId, newPromise);
+
+    newPromise.then(() => {
+      if (this.queues.get(targetId) === newPromise) {
+        this.queues.delete(targetId);
+      }
+    });
+
+    return newPromise;
+  };
+
+  private onQqMessageTask = async (event: PrivateMessageEvent | GroupMessageEvent) => {
     try {
       const target = event.message_type === 'private' ? event.friend : event.group;
       const pair = this.instance.forwardPairs.find(target);
