@@ -12,6 +12,7 @@ import { Friend, Group } from 'icqq';
 import { format } from 'date-and-time';
 import ZincSearch from 'zincsearch-node';
 import flags from '../constants/flags';
+import inChatCommandsHelper from '../helpers/inChatCommandsHelper';
 
 export default class InChatCommandsService {
   private readonly log: Logger;
@@ -149,7 +150,7 @@ export default class InChatCommandsService {
 
   public async editFlags(params: string[], pair: Pair) {
     if (!params.length) {
-      return '0b' + pair.flags.toString(2);
+      return inChatCommandsHelper.displayFlag(pair.flags);
     }
     if (params.length !== 2) return '参数格式错误';
 
@@ -175,6 +176,6 @@ export default class InChatCommandsService {
         break;
     }
 
-    return '0b' + pair.flags.toString(2);
+    return inChatCommandsHelper.displayFlag(pair.flags);
   }
 }
