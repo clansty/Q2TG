@@ -393,7 +393,7 @@ export default class ForwardService {
       const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '', isSpoilerPhoto = false;
-      const messageHeader = helper.getUserDisplayName(message.sender) +
+      let messageHeader = helper.getUserDisplayName(message.sender) +
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
           (message.fwdFrom?.fromName ||
@@ -555,8 +555,8 @@ export default class ForwardService {
       }
 
       if (message.message && !isSpoilerPhoto) {
-        if (message.entities) {
-          const emojiEntities = message.entities.filter(it => it instanceof Api.MessageEntityCustomEmoji) as Api.MessageEntityCustomEmoji[];
+        const emojiEntities = (message.entities || []).filter(it => it instanceof Api.MessageEntityCustomEmoji) as Api.MessageEntityCustomEmoji[];
+        if (emojiEntities.length) {
           const isMessageAllEmojis = _.sum(emojiEntities.map(it => it.length)) === message.message.length;
           const newChain = [] as (string | MessageElem)[];
           let messageLeft = message.message;
@@ -572,11 +572,23 @@ export default class ForwardService {
             });
           }
           chain.push(messageLeft, ...newChain);
+          brief += message.message;
+        }
+        // Q2TG Bot 转发的消息目前不会包含 custom emoji
+        else if (message.forward?.senderId?.eq?.(this.tgBot.me.id) && /^.*: ?$/.test(message.message.split('\n')[0])) {
+          // 复读了某一条来自 QQ 的消息 (Repeat as forward)
+          const originalMessage = message.message.includes('\n') ?
+            message.message.substring(message.message.indexOf('\n') + 1) : '';
+          chain.push(originalMessage);
+          brief += originalMessage;
+
+          messageHeader = helper.getUserDisplayName(message.sender) + ' 转发自 ' +
+            message.message.substring(0, message.message.indexOf(':')) + ': \n';
         }
         else {
           chain.push(message.message);
+          brief += message.message;
         }
-        brief += message.message;
       }
 
       // 处理回复
