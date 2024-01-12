@@ -61,12 +61,12 @@ export default class DeleteMessageService {
           // 假如 mapQQ 是普通成员，机器人是管理员，上面撤回失败了也可以由机器人撤回
           // 所以撤回两次
           // 不知道哪次会成功，所以就都不发失败提示了
-          this.recallQqMessage(pair.qq, messageInfo.seq, Number(messageInfo.rand),
-            pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
-            pair, isOthersMsg, !!mapQq);
           await db.message.delete({
             where: { id: messageInfo.id },
           });
+          this.recallQqMessage(pair.qq, messageInfo.seq, Number(messageInfo.rand),
+            pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
+            pair, isOthersMsg, !!mapQq);
         }
         catch (e) {
           this.log.error(e);
