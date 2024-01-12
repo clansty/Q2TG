@@ -7,6 +7,7 @@ import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import { consumer } from '../utils/highLevelFunces';
 import forwardHelper from '../helpers/forwardHelper';
+import flags from '../constants/flags';
 
 export default class DeleteMessageService {
   private readonly log: Logger;
@@ -143,11 +144,19 @@ export default class DeleteMessageService {
           instanceId: this.instance.id,
         },
       });
-      if (message) {
+      if (!message) return;
+      if (pair.flags & flags.NO_DELETE_MESSAGE) {
+        await pair.tg.editMessages({
+          message: message.tgMsgId,
+          text: `<del>${message.tgMessageText}</del>\n<i>此消息已删除</i>`,
+          parseMode: 'html',
+        });
+      }
+      else {
+        await pair.tg.deleteMessages(message.tgMsgId);
         await db.message.delete({
           where: { id: message.id },
         });
-        await pair.tg.deleteMessages(message.tgMsgId);
       }
     }
     catch (e) {

@@ -2,7 +2,7 @@ import { BigInteger } from 'big-integer';
 import { Api, TelegramClient, utils } from 'telegram';
 import { ButtonLike, Entity, EntityLike, MessageIDLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
-import { SendMessageParams } from 'telegram/client/messages';
+import { EditMessageParams, SendMessageParams } from 'telegram/client/messages';
 import { CustomFile } from 'telegram/client/uploads';
 import Telegram from './Telegram';
 import createPaginatedInlineSelector from '../utils/paginatedInlineSelector';
@@ -184,6 +184,10 @@ export default class TelegramChat {
       messageId = [messageId];
     }
     return await this.client.deleteMessages(this.entity, messageId, { revoke: true });
+  }
+
+  public async editMessages(params: EditMessageParams) {
+    return await this.client.editMessage(this.entity, params);
   }
 
   public async inviteMember(member: EntityLike | EntityLike[]) {
