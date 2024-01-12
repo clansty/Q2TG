@@ -67,6 +67,16 @@ export default class InChatCommandsController {
         pair.flags &= ~flags.DISABLE_TG2Q;
         await message.reply({ message: 'TG->QQ已启用' });
         return true;
+      case '/flags':
+      case '/flag':
+        if (!message.senderId.eq(this.instance.owner)) {
+          await message.reply({ message: '权限不够' });
+          return true;
+        }
+        await message.reply({
+          message: await this.service.editFlags(messageParts, pair),
+        });
+        return true;
       case '/refresh':
         if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
         await pair.updateInfo();
