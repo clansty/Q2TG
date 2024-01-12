@@ -151,11 +151,8 @@ export default class Instance {
       if (this.workMode === 'group') {
         this.hugController = new HugController(this, this.tgBot, this.oicq);
       }
+      this.quotLyController = new QuotLyController(this, this.tgBot, this.oicq);
       this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
-      if (this.workMode === 'group') {
-        // 希望那个 /q 也被转发
-        this.quotLyController = new QuotLyController(this, this.tgBot, this.oicq);
-      }
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()
       .then(() => this.log.info('初始化已完成'));

@@ -25,6 +25,7 @@ export default class {
   }
 
   private onQqMessage = async (event: PrivateMessageEvent | GroupMessageEvent) => {
+    if (this.instance.workMode === 'personal') return;
     if (event.message_type !== 'group') return;
     const pair = this.instance.forwardPairs.find(event.group);
     if (!pair) return;
@@ -53,13 +54,16 @@ export default class {
       this.log.error('找不到 sourceMessage');
       return true;
     }
-    try {
-      await this.sendQuote(pair, sourceMessage);
-    }
-    catch (e) {
-      this.log.error(e);
-      await event.reply(e.toString(), true);
-    }
+    setTimeout(async () => {
+      // 异步发送，为了让 /q 先到达
+      try {
+        await this.sendQuote(pair, sourceMessage);
+      }
+      catch (e) {
+        this.log.error(e);
+        await event.reply(e.toString(), true);
+      }
+    }, 50);
   };
 
   private onTelegramMessage = async (message: Api.Message) => {
@@ -86,15 +90,20 @@ export default class {
       this.log.error('找不到 sourceMessage');
       return true;
     }
-    try {
-      await this.sendQuote(pair, sourceMessage);
-    }
-    catch (e) {
-      this.log.error(e);
-      await message.reply({
-        message: e.toString(),
-      });
-    }
+    setTimeout(async () => {
+      try {
+        await this.sendQuote(pair, sourceMessage);
+      }
+      catch (e) {
+        this.log.error(e);
+        await message.reply({
+          message: e.toString(),
+        });
+      }
+    }, 50);
+
+    // 个人模式下，/q 这条消息不转发到 QQ，怪话图只有自己可见
+    if (this.instance.workMode === 'personal') return true;
   };
 
   private async genQuote(message: Message) {
@@ -287,10 +296,13 @@ export default class {
     const tgMessage = await pair.tg.sendMessage({
       file: new CustomFile('quote.webp', image.length, undefined, image),
     });
+
+    if (this.instance.workMode === 'personal') return;
+
     const qqMessage = await pair.qq.sendMsg({
       type: 'image',
       file: image,
-      asface: true
+      asface: true,
     });
     await db.message.create({
       data: {
