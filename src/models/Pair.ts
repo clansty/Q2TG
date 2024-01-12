@@ -17,11 +17,7 @@ export class Pair {
     public readonly qq: Friend | Group,
     private _tg: TelegramChat,
     public dbId: number,
-    private _joinNotice: boolean,
-    private _poke: boolean,
-    private _enable: boolean,
-    private _disableQ2TG: boolean,
-    private _disableTG2Q: boolean,
+    private _flags: number,
   ) {
   }
 
@@ -67,72 +63,16 @@ export class Pair {
       .then(() => log.info(`出现了到超级群组的转换: ${value.id}`));
   }
 
-  get joinNotice() {
-    return this._joinNotice;
+  get flags() {
+    return this._flags;
   }
 
-  set joinNotice(value) {
-    this._joinNotice = value;
+  set flags(value) {
+    this._flags = value;
     db.forwardPair
       .update({
         where: { id: this.dbId },
-        data: { joinNotice: value },
-      })
-      .then(() => 0);
-  }
-
-  get poke() {
-    return this._poke;
-  }
-
-  set poke(value) {
-    this._poke = value;
-    db.forwardPair
-      .update({
-        where: { id: this.dbId },
-        data: { poke: value },
-      })
-      .then(() => 0);
-  }
-
-  get enable() {
-    return this._enable;
-  }
-
-  set enable(value) {
-    this._enable = value;
-    db.forwardPair
-      .update({
-        where: { id: this.dbId },
-        data: { enable: value },
-      })
-      .then(() => 0);
-  }
-
-  get disableQ2TG() {
-    return this._disableQ2TG;
-  }
-
-  set disableQ2TG(value) {
-    this._disableQ2TG = value;
-    db.forwardPair
-      .update({
-        where: { id: this.dbId },
-        data: { disableQ2TG: value },
-      })
-      .then(() => 0);
-  }
-
-  get disableTG2Q() {
-    return this._disableTG2Q;
-  }
-
-  set disableTG2Q(value) {
-    this._disableTG2Q = value;
-    db.forwardPair
-      .update({
-        where: { id: this.dbId },
-        data: { disableTG2Q: value },
+        data: { flags: value },
       })
       .then(() => 0);
   }

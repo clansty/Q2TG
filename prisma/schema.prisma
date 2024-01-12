@@ -87,11 +87,7 @@ model ForwardPair {
   avatarCache AvatarCache[]
   instanceId  Int           @default(0)
   instance    Instance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
-  joinNotice  Boolean       @default(true)
-  poke        Boolean       @default(true)
-  enable      Boolean       @default(true)
-  disableQ2TG Boolean       @default(false)
-  disableTG2Q Boolean       @default(false)
+  flags       Int           @default(0)
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])

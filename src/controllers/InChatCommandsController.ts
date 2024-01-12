@@ -6,6 +6,7 @@ import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
 import { Group } from 'icqq';
 import RecoverMessageHelper from '../helpers/RecoverMessageHelper';
+import flags from '../constants/flags';
 
 export default class InChatCommandsController {
   private readonly service: InChatCommandsService;
@@ -43,27 +44,27 @@ export default class InChatCommandsController {
         await this.service.poke(message, pair);
         return true;
       case '/forwardoff':
-        pair.enable = false;
+        pair.flags |= flags.DISABLE_Q2TG | flags.DISABLE_TG2Q;
         await message.reply({ message: '转发已禁用' });
         return true;
       case '/forwardon':
-        pair.enable = true;
+        pair.flags &= ~flags.DISABLE_Q2TG & ~flags.DISABLE_TG2Q;
         await message.reply({ message: '转发已启用' });
         return true;
       case '/disable_qq_forward':
-        pair.disableQ2TG = true;
+        pair.flags |= flags.DISABLE_Q2TG;
         await message.reply({ message: 'QQ->TG已禁用' });
         return true;
       case '/enable_qq_forward':
-        pair.disableQ2TG = false;
+        pair.flags &= ~flags.DISABLE_Q2TG;
         await message.reply({ message: 'QQ->TG已启用' });
         return true;
       case '/disable_tg_forward':
-        pair.disableTG2Q = true;
+        pair.flags |= flags.DISABLE_TG2Q;
         await message.reply({ message: 'TG->QQ已禁用' });
         return true;
       case '/enable_tg_forward':
-        pair.disableTG2Q = false;
+        pair.flags &= ~flags.DISABLE_TG2Q;
         await message.reply({ message: 'TG->QQ已启用' });
         return true;
       case '/refresh':
