@@ -7,6 +7,7 @@ import { Api } from 'telegram';
 import { Group } from 'icqq';
 import RecoverMessageHelper from '../helpers/RecoverMessageHelper';
 import flags from '../constants/flags';
+import { editFlags } from '../utils/flagControl';
 
 export default class InChatCommandsController {
   private readonly service: InChatCommandsService;
@@ -74,7 +75,7 @@ export default class InChatCommandsController {
           return true;
         }
         await message.reply({
-          message: await this.service.editFlags(messageParts, pair),
+          message: await editFlags(messageParts, pair),
         });
         return true;
       case '/refresh':

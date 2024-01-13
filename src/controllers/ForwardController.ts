@@ -46,7 +46,7 @@ export default class ForwardController {
       const target = event.message_type === 'private' ? event.friend : event.group;
       const pair = this.instance.forwardPairs.find(target);
       if (!pair) return;
-      if (pair.flags & flags.DISABLE_Q2TG) return;
+      if ((pair.flags | this.instance.flags) & flags.DISABLE_Q2TG) return;
       // 如果是多张图片的话，是一整条消息，只过一次，所以不受这个判断影响
       let existed = event.message_type === 'private' && await db.message.findFirst({
         where: {
@@ -102,7 +102,7 @@ export default class ForwardController {
       if (message.senderId?.eq(this.instance.botMe.id)) return true;
       const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
-      if (pair.flags & flags.DISABLE_TG2Q) return;
+      if ((pair.flags | this.instance.flags) & flags.DISABLE_TG2Q) return;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
       if (qqMessagesSent) {
         // 更新数据库
@@ -140,7 +140,7 @@ export default class ForwardController {
   private onQqGroupMemberIncrease = async (event: MemberIncreaseEvent) => {
     try {
       const pair = this.instance.forwardPairs.find(event.group);
-      if (pair?.flags & flags.DISABLE_JOIN_NOTICE) return false;
+      if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       const avatar = await getAvatar(event.user_id);
       await pair.tg.sendMessage({
         file: new CustomFile('avatar.png', avatar.length, '', avatar),
@@ -156,7 +156,7 @@ export default class ForwardController {
   private onTelegramParticipant = async (event: Api.UpdateChannelParticipant) => {
     try {
       const pair = this.instance.forwardPairs.find(event.channelId);
-      if (pair?.flags & flags.DISABLE_JOIN_NOTICE) return false;
+      if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       if (
         !(event.newParticipant instanceof Api.ChannelParticipantAdmin) &&
         !(event.newParticipant instanceof Api.ChannelParticipantCreator) &&
@@ -174,7 +174,7 @@ export default class ForwardController {
   private onQqPoke = async (event: FriendPokeEvent | GroupPokeEvent) => {
     const target = event.notice_type === 'friend' ? event.friend : event.group;
     const pair = this.instance.forwardPairs.find(target);
-    if (pair?.flags & flags.DISABLE_POKE) return;
+    if ((pair?.flags | this.instance.flags) & flags.DISABLE_POKE) return;
     let operatorName: string, targetName: string;
     if (target instanceof Friend) {
       if (event.operator_id === target.user_id) {

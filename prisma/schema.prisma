@@ -45,6 +45,7 @@ model Instance {
   qqBotId       Int?
   qqBot         QqBot?        @relation(fields: [qqBotId], references: [id], onDelete: Cascade)
   reportUrl     String?
+  flags         Int           @default(0)
 }
 
 model QqBot {

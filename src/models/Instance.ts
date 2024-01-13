@@ -32,6 +32,7 @@ export default class Instance {
   private _userSessionId = 0;
   private _qq: QqBot;
   private _reportUrl: string;
+  private _flags: number;
 
   private readonly log: Logger;
 
@@ -84,6 +85,7 @@ export default class Instance {
     this._isSetup = dbEntry.isSetup;
     this._workMode = dbEntry.workMode;
     this._reportUrl = dbEntry.reportUrl;
+    this._flags = dbEntry.flags;
   }
 
   private async init(botToken?: string) {
@@ -255,6 +257,10 @@ export default class Instance {
     return this._reportUrl;
   }
 
+  get flags() {
+    return this._flags;
+  }
+
   set owner(owner: number) {
     this._owner = owner;
     db.instance.update({
@@ -309,10 +315,20 @@ export default class Instance {
   }
 
   set reportUrl(reportUrl: string) {
+    this._reportUrl = reportUrl;
     db.instance.update({
       data: { reportUrl },
       where: { id: this.id },
     })
       .then(() => this.log.trace(reportUrl));
+  }
+
+  set flags(value) {
+    this._flags = value;
+    db.instance.update({
+      data: { flags: value },
+      where: { id: this.id },
+    })
+      .then(() => this.log.trace(value));
   }
 }

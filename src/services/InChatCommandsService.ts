@@ -11,8 +11,6 @@ import db from '../models/db';
 import { Friend, Group } from 'icqq';
 import { format } from 'date-and-time';
 import ZincSearch from 'zincsearch-node';
-import flags from '../constants/flags';
-import inChatCommandsHelper from '../helpers/inChatCommandsHelper';
 
 export default class InChatCommandsService {
   private readonly log: Logger;
@@ -146,36 +144,5 @@ export default class InChatCommandsService {
       return `${index + 1}. ${link} score:${hit._score!.toFixed(3)}`;
     });
     return rpy.join('\n');
-  }
-
-  public async editFlags(params: string[], pair: Pair) {
-    if (!params.length) {
-      return inChatCommandsHelper.displayFlag(pair.flags);
-    }
-    if (params.length !== 2) return '参数格式错误';
-
-    let operand = Number(params[1]);
-    if (isNaN(operand)) {
-      operand = flags[params[1].toUpperCase()];
-    }
-    if (isNaN(operand)) return 'flag 格式错误';
-
-    switch (params[0]) {
-      case 'add':
-      case 'set':
-        pair.flags |= operand;
-        break;
-      case 'rm':
-      case 'remove':
-      case 'del':
-      case 'delete':
-        pair.flags &= ~operand;
-        break;
-      case 'put':
-        pair.flags = operand;
-        break;
-    }
-
-    return inChatCommandsHelper.displayFlag(pair.flags);
   }
 }

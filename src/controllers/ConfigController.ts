@@ -12,6 +12,7 @@ import {
 } from 'icqq';
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
+import { editFlags } from '../utils/flagControl';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
@@ -48,6 +49,15 @@ export default class ConfigController {
         return false;
     }
     else if (message.isPrivate) {
+      switch (messageSplit[0]) {
+        case '/flag':
+        case '/flags':
+          messageSplit.shift();
+          await message.reply({
+            message: await editFlags(messageSplit, this.instance),
+          });
+          return true;
+      }
       if (this.instance.workMode === 'personal') {
         switch (messageSplit[0]) {
           case '/addfriend':
