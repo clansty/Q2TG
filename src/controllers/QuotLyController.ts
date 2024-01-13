@@ -162,7 +162,10 @@ export default class {
         title: message.nick,
         photo: { url: getAvatarUrl(message.qqSenderId) },
       };
-      if (message.tgMessageText.includes('\n')) {
+      if (message.qqRoomId > 0) {
+        quoteMessage.text = message.tgMessageText;
+      }
+      else if (message.tgMessageText.includes('\n')) {
         quoteMessage.text = message.tgMessageText.substring(message.tgMessageText.indexOf('\n')).trim();
       }
       else {
