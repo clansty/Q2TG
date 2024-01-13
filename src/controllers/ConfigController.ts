@@ -13,6 +13,7 @@ import {
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
 import { editFlags } from '../utils/flagControl';
+import flags from '../constants/flags';
 
 export default class ConfigController {
   private readonly configService: ConfigService;
@@ -116,6 +117,7 @@ export default class ConfigController {
 
   private handleQqMessage = async (message: GroupMessageEvent | PrivateMessageEvent) => {
     if (message.message_type !== 'private' || this.instance.workMode === 'group') return false;
+    if (this.instance.flags & flags.NO_AUTO_CREATE_PM) return false;
     const pair = this.instance.forwardPairs.find(message.friend);
     if (pair) return false;
     // 如果正在创建中，应该阻塞
