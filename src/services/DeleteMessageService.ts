@@ -11,10 +11,20 @@ import flags from '../constants/flags';
 
 export default class DeleteMessageService {
   private readonly log: Logger;
+  private readonly lockIds = new Set<string>();
 
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram) {
     this.log = getLogger(`DeleteMessageService - ${instance.id}`);
+  }
+
+  private lock(lockId: string) {
+    if (this.lockIds.has(lockId)) {
+      this.log.debug('重复执行消息撤回', lockId);
+      return true;
+    }
+    this.lockIds.add(lockId);
+    setTimeout(() => this.lockIds.delete(lockId), 5000);
   }
 
   // 500ms 内只撤回一条消息，防止频繁导致一部分消息没有成功撤回。不过这样的话，会得不到返回的结果
@@ -46,6 +56,7 @@ export default class DeleteMessageService {
    */
   async telegramDeleteMessage(messageId: number, pair: Pair, isOthersMsg = false) {
     // 删除的时候会返回记录
+    if (this.lock(`tg-${pair.tgId}-${messageId}`)) return;
     try {
       const messageInfo = await db.message.findFirst({
         where: {
@@ -56,17 +67,18 @@ export default class DeleteMessageService {
       });
       if (messageInfo) {
         try {
+          if (this.lock(`qq-${pair.qqRoomId}-${messageInfo.seq}`)) return;
           const mapQq = pair.instanceMapForTg[messageInfo.tgSenderId.toString()];
           mapQq && this.recallQqMessage(mapQq, messageInfo.seq, Number(messageInfo.rand), messageInfo.pktnum, pair, false, true);
           // 假如 mapQQ 是普通成员，机器人是管理员，上面撤回失败了也可以由机器人撤回
           // 所以撤回两次
           // 不知道哪次会成功，所以就都不发失败提示了
-          await db.message.delete({
-            where: { id: messageInfo.id },
-          });
           this.recallQqMessage(pair.qq, messageInfo.seq, Number(messageInfo.rand),
             pair.qq instanceof Friend ? messageInfo.time : messageInfo.pktnum,
             pair, isOthersMsg, !!mapQq);
+          await db.message.delete({
+            where: { id: messageInfo.id },
+          });
         }
         catch (e) {
           this.log.error(e);
@@ -135,6 +147,7 @@ export default class DeleteMessageService {
   }
 
   public async handleQqRecall(event: FriendRecallEvent | GroupRecallEvent, pair: Pair) {
+    if (this.lock(`qq-${pair.qqRoomId}-${event.seq}`)) return;
     try {
       const message = await db.message.findFirst({
         where: {
@@ -145,6 +158,7 @@ export default class DeleteMessageService {
         },
       });
       if (!message) return;
+      if (this.lock(`tg-${pair.tgId}-${message.tgMsgId}`)) return;
       if ((pair.flags | this.instance.flags) & flags.NO_DELETE_MESSAGE) {
         await pair.tg.editMessages({
           message: message.tgMsgId,
