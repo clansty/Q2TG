@@ -1,7 +1,6 @@
 import path from 'path';
-
-const DATA_DIR = process.env.DATA_DIR || path.resolve('./data');
+import env from '../models/env';
 
 // Wrap of path.join, add base DATA_DIR
 export default (...paths: string[]) =>
-  path.join(DATA_DIR, ...paths);
+  path.join(env.DATA_DIR, ...paths);

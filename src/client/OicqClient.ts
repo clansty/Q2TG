@@ -20,8 +20,9 @@ import { Converter, Image, rand2uuid } from 'icqq/lib/message';
 import { randomBytes } from 'crypto';
 import { escapeXml, gzip, timestamp } from 'icqq/lib/common';
 import { pb } from 'icqq/lib/core';
+import env from '../models/env';
 
-const LOG_LEVEL: LogLevel = process.env.LOG_LEVEL as LogLevel || 'warn';
+const LOG_LEVEL: LogLevel = env.OICQ_LOG_LEVEL;
 
 type MessageHandler = (event: PrivateMessageEvent | GroupMessageEvent) => Promise<boolean | void>
 
@@ -123,10 +124,10 @@ export default class OicqClient extends Client {
         platform: params.platform,
         data_dir: dataPath(params.uin.toString()),
         log_level: LOG_LEVEL,
-        ffmpeg_path: process.env.FFMPEG_PATH,
-        ffprobe_path: process.env.FFPROBE_PATH,
-        sign_api_addr: params.signApi || process.env.SIGN_API,
-        ver: params.signVer || process.env.SIGN_VER,
+        ffmpeg_path: env.FFMPEG_PATH,
+        ffprobe_path: env.FFPROBE_PATH,
+        sign_api_addr: params.signApi || env.SIGN_API,
+        ver: params.signVer || env.SIGN_VER,
       }, params.signDockerId);
       client.on('system.login.device', loginDeviceHandler);
       client.on('system.login.slider', loginSliderHandler);

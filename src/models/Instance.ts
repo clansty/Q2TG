@@ -24,6 +24,7 @@ import StatusReportController from '../controllers/StatusReportController';
 import HugController from '../controllers/HugController';
 import QuotLyController from '../controllers/QuotLyController';
 import MiraiSkipFilterController from '../controllers/MiraiSkipFilterController';
+import env from './env';
 
 export default class Instance {
   private _owner = 0;
@@ -96,7 +97,7 @@ export default class Instance {
       this.tgBot = await Telegram.connect(this._botSessionId);
     }
     else {
-      const token = this.id === 0 ? process.env.TG_BOT_TOKEN : botToken;
+      const token = this.id === 0 ? env.TG_BOT_TOKEN : botToken;
       if (!token) {
         throw new Error('botToken 未指定');
       }

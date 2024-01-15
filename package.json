@@ -48,7 +48,8 @@
     "telegram": "^2.19.10",
     "tmp-promise": "^3.0.3",
     "undici": "^6.3.0",
-    "zincsearch-node": "^2.1.0"
+    "zincsearch-node": "^2.1.0",
+    "zod": "^3.22.4"
   },
   "engines": {
     "node": "^14.13.1 || >=16.0.0"

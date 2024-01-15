@@ -19,6 +19,7 @@ import axios from 'axios';
 import { CustomFile } from 'telegram/client/uploads';
 import fsP from 'fs/promises';
 import { file } from 'tmp-promise';
+import env from '../models/env';
 
 export default class {
   private readonly log: Logger;
@@ -197,21 +198,26 @@ export default class {
                 }
                 break;
               case 'forward':
-                try {
-                  const messages = await this.pair.qq.getForwardMsg(result.resId);
-                  const hash = md5Hex(result.resId);
-                  text += `转发的消息记录 ${process.env.CRV_API}/?hash=${hash}`;
-                  // 传到 Cloudflare
-                  axios.post(`${process.env.CRV_API}/add`, {
-                    auth: process.env.CRV_KEY,
-                    key: hash,
-                    data: messages,
-                  })
-                    .then(data => this.log.trace('上传消息记录到 Cloudflare', data.data))
-                    .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
+                if (env.CRV_API) {
+                  try {
+                    const messages = await this.pair.qq.getForwardMsg(result.resId);
+                    const hash = md5Hex(result.resId);
+                    text += `转发的消息记录 ${env.CRV_API}/?hash=${hash}`;
+                    // 传到 Cloudflare
+                    axios.post(`${env.CRV_API}/add`, {
+                      auth: env.CRV_KEY,
+                      key: hash,
+                      data: messages,
+                    })
+                      .then(data => this.log.trace('上传消息记录到 Cloudflare', data.data))
+                      .catch(e => this.log.error('上传消息记录到 Cloudflare 失败', e));
+                  }
+                  catch (e) {
+                    text += '[转发多条消息（无法获取）]';
+                  }
                 }
-                catch (e) {
-                  text += '[转发多条消息（无法获取）]';
+                else {
+                  text += '[转发多条消息]';
                 }
                 break;
             }
@@ -255,11 +261,11 @@ export default class {
         ext: 'tgs',
         mime: 'application/x-tgsticker',
       } : await fileTypeFromFile(filePath);
-      if(!type){
+      if (!type) {
         type = {
           ext: 'bin',
           mime: 'application/octet-stream',
-        }
+        };
       }
       let media: Api.TypeInputMedia;
       if (['.webp', '.tgs'].includes(path.extname(filePath))) {

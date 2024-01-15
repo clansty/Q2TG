@@ -2,6 +2,7 @@ import { MemorySession } from 'telegram/sessions';
 import db from './db';
 import { AuthKey } from 'telegram/crypto/AuthKey';
 import { getLogger, Logger } from 'log4js';
+import env from './env';
 
 const PASS = () => 0;
 
@@ -19,19 +20,19 @@ export default class TelegramSession extends MemorySession {
 
   async load() {
     this.log.trace('load');
-    if (process.env.TG_INITIAL_DCID) {
-      this._dcId = Number(process.env.TG_INITIAL_DCID);
+    if (env.TG_INITIAL_DCID) {
+      this._dcId = env.TG_INITIAL_DCID;
     }
-    if (process.env.TG_INITIAL_SERVER) {
-      this._serverAddress = process.env.TG_INITIAL_SERVER;
+    if (env.TG_INITIAL_SERVER) {
+      this._serverAddress = env.TG_INITIAL_SERVER;
     }
     if (!this._dbId) {
       this.log.debug('Session 不存在，创建');
       // 创建并返回
       const newDbEntry = await db.session.create({
         data: {
-          dcId: process.env.TG_INITIAL_DCID ? Number(process.env.TG_INITIAL_DCID) : null,
-          serverAddress: process.env.TG_INITIAL_SERVER,
+          dcId: env.TG_INITIAL_DCID,
+          serverAddress: env.TG_INITIAL_SERVER,
         },
       });
       this._dbId = newDbEntry.id;

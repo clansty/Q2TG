@@ -11,6 +11,7 @@ import db from '../models/db';
 import { Friend, Group } from 'icqq';
 import { format } from 'date-and-time';
 import ZincSearch from 'zincsearch-node';
+import env from '../models/env';
 
 export default class InChatCommandsService {
   private readonly log: Logger;
@@ -20,11 +21,11 @@ export default class InChatCommandsService {
               private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
     this.log = getLogger(`InChatCommandsService - ${instance.id}`);
-    if (process.env.ZINC_URL) {
+    if (env.ZINC_URL) {
       this.zincSearch = new ZincSearch({
-        url: process.env.ZINC_URL,
-        user: process.env.ZINC_USERNAME,
-        password: process.env.ZINC_PASSWORD,
+        url: env.ZINC_URL,
+        user: env.ZINC_USERNAME,
+        password: env.ZINC_PASSWORD,
       });
     }
   }

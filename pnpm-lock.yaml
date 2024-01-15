@@ -80,6 +80,9 @@ dependencies:
   zincsearch-node:
     specifier: ^2.1.0
     version: 2.1.1(undici@6.3.0)
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
 
 devDependencies:
   '@types/cli-progress':
@@ -3719,6 +3722,10 @@ packages:
     dependencies:
       typescript: 4.9.5
       undici: 6.3.0
+    dev: false
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
   '@github.com/Clansty/quote-api/archive/37a0e48a434b94bb04c04c7d86d9f0d2295df869.tar.gz':

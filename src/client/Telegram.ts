@@ -15,6 +15,7 @@ import { BigInteger } from 'big-integer';
 import { EditMessageParams, IterMessagesParams } from 'telegram/client/messages';
 import { PromisedNetSockets, PromisedWebSockets } from 'telegram/extensions';
 import { ConnectionTCPFull, ConnectionTCPObfuscated } from 'telegram/network';
+import env from '../models/env';
 
 type MessageHandler = (message: Api.Message) => Promise<boolean | void>;
 type ServiceMessageHandler = (message: Api.MessageService) => Promise<boolean | void>;
@@ -41,24 +42,24 @@ export default class Telegram {
   private constructor(appName: string, sessionId?: number) {
     this.client = new TelegramClient(
       new TelegramSession(sessionId),
-      parseInt(process.env.TG_API_ID),
-      process.env.TG_API_HASH,
+      env.TG_API_ID,
+      env.TG_API_HASH,
       {
         connectionRetries: 20,
         langCode: 'zh',
         deviceModel: `${appName} On ${os.hostname()}`,
         appVersion: 'rainbowcat',
-        useIPV6: !!process.env.IPV6,
-        proxy: process.env.PROXY_IP ? {
+        useIPV6: !!env.IPV6,
+        proxy: env.PROXY_IP ? {
           socksType: 5,
-          ip: process.env.PROXY_IP,
-          port: parseInt(process.env.PROXY_PORT),
-          ...(process.env.PROXY_USERNAME && { username: process.env.PROXY_USERNAME }),
-          ...(process.env.PROXY_PASSWORD && { password: process.env.PROXY_PASSWORD }),
+          ip: env.PROXY_IP,
+          port: env.PROXY_PORT,
+          username: env.PROXY_USERNAME,
+          password: env.PROXY_PASSWORD,
         } : undefined,
         autoReconnect: true,
-        networkSocket: process.env.TG_CONNECTION === 'websocket' ? PromisedWebSockets : PromisedNetSockets,
-        connection: process.env.TG_CONNECTION === 'websocket' ? ConnectionTCPObfuscated : ConnectionTCPFull,
+        networkSocket: env.TG_CONNECTION === 'websocket' ? PromisedWebSockets : PromisedNetSockets,
+        connection: env.TG_CONNECTION === 'websocket' ? ConnectionTCPObfuscated : ConnectionTCPFull,
       },
     );
     // this.client.logger.setLevel(LogLevel.WARN);

@@ -12,6 +12,7 @@ import BigInteger from 'big-integer';
 import { getAvatarUrl } from '../utils/urls';
 import convert from '../helpers/convert';
 import { Pair } from '../models/Pair';
+import env from '../models/env';
 
 export default class {
   private readonly log: Logger;
@@ -280,7 +281,7 @@ export default class {
       throw new Error('不支持的消息类型');
     }
     const res = await quotly({
-      botToken: process.env.TG_BOT_TOKEN,
+      botToken: env.TG_BOT_TOKEN,
       type,
       format,
       backgroundColor,

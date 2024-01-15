@@ -9,6 +9,7 @@ import { WorkMode } from '../types/definitions';
 import OicqClient from '../client/OicqClient';
 import { md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
+import env from '../models/env';
 
 export default class SetupController {
   private readonly setupService: SetupService;
@@ -106,7 +107,7 @@ export default class SetupController {
 
         let signApi: string;
 
-        if (!process.env.SIGN_API) {
+        if (!env.SIGN_API) {
           signApi = await this.setupService.waitForOwnerInput('请输入签名服务器地址', [
             [Button.text('不需要签名服务器', true, true)],
           ]);
@@ -115,7 +116,7 @@ export default class SetupController {
 
         let signVer: string;
 
-        if (signApi && !process.env.SIGN_VER) {
+        if (signApi && !env.SIGN_VER) {
           signVer = await this.setupService.waitForOwnerInput('请输入签名服务器版本', [
             [Button.text('8.9.63', true, true),
               Button.text('8.9.68', true, true)],
