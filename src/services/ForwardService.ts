@@ -91,16 +91,6 @@ export default class ForwardService {
 
   public async forwardFromQq(event: PrivateMessageEvent | GroupMessageEvent, pair: Pair) {
     try {
-      const messageMirai = event.message.find(it => it.type === 'mirai') as MiraiElem;
-      if (messageMirai) {
-        try {
-          const miraiData = JSON.parse(messageMirai.data);
-          if (miraiData.q2tgSkip) return;
-        }
-        catch {
-        }
-      }
-
       const tempFiles: FileResult[] = [];
       let message = '', files: FileLike[] = [], buttons: ButtonLike[] = [], replyTo = 0;
       let messageHeader = '', sender = '';
