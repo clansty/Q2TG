@@ -21,8 +21,8 @@ dependencies:
     specifier: ^3.11.2
     version: 3.12.0
   date-and-time:
-    specifier: ^3.1.0
-    version: 3.1.0
+    specifier: ^3.1.1
+    version: 3.1.1
   dockerode:
     specifier: ^4.0.2
     version: 4.0.2
@@ -788,7 +788,7 @@ packages:
     resolution: {integrity: sha512-5uHEzTnzhS5gO8UOWIwPQitg13mAnixpoWaWuqUfGLvF9GdxBe7Uo56ZRLTQ7CckanqW/oAv/RyQDv4Knf075A==}
     deprecated: This is a stub types definition. date-and-time provides its own type definitions, so you do not need this installed.
     dependencies:
-      date-and-time: 2.4.3
+      date-and-time: 3.1.1
     dev: true
 
   /@types/docker-modem@3.0.6:
@@ -1315,13 +1315,8 @@ packages:
       whatwg-url: 8.7.0
     dev: false
 
-  /date-and-time@2.4.3:
-    resolution: {integrity: sha512-xkS/imTmsyEdpp9ie5oV5UWolg3XkYWNySbT2W4ESWr6v4V8YrsHbhpk9fIeQcr0NFTnYbQJLXlgU1zrLItysA==}
-    dev: true
-
-  /date-and-time@3.1.0:
-    resolution: {integrity: sha512-tWIpW3LK8tyLofyuMYxfOUchstWcyXjM+4rzIzve/VtBLzvS6q1oOxkcwhQ710nhU3M04jpfveDQ18IIw8lm2A==}
-    dev: false
+  /date-and-time@3.1.1:
+    resolution: {integrity: sha512-N9kstidT3P0VUk1iKOFilOZ6251r6iTUNx9M9kvgL2jqOk9mljWZUq5CjAtYwCnppWHbERk5YFQUrSbY7FQOpA==}
 
   /date-format@4.0.14:
     resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}

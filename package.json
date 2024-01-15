@@ -29,7 +29,7 @@
     "baidu-aip-sdk": "^4.16.15",
     "big-integer": "^1.6.52",
     "cli-progress": "^3.11.2",
-    "date-and-time": "^3.1.0",
+    "date-and-time": "^3.1.1",
     "dockerode": "^4.0.2",
     "dotenv": "^16.0.1",
     "eviltransform": "^0.2.2",
