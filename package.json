@@ -18,7 +18,7 @@
     "@types/dockerode": "^3.3.23",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.11.4",
     "@types/prompts": "^2.4.9",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
