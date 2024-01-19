@@ -23,7 +23,7 @@ type ActionSubjectQq = {
 
 type ActionSubject = ActionSubjectTg | ActionSubjectQq;
 
-const COMMAND_REGEX = /^\/([^\w\s$]\S*)|^\/\$(\w\S*)/; // /抱 /$rua
+const COMMAND_REGEX = /(^\/([^\w\s$]\S*)|^\/\$(\w\S*))( (\S*))?/; // /抱 /$rua
 
 export default class {
   private readonly log: Logger;
@@ -47,7 +47,7 @@ export default class {
     if (firstElem?.type !== 'text') return;
     const exec = COMMAND_REGEX.exec(firstElem.text.trim());
     if (!exec) return;
-    const action = exec[1] || exec[2];
+    const action = exec[2] || exec[3];
     if (!action) return;
     const from: ActionSubject = {
       from: 'qq',
@@ -100,7 +100,7 @@ export default class {
         id: event.sender.user_id,
       };
     }
-    await this.sendAction(pair, from, to, action);
+    await this.sendAction(pair, from, to, action, exec[5]);
     return true;
   };
 
@@ -109,7 +109,7 @@ export default class {
     if (!pair) return;
     const exec = COMMAND_REGEX.exec(message.message);
     if (!exec) return;
-    const action = exec[1] || exec[2];
+    const action = exec[2] || exec[3];
     if (!action) return;
     const from: ActionSubject = {
       from: 'tg',
@@ -152,11 +152,11 @@ export default class {
         id: (await this.tgBot.getChat(message.senderId)).inputPeer as Api.InputPeerUser,
       };
     }
-    await this.sendAction(pair, from, to, action);
+    await this.sendAction(pair, from, to, action, exec[5]);
     return true;
   };
 
-  private async sendAction(pair: Pair, from: ActionSubject, to: ActionSubject, action: string) {
+  private async sendAction(pair: Pair, from: ActionSubject, to: ActionSubject, action: string, suffix?: string) {
     let tgText = '';
     const tgEntities: Api.TypeMessageEntity[] = [];
     const qqMessageContent: Sendable = [];
@@ -193,6 +193,13 @@ export default class {
     }
     addText('了 ');
     addSubject(to);
+    if (suffix) {
+      if (!/[\u4e00-\u9fa5]$/.test(suffix) || !/[\u4e00-\u9fa5]$/.test(to.name)) {
+        // 英文之后加上空格
+        tgText += " ";
+      }
+      tgText += suffix;
+    }
     addText('！');
 
     const tgMessage = await pair.tg.sendMessage({
