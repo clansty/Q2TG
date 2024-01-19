@@ -154,11 +154,11 @@ export default class Instance {
       this.deleteMessageController = new DeleteMessageController(this, this.tgBot, this.tgUser, this.oicq);
       this.miraiSkipFilterController = new MiraiSkipFilterController(this, this.tgBot, this.tgUser, this.oicq);
       this.inChatCommandsController = new InChatCommandsController(this, this.tgBot, this.tgUser, this.oicq);
+      this.quotLyController = new QuotLyController(this, this.tgBot, this.oicq);
+      this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
       if (this.workMode === 'group') {
         this.hugController = new HugController(this, this.tgBot, this.oicq);
       }
-      this.quotLyController = new QuotLyController(this, this.tgBot, this.oicq);
-      this.forwardController = new ForwardController(this, this.tgBot, this.tgUser, this.oicq);
       this.fileAndFlashPhotoController = new FileAndFlashPhotoController(this, this.tgBot, this.oicq);
     })()
       .then(() => this.log.info('初始化已完成'));
