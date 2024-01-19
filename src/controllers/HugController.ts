@@ -23,10 +23,11 @@ type ActionSubjectQq = {
 
 type ActionSubject = ActionSubjectTg | ActionSubjectQq;
 
-const COMMAND_REGEX = /(^\/([^\w\s$]\S*)|^\/\$(\w\S*))( (\S*))?/; // /抱 /$rua
+const COMMAND_REGEX = /(^\/([^\w\s$¥]\S*)|^\/[$¥](\w\S*))( (\S*))?/; // /抱 /$rua
 
 export default class {
   private readonly log: Logger;
+
   constructor(private readonly instance: Instance,
               private readonly tgBot: Telegram,
               private readonly oicq: OicqClient) {
@@ -76,7 +77,7 @@ export default class {
         },
       });
       if (!sourceMessage) {
-        this.log.error('找不到 sourceMessage')
+        this.log.error('找不到 sourceMessage');
         return true;
       }
       to = {
@@ -126,7 +127,7 @@ export default class {
         },
       });
       if (!sourceMessage) {
-        this.log.error('找不到 sourceMessage')
+        this.log.error('找不到 sourceMessage');
         return true;
       }
       if (this.tgBot.me.id.eq(sourceMessage.tgSenderId)) {
@@ -194,11 +195,7 @@ export default class {
     addText('了 ');
     addSubject(to);
     if (suffix) {
-      if (!/[\u4e00-\u9fa5]$/.test(suffix) || !/[\u4e00-\u9fa5]$/.test(to.name)) {
-        // 英文之后加上空格
-        tgText += " ";
-      }
-      tgText += suffix;
+      tgText += ' ' + suffix;
     }
     addText('！');
 
