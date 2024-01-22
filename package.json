@@ -31,7 +31,7 @@
     "cli-progress": "^3.11.2",
     "date-and-time": "^3.1.1",
     "dockerode": "^4.0.2",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.3.2",
     "eviltransform": "^0.2.2",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
