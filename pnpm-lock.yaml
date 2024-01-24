@@ -27,8 +27,8 @@ dependencies:
     specifier: ^4.0.2
     version: 4.0.2
   dotenv:
-    specifier: ^16.0.1
-    version: 16.3.1
+    specifier: ^16.4.0
+    version: 16.4.0
   eviltransform:
     specifier: ^0.2.2
     version: 0.2.2
@@ -1652,8 +1652,8 @@ packages:
       domhandler: 4.3.1
     dev: false
 
-  /dotenv@16.3.1:
-    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+  /dotenv@16.4.0:
+    resolution: {integrity: sha512-WvImr5kpN5NGNn7KaDjJnLTh5rDVLZiDf/YLA8T1ZEZEBZNEDOE+mnkS0PVjPax8ZxBP5zC5SLMB3/9VV5de9g==}
     engines: {node: '>=12'}
     dev: false
 
