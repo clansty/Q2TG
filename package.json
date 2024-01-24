@@ -47,7 +47,7 @@
     "silk-sdk": "^0.2.2",
     "telegram": "^2.19.10",
     "tmp-promise": "^3.0.3",
-    "undici": "^6.3.0",
+    "undici": "^6.4.0",
     "zincsearch-node": "^2.1.0",
     "zod": "^3.22.4"
   },
