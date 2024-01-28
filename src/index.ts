@@ -22,20 +22,19 @@ import db from './models/db';
   });
   const instanceEntries = await db.instance.findMany();
 
-  const instances = [] as Instance[];
   if (!instanceEntries.length) {
-    instances.push(await Instance.start(0));
+    await Instance.start(0);
   }
   else {
     for (const instanceEntry of instanceEntries) {
-      instances.push(await Instance.start(instanceEntry.id));
+      await Instance.start(instanceEntry.id);
     }
   }
 
   setTimeout(async () => {
-    for (const instance of instances.filter(it => it.workMode === 'group')) {
+    for (const instance of Instance.instances.filter(it => it.workMode === 'group')) {
       try {
-        await instance.forwardPairs.initMapInstance(instances.filter(it => it.workMode === 'personal'));
+        await instance.forwardPairs.initMapInstance(Instance.instances.filter(it => it.workMode === 'personal'));
       }
       catch {
       }
