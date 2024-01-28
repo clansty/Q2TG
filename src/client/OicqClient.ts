@@ -217,15 +217,15 @@ export default class OicqClient extends Client {
       await contact.uploadImages(imgs);
     const compressed = await gzip(pb.encode({
       1: nodes,
-      2: {
+      2: [{
         1: 'MultiMsg',
         2: {
           1: nodes,
         },
-      },
+      }],
     }));
     const _uploadMultiMsg = Reflect.get(contact, '_uploadMultiMsg') as Function;
-    const resid = await _uploadMultiMsg.apply(contact, compressed);
+    const resid = await _uploadMultiMsg.apply(contact, [compressed]);
     return {
       tSum: nodes.length,
       resid,
