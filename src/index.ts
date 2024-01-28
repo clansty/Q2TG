@@ -12,6 +12,11 @@ import db from './models/db';
     },
   });
   const log = getLogger('Main');
+
+  if (!process.versions.node.startsWith('18.')) {
+    log.warn('当前正在使用的 Node.JS 版本为', process.versions.node, '，未经测试');
+  }
+
   process.on('unhandledRejection', error => {
     log.error('UnhandledException: ', error);
   });
