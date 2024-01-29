@@ -28,7 +28,6 @@ export default {
       const aspectRatio = dimensions.width / dimensions.height;
       if (aspectRatio > 20 || aspectRatio < 1 / 20
         || dimensions.width + dimensions.height > 10000
-        || file.length > 1024 * 1024 * 10
       ) {
         // 让 Telegram 服务器下载
         return url
