@@ -194,6 +194,7 @@ export default class ForwardService {
                 const file = await helper.downloadToCustomFile(url, !(message || messageHeader));
                 files.push(file);
                 if (file instanceof CustomFile && elem.type === 'image' && file.size > 10 * 1024 * 1024) {
+                  this.log.info('强制使用文件发送');
                   forceDocument = true;
                 }
                 buttons.push(Button.url(`${emoji.picture()} 查看原图`, url));
@@ -225,7 +226,12 @@ export default class ForwardService {
               }
               this.log.info('正在发送媒体，长度', helper.hSize(elem.size));
               try {
-                files.push(await helper.downloadToCustomFile(url, !(message || messageHeader), elem.name));
+                const file = await helper.downloadToCustomFile(url, !(message || messageHeader), elem.name);
+                if (file instanceof CustomFile && file.size > 10 * 1024 * 1024) {
+                  this.log.info('强制使用文件发送');
+                  forceDocument = true;
+                }
+                files.push(file);
               }
               catch (e) {
                 this.log.error('下载媒体失败', e);
