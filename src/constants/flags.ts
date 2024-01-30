@@ -5,6 +5,7 @@ enum flags {
   DISABLE_POKE = 1 << 3,
   NO_DELETE_MESSAGE = 1 << 4,
   NO_AUTO_CREATE_PM = 1 << 5,
+  COLOR_EMOJI_PREFIX = 1 << 6,
 }
 
 export default flags;

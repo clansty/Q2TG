@@ -43,6 +43,7 @@ import Docker from 'dockerode';
 import ReplyKeyboardHide = Api.ReplyKeyboardHide;
 import env from '../models/env';
 import { CustomFile } from 'telegram/client/uploads';
+import flags from '../constants/flags';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -106,7 +107,10 @@ export default class ForwardService {
         if (event.anonymous) {
           sender = `[${sender}]${event.anonymous.name}`;
         }
-        messageHeader = `<b>${helper.htmlEscape(sender)}</b>: `;
+        if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
+          messageHeader += emoji.color(event.sender.user_id);
+        }
+        messageHeader += `<b>${helper.htmlEscape(sender)}</b>: `;
       }
       const useSticker = (file: FileLike) => {
         files.push(file);
@@ -415,6 +419,9 @@ export default class ForwardService {
             helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
           '') +
         ': \n';
+      if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
+        messageHeader = emoji.color(message.senderId.toJSNumber()) + messageHeader;
+      }
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
