@@ -44,6 +44,7 @@ import ReplyKeyboardHide = Api.ReplyKeyboardHide;
 import env from '../models/env';
 import { CustomFile } from 'telegram/client/uploads';
 import flags from '../constants/flags';
+import BigInteger from 'big-integer';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -331,7 +332,6 @@ export default class ForwardService {
         }
       }
       message = message.trim();
-      message = messageHeader + (message && messageHeader ? '\n' : '') + message;
 
       // 处理回复
       if (event.source) {
@@ -382,6 +382,22 @@ export default class ForwardService {
       else if (files.length) {
         messageToSend.file = files;
       }
+      else if ((pair.flags | this.instance.flags) & flags.RICH_HEADER) {
+        // 没有文件时才能显示链接预览
+        messageHeader = '';
+        const url = new URL('https://q2tg-header.clansty.workers.dev');
+        url.searchParams.set('name', sender);
+        url.searchParams.set('id', event.sender.user_id.toString());
+        // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
+        // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/generate/scheme/telegram_api.tl#L1841
+        // https://github.com/gram-js/gramjs/pull/633
+        messageToSend.file = new Api.InputMediaWebPage({
+          url: url.toString(),
+        });
+        messageToSend.linkPreview = { showAboveText: true };
+      }
+
+      message = messageHeader + (message && messageHeader ? '\n' : '') + message;
       buttons.length && (messageToSend.buttons = _.chunk(buttons, 3));
       replyTo && (messageToSend.replyTo = replyTo);
 
@@ -406,6 +422,7 @@ export default class ForwardService {
   }
 
   public async forwardFromTelegram(message: Api.Message, pair: Pair): Promise<Array<QQMessageSent>> {
+    // console.log(message);
     try {
       const tempFiles: FileResult[] = [];
       let chain: Sendable = [];

@@ -69,8 +69,8 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2
   telegram:
-    specifier: ^2.19.10
-    version: 2.19.10
+    specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
+    version: '@github.com/clansty/gramjs/releases/download/2.19.10%252Brevert_media/telegram-2.19.10.tgz'
   tmp-promise:
     specifier: ^3.0.3
     version: 3.0.3
@@ -1243,7 +1243,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.6.1
+      node-gyp-build: 4.8.0
     dev: false
 
   /buildcheck@0.0.6:
@@ -2740,8 +2740,8 @@ packages:
       whatwg-url: 5.0.0
     dev: false
 
-  /node-gyp-build@4.6.1:
-    resolution: {integrity: sha512-24vnklJmyRS8ViBNI8KbtK/r/DmXQMRiOMXTNz2nrTnAYUwjmEEbnnpB/+kt+yWRv73bPsSPRFddrcIbAxSiMQ==}
+  /node-gyp-build@4.8.0:
+    resolution: {integrity: sha512-u6fs2AEUljNho3EYTJNBfImO5QTo/J/1Etd+NVdCj7qWKUSN/bSLkZwhDv7I+w/MSC6qJ4cknepkAYykDdK8og==}
     hasBin: true
     requiresBuild: true
     dev: false
@@ -3457,30 +3457,6 @@ packages:
       - supports-color
     dev: false
 
-  /telegram@2.19.10:
-    resolution: {integrity: sha512-5Brrn+BcYSjDUmT1/9T4Nq2tYlR1/TreRvpim1UGeuwfnIgFOiTXwDwXBOy6hbn9yssvmtk/dQJU9pBColM7ag==}
-    dependencies:
-      '@cryptography/aes': 0.1.1
-      async-mutex: 0.3.2
-      big-integer: 1.6.52
-      buffer: 6.0.3
-      htmlparser2: 6.1.0
-      mime: 3.0.0
-      node-localstorage: 2.2.1
-      pako: 2.1.0
-      path-browserify: 1.0.1
-      real-cancellable-promise: 1.2.0
-      socks: 2.7.1
-      store2: 2.14.2
-      ts-custom-error: 3.3.1
-      websocket: 1.0.34
-    optionalDependencies:
-      bufferutil: 4.0.8
-      utf-8-validate: 5.0.10
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /timm@1.7.1:
     resolution: {integrity: sha512-IjZc9KIotudix8bMaBW6QvMuq64BrJWFs1+4V0lXwWGQZwH+LnX87doAYhem4caOEusRP9/g6jVDQmZ8XOk1nw==}
     dev: false
@@ -3563,6 +3539,7 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    requiresBuild: true
     dev: false
 
   /tsscmp@1.0.6:
@@ -3681,7 +3658,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.6.1
+      node-gyp-build: 4.8.0
     dev: false
 
   /utif2@4.1.0:
@@ -3924,4 +3901,30 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+    dev: false
+
+  '@github.com/clansty/gramjs/releases/download/2.19.10%252Brevert_media/telegram-2.19.10.tgz':
+    resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
+    name: telegram
+    version: 2.19.10
+    dependencies:
+      '@cryptography/aes': 0.1.1
+      async-mutex: 0.3.2
+      big-integer: 1.6.52
+      buffer: 6.0.3
+      htmlparser2: 6.1.0
+      mime: 3.0.0
+      node-localstorage: 2.2.1
+      pako: 2.1.0
+      path-browserify: 1.0.1
+      real-cancellable-promise: 1.2.0
+      socks: 2.7.1
+      store2: 2.14.2
+      ts-custom-error: 3.3.1
+      websocket: 1.0.34
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 5.0.10
+    transitivePeerDependencies:
+      - supports-color
     dev: false
