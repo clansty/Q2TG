@@ -393,6 +393,7 @@ export default class ForwardService {
         // https://github.com/gram-js/gramjs/pull/633
         messageToSend.file = new Api.InputMediaWebPage({
           url: url.toString(),
+          forceSmallMedia: true,
         });
         messageToSend.linkPreview = { showAboveText: true };
       }
