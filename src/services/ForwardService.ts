@@ -394,6 +394,7 @@ export default class ForwardService {
         messageToSend.file = new Api.InputMediaWebPage({
           url: url.toString(),
           forceSmallMedia: true,
+          optional: true,
         });
         messageToSend.linkPreview = { showAboveText: true };
       }
@@ -412,7 +413,7 @@ export default class ForwardService {
       }
       catch (e) {
         if (richHeaderUsed) {
-          this.log.warn('Rich Header 发送错误', messageToSend.file);
+          this.log.warn('Rich Header 发送错误', messageToSend.file, e);
           delete messageToSend.file;
           delete messageToSend.linkPreview;
           message = messageHeader + (message && messageHeader ? '\n' : '') + message;
