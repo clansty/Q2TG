@@ -459,7 +459,7 @@ export default class ForwardService {
           '') +
         ': \n';
       if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
-        messageHeader = emoji.color(message.senderId.toJSNumber()) + messageHeader;
+        messageHeader = emoji.tgColor((message.sender as Api.User)?.color || message.senderId.toJSNumber()) + messageHeader;
       }
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
