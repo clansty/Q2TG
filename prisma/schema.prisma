@@ -60,22 +60,23 @@ model QqBot {
 }
 
 model Message {
-  id            Int      @id @default(autoincrement())
-  qqRoomId      BigInt   @db.BigInt
-  qqSenderId    BigInt   @db.BigInt
-  time          Int
-  brief         String?
-  seq           Int
-  rand          BigInt   @db.BigInt
-  pktnum        Int
-  tgChatId      BigInt   @db.BigInt
-  tgMsgId       Int
-  instanceId    Int      @default(0)
-  instance      Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
-  tgFileId      BigInt?  @db.BigInt
-  tgMessageText String?
-  nick          String? // /抱 的时候会用到
-  tgSenderId    BigInt?  @db.BigInt
+  id             Int      @id @default(autoincrement())
+  qqRoomId       BigInt   @db.BigInt
+  qqSenderId     BigInt   @db.BigInt
+  time           Int
+  brief          String?
+  seq            Int
+  rand           BigInt   @db.BigInt
+  pktnum         Int
+  tgChatId       BigInt   @db.BigInt
+  tgMsgId        Int
+  instanceId     Int      @default(0)
+  instance       Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  tgFileId       BigInt?  @db.BigInt
+  tgMessageText  String?
+  nick           String? // /抱 的时候会用到
+  tgSenderId     BigInt?  @db.BigInt
+  richHeaderUsed Boolean  @default(false)
 
   @@index([qqRoomId, qqSenderId, seq, rand, pktnum, time, instanceId])
   @@index([tgChatId, tgMsgId, instanceId])

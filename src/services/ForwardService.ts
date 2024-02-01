@@ -430,7 +430,7 @@ export default class ForwardService {
       }
 
       tempFiles.forEach(it => it.cleanup());
-      return tgMessage;
+      return { tgMessage, richHeaderUsed };
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
@@ -439,7 +439,7 @@ export default class ForwardService {
       }
       catch {
       }
-      return null;
+      return {};
     }
   }
 
