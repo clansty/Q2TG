@@ -387,6 +387,8 @@ export default class ForwardService {
         richHeaderUsed = true;
         const url = new URL('https://q2tg-header.clansty.workers.dev');
         url.searchParams.set('name', sender);
+        url.searchParams.set('title', 'title' in event.sender ? event.sender.title : '');
+        url.searchParams.set('role', 'role' in event.sender ? event.sender.role : '');
         url.searchParams.set('id', event.sender.user_id.toString());
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/generate/scheme/telegram_api.tl#L1841
