@@ -195,7 +195,7 @@ export default class {
         photo = await convert.cachedBuffer(`${sender.photo.photoId.toString(16)}.jpg`, () => this.tgBot.downloadEntityPhoto(sender));
       }
       messageFrom = {
-        id: Number(message.tgSenderId),
+        id: sender.color || Number(message.tgSenderId),
         name: message.nick,
         title: message.nick,
         username: sender.username,
