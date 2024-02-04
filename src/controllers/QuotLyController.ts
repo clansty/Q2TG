@@ -163,7 +163,7 @@ export default class {
         title: message.nick,
         photo: { url: getAvatarUrl(message.qqSenderId) },
       };
-      if (message.qqRoomId > 0) {
+      if (message.qqRoomId > 0 || message.richHeaderUsed) {
         quoteMessage.text = message.tgMessageText;
       }
       else if (message.tgMessageText.includes('\n')) {
@@ -195,7 +195,7 @@ export default class {
         photo = await convert.cachedBuffer(`${sender.photo.photoId.toString(16)}.jpg`, () => this.tgBot.downloadEntityPhoto(sender));
       }
       messageFrom = {
-        id: Number(message.tgSenderId),
+        id: sender.color || Number(message.tgSenderId),
         name: message.nick,
         title: message.nick,
         username: sender.username,

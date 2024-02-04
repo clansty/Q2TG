@@ -387,6 +387,8 @@ export default class ForwardService {
         richHeaderUsed = true;
         const url = new URL('https://q2tg-header.clansty.workers.dev');
         url.searchParams.set('name', sender);
+        url.searchParams.set('title', 'title' in event.sender ? event.sender.title : '');
+        url.searchParams.set('role', 'role' in event.sender ? event.sender.role : '');
         url.searchParams.set('id', event.sender.user_id.toString());
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/generate/scheme/telegram_api.tl#L1841
@@ -394,6 +396,7 @@ export default class ForwardService {
         messageToSend.file = new Api.InputMediaWebPage({
           url: url.toString(),
           forceSmallMedia: true,
+          optional: true,
         });
         messageToSend.linkPreview = { showAboveText: true };
       }
@@ -412,7 +415,7 @@ export default class ForwardService {
       }
       catch (e) {
         if (richHeaderUsed) {
-          this.log.warn('Rich Header 发送错误', messageToSend.file);
+          this.log.warn('Rich Header 发送错误', messageToSend.file, e);
           delete messageToSend.file;
           delete messageToSend.linkPreview;
           message = messageHeader + (message && messageHeader ? '\n' : '') + message;
@@ -427,7 +430,7 @@ export default class ForwardService {
       }
 
       tempFiles.forEach(it => it.cleanup());
-      return tgMessage;
+      return { tgMessage, richHeaderUsed };
     }
     catch (e) {
       this.log.error('从 QQ 到 TG 的消息转发失败', e);
@@ -436,7 +439,7 @@ export default class ForwardService {
       }
       catch {
       }
-      return null;
+      return {};
     }
   }
 
@@ -456,7 +459,7 @@ export default class ForwardService {
           '') +
         ': \n';
       if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
-        messageHeader = emoji.color(message.senderId.toJSNumber()) + messageHeader;
+        messageHeader = emoji.tgColor((message.sender as Api.User)?.color || message.senderId.toJSNumber()) + messageHeader;
       }
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个

@@ -42,7 +42,7 @@
     "nodejs-base64": "^2.0.0",
     "prisma": "5.8.0",
     "prompts": "^2.4.2",
-    "quote-api": "https://github.com/Clansty/quote-api/archive/37a0e48a434b94bb04c04c7d86d9f0d2295df869.tar.gz",
+    "quote-api": "https://github.com/Clansty/quote-api/archive/014b21138afbbe0e12c91b00561414b1e851fc0f.tar.gz",
     "sharp": "^0.33.2",
     "silk-sdk": "^0.2.2",
     "telegram": "https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz",

@@ -61,36 +61,32 @@ export default class ForwardController {
       });
       if (existed) return;
       // 开始转发过程
-      let tgMessages: Api.Message | Api.Message[] = await this.forwardService.forwardFromQq(event, pair);
-      if (!tgMessages) return;
-      if (!Array.isArray(tgMessages)) {
-        tgMessages = [tgMessages];
-      }
-      for (const tgMessage of tgMessages) {
-        // 更新数据库
-        await db.message.create({
-          data: {
-            qqRoomId: pair.qqRoomId,
-            qqSenderId: event.sender.user_id,
-            time: event.time,
-            brief: event.raw_message,
-            seq: event.seq,
-            rand: event.rand,
-            pktnum: event.pktnum,
-            tgChatId: pair.tgId,
-            tgMsgId: tgMessage.id,
-            instanceId: this.instance.id,
-            tgMessageText: tgMessage.message,
-            tgFileId: forwardHelper.getMessageDocumentId(tgMessage),
-            nick: event.nickname,
-            tgSenderId: BigInt(this.tgBot.me.id.toString()),
-          },
-        });
-        await this.forwardService.addToZinc(pair.dbId, tgMessage.id, {
-          text: event.raw_message,
+      let { tgMessage, richHeaderUsed } = await this.forwardService.forwardFromQq(event, pair);
+      if (!tgMessage) return;
+      // 更新数据库
+      await db.message.create({
+        data: {
+          qqRoomId: pair.qqRoomId,
+          qqSenderId: event.sender.user_id,
+          time: event.time,
+          brief: event.raw_message,
+          seq: event.seq,
+          rand: event.rand,
+          pktnum: event.pktnum,
+          tgChatId: pair.tgId,
+          tgMsgId: tgMessage.id,
+          instanceId: this.instance.id,
+          tgMessageText: tgMessage.message,
+          tgFileId: forwardHelper.getMessageDocumentId(tgMessage),
           nick: event.nickname,
-        });
-      }
+          tgSenderId: BigInt(this.tgBot.me.id.toString()),
+          richHeaderUsed,
+        },
+      });
+      await this.forwardService.addToZinc(pair.dbId, tgMessage.id, {
+        text: event.raw_message,
+        nick: event.nickname,
+      });
     }
     catch (e) {
       this.log.error('处理 QQ 消息时遇到问题', e);
