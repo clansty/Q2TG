@@ -382,7 +382,7 @@ export default class ForwardService {
       else if (files.length) {
         messageToSend.file = files;
       }
-      else if ((pair.flags | this.instance.flags) & flags.RICH_HEADER) {
+      else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER) {
         // 没有文件时才能显示链接预览
         richHeaderUsed = true;
         const url = new URL('https://q2tg-header.clansty.workers.dev');
