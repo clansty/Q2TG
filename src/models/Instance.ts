@@ -145,7 +145,7 @@ export default class Instance {
         this.log.info('OICQ 登录完成');
       }
       this.statusReportController = new StatusReportController(this, this.tgBot, this.tgUser, this.oicq);
-      this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot);
+      this.forwardPairs = await ForwardPairs.load(this.id, this.oicq, this.tgBot, this.tgUser);
       this.setupCommands()
         .then(() => this.log.info('命令设置成功'))
         .catch(e => this.log.error('命令设置错误', e));

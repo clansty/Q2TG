@@ -415,6 +415,7 @@ export default class ForwardService {
       }
       catch (e) {
         if (richHeaderUsed) {
+          richHeaderUsed = false;
           this.log.warn('Rich Header 发送错误', messageToSend.file, e);
           delete messageToSend.file;
           delete messageToSend.linkPreview;
@@ -423,6 +424,23 @@ export default class ForwardService {
           tgMessage = await pair.tg.sendMessage(messageToSend);
         }
         else throw e;
+      }
+
+      if (richHeaderUsed) {
+        // 测试 Web Preview 内容是否被正确获取
+        setTimeout(async () => {
+          // Telegram Bot 账号无法获取 Web 预览内容，只能用 User 账号获取
+          const userMessage = await pair.tgUser.getMessage({
+            ids: tgMessage.id,
+          });
+          if (['WebPage', 'WebPageNotModified'].includes((userMessage.media as Api.MessageMediaWebPage)?.webpage?.className))
+            return;
+          // 没有正常获取的话，就加上原先的头部
+          this.log.warn('Rich Header 回测错误', messageToSend.file);
+          await tgMessage.edit({
+            text: messageHeader + (message && messageHeader ? '\n' : '') + message,
+          });
+        }, 3000);
       }
 
       if (this.instance.workMode === 'personal' && event.message_type === 'group' && event.atall) {

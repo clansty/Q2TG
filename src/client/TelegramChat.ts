@@ -31,6 +31,11 @@ export default class TelegramChat {
     return await this.client.sendMessage(this.entity, params);
   }
 
+  public async getMessage(params: Parameters<typeof this.client.getMessages>[1]) {
+    const messages = await this.client.getMessages(this.entity, params);
+    return messages[0];
+  }
+
   public async sendSelfDestructingPhoto(params: SendMessageParams, photo: CustomFile, ttlSeconds: number) {
     // @ts-ignore 定义不好好写的？你家 `FileLike` 明明可以是 `TypeInputMedia`
     params.file = new Api.InputMediaUploadedPhoto({

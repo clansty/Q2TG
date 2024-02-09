@@ -18,7 +18,7 @@ export default class ForwardPairs {
   }
 
   // 在 forwardController 创建时初始化
-  private async init(oicq: OicqClient, tgBot: Telegram) {
+  private async init(oicq: OicqClient, tgBot: Telegram, tgUser: Telegram) {
     const dbValues = await db.forwardPair.findMany({
       where: { instanceId: this.instanceId },
     });
@@ -26,8 +26,9 @@ export default class ForwardPairs {
       try {
         const qq = oicq.getChat(Number(i.qqRoomId));
         const tg = await tgBot.getChat(Number(i.tgChatId));
-        if (qq && tg) {
-          this.pairs.push(new Pair(qq, tg, i.id, i.flags));
+        const tgUserChat = await tgUser.getChat(Number(i.tgChatId));
+        if (qq && tg && tgUserChat) {
+          this.pairs.push(new Pair(qq, tg, tgUserChat, i.id, i.flags));
         }
       }
       catch (e) {
@@ -36,13 +37,13 @@ export default class ForwardPairs {
     }
   }
 
-  public static async load(instanceId: number, oicq: OicqClient, tgBot: Telegram) {
+  public static async load(instanceId: number, oicq: OicqClient, tgBot: Telegram, tgUser: Telegram) {
     const instance = new this(instanceId);
-    await instance.init(oicq, tgBot);
+    await instance.init(oicq, tgBot, tgUser);
     return instance;
   }
 
-  public async add(qq: Friend | Group, tg: TelegramChat) {
+  public async add(qq: Friend | Group, tg: TelegramChat, tgUser: TelegramChat) {
     const dbEntry = await db.forwardPair.create({
       data: {
         qqRoomId: qq instanceof Friend ? qq.user_id : -qq.group_id,
@@ -50,7 +51,7 @@ export default class ForwardPairs {
         instanceId: this.instanceId,
       },
     });
-    this.pairs.push(new Pair(qq, tg, dbEntry.id, dbEntry.flags));
+    this.pairs.push(new Pair(qq, tg, tgUser, dbEntry.id, dbEntry.flags));
     return dbEntry;
   }
 
