@@ -6,11 +6,11 @@ settings:
 
 dependencies:
   '@prisma/client':
-    specifier: 5.8.0
-    version: 5.8.0(prisma@5.8.0)
+    specifier: 5.9.1
+    version: 5.9.1(prisma@5.9.1)
   axios:
-    specifier: ^1.6.5
-    version: 1.6.5
+    specifier: ^1.6.7
+    version: 1.6.7
   baidu-aip-sdk:
     specifier: ^4.16.15
     version: 4.16.15
@@ -27,8 +27,8 @@ dependencies:
     specifier: ^4.0.2
     version: 4.0.2
   dotenv:
-    specifier: ^16.4.0
-    version: 16.4.0
+    specifier: ^16.4.1
+    version: 16.4.1
   eviltransform:
     specifier: ^0.2.2
     version: 0.2.2
@@ -54,8 +54,8 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   prisma:
-    specifier: 5.8.0
-    version: 5.8.0
+    specifier: 5.9.1
+    version: 5.9.1
   prompts:
     specifier: ^2.4.2
     version: 2.4.2
@@ -70,7 +70,7 @@ dependencies:
     version: 0.2.2
   telegram:
     specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-    version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252Brevert_media/telegram-2.19.10.tgz'
+    version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz'
   tmp-promise:
     specifier: ^3.0.3
     version: 3.0.3
@@ -101,8 +101,8 @@ devDependencies:
     specifier: ^4.14.202
     version: 4.14.202
   '@types/node':
-    specifier: ^20.11.5
-    version: 20.11.5
+    specifier: ^20.11.17
+    version: 20.11.17
   '@types/prompts':
     specifier: ^2.4.9
     version: 2.4.9
@@ -895,8 +895,8 @@ packages:
       - supports-color
     dev: false
 
-  /@prisma/client@5.8.0(prisma@5.8.0):
-    resolution: {integrity: sha512-QxO6C4MaA/ysTIbC+EcAH1aX/YkpymhXtO6zPdk+FvA7+59tNibIYpd+7koPdViLg2iKES4ojsxWNUGNJaEcbA==}
+  /@prisma/client@5.9.1(prisma@5.9.1):
+    resolution: {integrity: sha512-caSOnG4kxcSkhqC/2ShV7rEoWwd3XrftokxJqOCMVvia4NYV/TPtJlS9C2os3Igxw/Qyxumj9GBQzcStzECvtQ==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -905,39 +905,39 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.8.0
+      prisma: 5.9.1
     dev: false
 
-  /@prisma/debug@5.8.0:
-    resolution: {integrity: sha512-ZqPpkvbovu/kQJ1bvy57NO4dw97fpQGcbQSCtsqlwSE1UNKJP75R3BKxdznk8ZPMY+GJdMRetWNv4oAvSbWn8Q==}
+  /@prisma/debug@5.9.1:
+    resolution: {integrity: sha512-yAHFSFCg8KVoL0oRUno3m60GAjsUKYUDkQ+9BA2X2JfVR3kRVSJFc/GpQ2fSORi4pSHZR9orfM4UC9OVXIFFTA==}
     dev: false
 
-  /@prisma/engines-version@5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848:
-    resolution: {integrity: sha512-cXcoVweYbnv8xRfkWq9oj8BECOdzHUazrSpYCa0ehp5TNz4l5Spa8jbq/VROCTzj3ZncH5D9Q2TmySYTOUeKlw==}
+  /@prisma/engines-version@5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64:
+    resolution: {integrity: sha512-HFl7275yF0FWbdcNvcSRbbu9JCBSLMcurYwvWc8WGDnpu7APxQo2ONtZrUggU3WxLxUJ2uBX+0GOFIcJeVeOOQ==}
     dev: false
 
-  /@prisma/engines@5.8.0:
-    resolution: {integrity: sha512-Qhqm9WWLujNEC13AuZlUO14SQ15tNLe5puaz+tOk7UqINqJ3PtqMmuSuzomiw2diGVqZ+HYiSQzlR3+pPucVHA==}
+  /@prisma/engines@5.9.1:
+    resolution: {integrity: sha512-gkdXmjxQ5jktxWNdDA5aZZ6R8rH74JkoKq6LD5mACSvxd2vbqWeWIOV0Py5wFC8vofOYShbt6XUeCIUmrOzOnQ==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.8.0
-      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
-      '@prisma/fetch-engine': 5.8.0
-      '@prisma/get-platform': 5.8.0
+      '@prisma/debug': 5.9.1
+      '@prisma/engines-version': 5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64
+      '@prisma/fetch-engine': 5.9.1
+      '@prisma/get-platform': 5.9.1
     dev: false
 
-  /@prisma/fetch-engine@5.8.0:
-    resolution: {integrity: sha512-1CAuE+JoYsPNggMEn6qk0zos06Uc9bYZBJ0VBPHD6R7REL05614koAbOCmn52IaYz3nobb7f25hqW6AY7rLkIw==}
+  /@prisma/fetch-engine@5.9.1:
+    resolution: {integrity: sha512-l0goQOMcNVOJs1kAcwqpKq3ylvkD9F04Ioe1oJoCqmz05mw22bNAKKGWuDd3zTUoUZr97va0c/UfLNru+PDmNA==}
     dependencies:
-      '@prisma/debug': 5.8.0
-      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
-      '@prisma/get-platform': 5.8.0
+      '@prisma/debug': 5.9.1
+      '@prisma/engines-version': 5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64
+      '@prisma/get-platform': 5.9.1
     dev: false
 
-  /@prisma/get-platform@5.8.0:
-    resolution: {integrity: sha512-Nk3rhTFZ1LYkFZJnpSvQcLPCaBWgJQfteHII6UEENOOkYlmP0k3FuswND54tzzEr4qs39wOdV9pbXKX9U2lv7A==}
+  /@prisma/get-platform@5.9.1:
+    resolution: {integrity: sha512-6OQsNxTyhvG+T2Ksr8FPFpuPeL4r9u0JF0OZHUBI/Uy9SS43sPyAIutt4ZEAyqWQt104ERh70EZedkHZKsnNbg==}
     dependencies:
-      '@prisma/debug': 5.8.0
+      '@prisma/debug': 5.9.1
     dev: false
 
   /@tokenizer/token@0.3.0:
@@ -952,7 +952,7 @@ packages:
   /@types/cli-progress@3.11.5:
     resolution: {integrity: sha512-D4PbNRbviKyppS5ivBGyFO29POlySLmA2HyUFE4p5QGazAMM3CwkKWcvTl8gvElSuxRh6FPKL8XmidX873ou4g==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.17
     dev: true
 
   /@types/date-and-time@3.0.3:
@@ -965,7 +965,7 @@ packages:
   /@types/docker-modem@3.0.6:
     resolution: {integrity: sha512-yKpAGEuKRSS8wwx0joknWxsmLha78wNMe9R2S3UNsVOkZded8UqOrV8KoeDXoXsjndxwyF3eIhyClGbO1SEhEg==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.17
       '@types/ssh2': 1.11.18
     dev: true
 
@@ -973,13 +973,13 @@ packages:
     resolution: {integrity: sha512-Lz5J+NFgZS4cEVhquwjIGH4oQwlVn2h7LXD3boitujBnzOE5o7s9H8hchEjoDK2SlRsJTogdKnQeiJgPPKLIEw==}
     dependencies:
       '@types/docker-modem': 3.0.6
-      '@types/node': 20.11.5
+      '@types/node': 20.11.17
     dev: true
 
   /@types/fluent-ffmpeg@2.1.24:
     resolution: {integrity: sha512-g5oQO8Jgi2kFS3tTub7wLvfLztr1s8tdXmRd8PiL/hLMLzTIAyMR2sANkTggM/rdEDAg3d63nYRRVepwBiCw5A==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.17
     dev: true
 
   /@types/lodash@4.14.202:
@@ -996,8 +996,8 @@ packages:
       undici-types: 5.26.5
     dev: true
 
-  /@types/node@20.11.5:
-    resolution: {integrity: sha512-g557vgQjUUfN76MZAN/dt1z3dzcUsimuysco0KeluHgrPdJXkP/XdAURgyO2W9fZWHRtRBiVKzKn8vyOAwlG+w==}
+  /@types/node@20.11.17:
+    resolution: {integrity: sha512-QmgQZGWu1Yw9TDyAP9ZzpFJKynYNeOvwMJmaxABfieQoVoiVOS6MN1WSpqpRcbeA5+RW82kraAVxCCJg+780Qw==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -1005,7 +1005,7 @@ packages:
   /@types/prompts@2.4.9:
     resolution: {integrity: sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.17
       kleur: 3.0.3
     dev: true
 
@@ -1139,8 +1139,8 @@ packages:
     resolution: {integrity: sha512-NmWvPnx0F1SfrQbYwOi7OeaNGokp9XhzNioJ/CSBs8Qa4vxug81mhJEAVZwxXuBmYB5KDRfMq/F3RR0BIU7sWg==}
     dev: false
 
-  /axios@1.6.5:
-    resolution: {integrity: sha512-Ii012v05KEVuUoFWmMW/UQv9aRIc3ZwkWDcM+h5Il8izZCtRVpDUfwpoFf7eOtajT3QiGR4yDUx7lPqHJULgbg==}
+  /axios@1.6.7:
+    resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
     dependencies:
       follow-redirects: 1.15.4
       form-data: 4.0.0
@@ -1652,8 +1652,8 @@ packages:
       domhandler: 4.3.1
     dev: false
 
-  /dotenv@16.4.0:
-    resolution: {integrity: sha512-WvImr5kpN5NGNn7KaDjJnLTh5rDVLZiDf/YLA8T1ZEZEBZNEDOE+mnkS0PVjPax8ZxBP5zC5SLMB3/9VV5de9g==}
+  /dotenv@16.4.1:
+    resolution: {integrity: sha512-CjA3y+Dr3FyFDOAMnxZEGtnW9KBR2M0JvvUtXNW+dYJL5ROWxP9DUHCwgFqpMk0OXCc0ljhaNTr2w/kutYIcHQ==}
     engines: {node: '>=12'}
     dev: false
 
@@ -2185,7 +2185,7 @@ packages:
     resolution: {integrity: sha512-+Whg6gcxomNshRhij3vuEnjaO/8ODAzl3ZVda6KKwZtWTwuD23iX4pR57Kv7+VGw6Lp5fEGF6hjSxPHw9Rvqcg==}
     engines: {node: '>= v14'}
     dependencies:
-      axios: 1.6.5
+      axios: 1.6.7
       log4js: 6.9.1
       long: 4.0.0
       pngjs: 6.0.0
@@ -2908,13 +2908,13 @@ packages:
     engines: {node: '>=12.13.0'}
     dev: false
 
-  /prisma@5.8.0:
-    resolution: {integrity: sha512-hDKoEqPt2qEUTH5yGO3l27CBnPtwvte0CGMKrpCr9+/A919JghfqJ3qgCGgMbOwdkXUOzdho0RH9tyUF3UhpMw==}
+  /prisma@5.9.1:
+    resolution: {integrity: sha512-Hy/8KJZz0ELtkw4FnG9MS9rNWlXcJhf98Z2QMqi0QiVMoS8PzsBkpla0/Y5hTlob8F3HeECYphBjqmBxrluUrQ==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.8.0
+      '@prisma/engines': 5.9.1
     dev: false
 
   /probe-image-size@7.2.3:
@@ -3903,7 +3903,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%25252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10
