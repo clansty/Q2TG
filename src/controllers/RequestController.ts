@@ -20,9 +20,10 @@ export default class RequestController {
 
   private handleRequest = async (event: FriendRequestEvent | GroupInviteEvent) => {
     this.log.info(`收到申请：${event.nickname} (${event.user_id})`);
-    const avatar = await getAvatar(event.user_id);
+    let avatar: Buffer;
     let messageText = '';
     if (event.request_type === 'friend') {
+      avatar = await getAvatar(event.user_id);
       messageText = `收到好友申请\n` +
         `<b>昵称：</b>${event.nickname}\n` +
         `<b>账号：</b><code>${event.user_id}</code>\n` +
@@ -32,6 +33,7 @@ export default class RequestController {
         `<b>附言：</b>${event.comment}`;
     }
     else {
+      avatar = await getAvatar(-event.group_id);
       messageText = `收到加群邀请\n` +
         `<b>邀请人：</b>${event.nickname} (<code>${event.user_id}</code>)\n` +
         `<b>群名称：</b>${event.group_name}\n` +
