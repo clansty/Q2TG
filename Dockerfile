@@ -12,7 +12,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 
-FROM base AS build-env
+FROM base AS build
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   apt update && apt-get --no-install-recommends install -y \
@@ -21,7 +21,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml /app/
 COPY main/package.json /app/main/
 
-FROM build-env AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
 COPY main/src main/tsconfig.json /app/main/
 COPY main/prisma /app/main/
