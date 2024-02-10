@@ -1,6 +1,7 @@
 import { configure, getLogger } from 'log4js';
 import Instance from './models/Instance';
 import db from './models/db';
+import api from './api';
 
 (async () => {
   configure({
@@ -20,6 +21,9 @@ import db from './models/db';
   process.on('unhandledRejection', error => {
     log.error('UnhandledException: ', error);
   });
+
+  await api.startListening();
+
   const instanceEntries = await db.instance.findMany();
 
   if (!instanceEntries.length) {

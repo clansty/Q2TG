@@ -23,6 +23,7 @@
     "tsx": "^4.7.0"
   },
   "dependencies": {
+    "@fastify/http-proxy": "^9.4.0",
     "@prisma/client": "5.9.1",
     "axios": "^1.6.7",
     "baidu-aip-sdk": "^4.16.15",
@@ -32,6 +33,7 @@
     "dockerode": "^4.0.2",
     "dotenv": "^16.4.1",
     "eviltransform": "^0.2.2",
+    "fastify": "^4.26.0",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "icqq": "^0.6.8",

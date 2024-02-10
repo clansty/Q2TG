@@ -61,4 +61,5 @@ RUN pnpm exec prisma generate
 COPY --from=build-front /app/ui/dist /app/front
 
 ENV DATA_DIR=/app/data
+EXPOSE 8080
 CMD pnpm start

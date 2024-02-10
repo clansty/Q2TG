@@ -29,6 +29,9 @@ const configParsed = z.object({
   BAIDU_API_KEY: z.string().optional(),
   BAIDU_SECRET_KEY: z.string().optional(),
   DISABLE_FILE_UPLOAD_TIP: z.string().transform((v) => ['true', '1', 'yes'].includes(v.toLowerCase())).default('false'),
+  LISTEN_PORT: z.string().regex(/^\d+$/).transform(Number).default('8080'),
+  UI_PATH: z.string().optional(),
+  UI_PROXY: z.string().url().optional(),
 }).safeParse(process.env);
 
 if (!configParsed.success) {
