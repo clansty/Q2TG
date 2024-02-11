@@ -13,7 +13,6 @@
     "assets"
   ],
   "devDependencies": {
-    "@fastify/static": "^7.0.1",
     "@types/cli-progress": "^3.11.5",
     "@types/date-and-time": "^3.0.3",
     "@types/dockerode": "^3.3.23",
@@ -26,6 +25,7 @@
   },
   "dependencies": {
     "@fastify/http-proxy": "^9.4.0",
+    "@fastify/static": "^7.0.1",
     "@prisma/client": "5.9.1",
     "axios": "^1.6.7",
     "baidu-aip-sdk": "^4.16.15",
