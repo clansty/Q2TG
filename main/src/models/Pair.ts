@@ -9,6 +9,12 @@ import db from './db';
 const log = getLogger('ForwardPair');
 
 export class Pair {
+  private static readonly apiKeyMap = new Map<string, Pair>();
+
+  public static getByApiKey(key: string) {
+    return this.apiKeyMap.get(key);
+  }
+
   // 群成员的 tg 账号对应它对应的 QQ 账号获取到的 Group 对象
   // 只有群组模式有效
   public readonly instanceMapForTg = {} as { [tgUserId: string]: Group };
@@ -19,7 +25,11 @@ export class Pair {
     public readonly tgUser: TelegramChat,
     public dbId: number,
     private _flags: number,
+    public readonly apiKey: string,
   ) {
+    if (apiKey) {
+      Pair.apiKeyMap.set(apiKey, this);
+    }
   }
 
   // 更新 TG 群组的头像和简介

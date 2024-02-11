@@ -90,6 +90,7 @@ model ForwardPair {
   instanceId  Int           @default(0)
   instance    Instance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   flags       Int           @default(0)
+  apiKey      String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])

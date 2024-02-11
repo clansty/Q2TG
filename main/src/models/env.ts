@@ -32,6 +32,7 @@ const configParsed = z.object({
   LISTEN_PORT: z.string().regex(/^\d+$/).transform(Number).default('8080'),
   UI_PATH: z.string().optional(),
   UI_PROXY: z.string().url().optional(),
+  WEB_ENDPOINT: z.string().url().optional(),
 }).safeParse(process.env);
 
 if (!configParsed.success) {

@@ -1,0 +1,26 @@
+<html lang="zh">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta property="og:image" content="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0"/>
+    <% if (!!title) { %>
+        <meta property="og:site_name" content="「<%= title %>」"/>
+    <% }else { %>
+        <meta property="og:site_name" content="「<%= role %>」"/>
+    <% } %>
+    <meta property="og:title" content="<%= name %>"/>
+    <title>群成员：<%= name %></title>
+    <style>
+      html, body {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+</head>
+<body>
+<img style="width: 100%" src="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0" alt="头像">
+<p><%= role %></p>
+<p><%= name %></p>
+<p><%= userId %></p>
+</body>
+</html>

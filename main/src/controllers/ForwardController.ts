@@ -3,7 +3,7 @@ import OicqClient from '../client/OicqClient';
 import ForwardService from '../services/ForwardService';
 import {
   Friend,
-  FriendPokeEvent,
+  FriendPokeEvent, Group,
   GroupMessageEvent,
   GroupPokeEvent,
   MemberIncreaseEvent,

@@ -41,6 +41,9 @@ importers:
       dotenv:
         specifier: ^16.4.1
         version: 16.4.1
+      ejs:
+        specifier: ^3.1.9
+        version: 3.1.9
       eviltransform:
         specifier: ^0.2.2
         version: 0.2.2
@@ -85,7 +88,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -108,6 +111,9 @@ importers:
       '@types/dockerode':
         specifier: ^3.3.23
         version: 3.3.23
+      '@types/ejs':
+        specifier: ^3.1.5
+        version: 3.1.5
       '@types/fluent-ffmpeg':
         specifier: ^2.1.24
         version: 2.1.24
@@ -140,10 +146,10 @@ importers:
         version: 5.1.1(sass@1.70.0)
       vue:
         specifier: ^3.4.18
-        version: 3.4.18
+        version: 3.4.18(typescript@5.3.3)
       vue-tg:
         specifier: ^0.3.0
-        version: 0.3.0
+        version: 0.3.0(typescript@5.3.3)
 
 packages:
 
@@ -470,7 +476,7 @@ packages:
     peerDependencies:
       vue: ^3.0.11
     dependencies:
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     dev: true
 
   /@emnapi/runtime@0.45.0:
@@ -1517,6 +1523,10 @@ packages:
       '@types/node': 20.11.17
     dev: true
 
+  /@types/ejs@3.1.5:
+    resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
+    dev: true
+
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
@@ -1585,7 +1595,7 @@ packages:
       '@babel/plugin-transform-typescript': 7.23.6(@babel/core@7.23.9)
       '@vue/babel-plugin-jsx': 1.2.1(@babel/core@7.23.9)
       vite: 5.1.1(sass@1.70.0)
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1697,7 +1707,7 @@ packages:
     dependencies:
       '@vue/compiler-ssr': 3.4.18
       '@vue/shared': 3.4.18
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     dev: true
 
   /@vue/shared@3.4.18:
@@ -1804,6 +1814,13 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       color-convert: 1.9.3
+
+  /ansi-styles@4.3.0:
+    resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
+    engines: {node: '>=8'}
+    dependencies:
+      color-convert: 2.0.1
+    dev: false
 
   /any-base@1.1.0:
     resolution: {integrity: sha512-uMgjozySS8adZZYePpaWs8cxB9/kdzmpX6SgJZ+wbz1K5eYk5QMYDVJaZKhxyIHUdnnJkfR7SVgStgH7LkGUyg==}
@@ -1965,6 +1982,12 @@ packages:
       concat-map: 0.0.1
     dev: false
 
+  /brace-expansion@2.0.1:
+    resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
+    dependencies:
+      balanced-match: 1.0.2
+    dev: false
+
   /braces@3.0.2:
     resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
     engines: {node: '>=8'}
@@ -2086,6 +2109,14 @@ packages:
       ansi-styles: 3.2.1
       escape-string-regexp: 1.0.5
       supports-color: 5.5.0
+
+  /chalk@4.1.2:
+    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+    engines: {node: '>=10'}
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+    dev: false
 
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -2506,6 +2537,14 @@ packages:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
     dev: false
 
+  /ejs@3.1.9:
+    resolution: {integrity: sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==}
+    engines: {node: '>=0.10.0'}
+    hasBin: true
+    dependencies:
+      jake: 10.8.7
+    dev: false
+
   /electron-to-chromium@1.4.665:
     resolution: {integrity: sha512-UpyCWObBoD+nSZgOC2ToaIdZB0r9GhqT2WahPKiSki6ckkSuKhQNso8V2PrFcHBMleI/eqbKgVQgVC4Wni4ilw==}
     dev: true
@@ -2774,6 +2813,12 @@ packages:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
     dev: false
 
+  /filelist@1.0.4:
+    resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
+    dependencies:
+      minimatch: 5.1.6
+    dev: false
+
   /fill-range@7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
@@ -3021,6 +3066,11 @@ packages:
   /has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
+
+  /has-flag@4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
+    dev: false
 
   /has-property-descriptors@1.0.1:
     resolution: {integrity: sha512-VsX8eaIewvas0xnvinAe9bw4WfIeODpGYikiWYLH+dma0Jw6KHYqWiWfhQlgOVK8D6PvjubK5Uc4P0iIhIcNVg==}
@@ -3299,6 +3349,17 @@ packages:
 
   /isstream@0.1.2:
     resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
+    dev: false
+
+  /jake@10.8.7:
+    resolution: {integrity: sha512-ZDi3aP+fG/LchyBzUM804VjddnwfSfsdeYkwt8NcbKRvo4rFkjhs456iLFn3k2ZUWvNe4i48WACDbza8fhq2+w==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      async: 3.2.5
+      chalk: 4.1.2
+      filelist: 1.0.4
+      minimatch: 3.1.2
     dev: false
 
   /jimp@0.22.10:
@@ -3674,6 +3735,13 @@ packages:
       brace-expansion: 1.1.11
     dev: false
 
+  /minimatch@5.1.6:
+    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
+
   /minimist@0.0.8:
     resolution: {integrity: sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q==}
     requiresBuild: true
@@ -3781,7 +3849,7 @@ packages:
       treemate: 0.3.11
       vdirs: 0.1.8(vue@3.4.18)
       vooks: 0.2.12(vue@3.4.18)
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
       vueuc: 0.4.58(vue@3.4.18)
     dev: true
 
@@ -4685,6 +4753,13 @@ packages:
     dependencies:
       has-flag: 3.0.0
 
+  /supports-color@7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
+    dependencies:
+      has-flag: 4.0.0
+    dev: false
+
   /svg-tags@1.0.0:
     resolution: {integrity: sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA==}
     dev: true
@@ -5022,7 +5097,7 @@ packages:
       vue: ^3.0.11
     dependencies:
       evtd: 0.2.4
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     dev: true
 
   /verror@1.10.0:
@@ -5076,19 +5151,19 @@ packages:
       vue: ^3.0.0
     dependencies:
       evtd: 0.2.4
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     dev: true
 
-  /vue-tg@0.3.0:
+  /vue-tg@0.3.0(typescript@5.3.3):
     resolution: {integrity: sha512-DZ5wt9ZY1Ux3yFH+KWeYyVo4Fd3R4UDoq07XWhA6EqpyfxII9zxT7xPKjTjrpDbvjHRzeuukZBBi4EIiQxtDaQ==}
     dependencies:
       '@types/telegram-web-app': 7.0.0
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     transitivePeerDependencies:
       - typescript
     dev: true
 
-  /vue@3.4.18:
+  /vue@3.4.18(typescript@5.3.3):
     resolution: {integrity: sha512-0zLRYamFRe0wF4q2L3O24KQzLyLpL64ye1RUToOgOxuWZsb/FhaNRdGmeozdtVYLz6tl94OXLaK7/WQIrVCw1A==}
     peerDependencies:
       typescript: '*'
@@ -5101,6 +5176,7 @@ packages:
       '@vue/runtime-dom': 3.4.18
       '@vue/server-renderer': 3.4.18(vue@3.4.18)
       '@vue/shared': 3.4.18
+      typescript: 5.3.3
     dev: true
 
   /vueuc@0.4.58(vue@3.4.18):
@@ -5115,7 +5191,7 @@ packages:
       seemly: 0.3.8
       vdirs: 0.1.8(vue@3.4.18)
       vooks: 0.2.12(vue@3.4.18)
-      vue: 3.4.18
+      vue: 3.4.18(typescript@5.3.3)
     dev: true
 
   /w3c-hr-time@1.0.2:
@@ -5342,7 +5418,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10

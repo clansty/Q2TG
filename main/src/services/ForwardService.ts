@@ -26,7 +26,7 @@ import fsP from 'fs/promises';
 import eviltransform from 'eviltransform';
 import silk from '../encoding/silk';
 import axios from 'axios';
-import { md5Hex } from '../utils/hashing';
+import { md5B64, md5Hex } from '../utils/hashing';
 import Instance from '../models/Instance';
 import { Pair } from '../models/Pair';
 import OicqClient from '../client/OicqClient';
@@ -385,11 +385,19 @@ export default class ForwardService {
       else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER) {
         // 没有文件时才能显示链接预览
         richHeaderUsed = true;
-        const url = new URL('https://q2tg-header.clansty.workers.dev');
-        url.searchParams.set('name', sender);
-        url.searchParams.set('title', 'title' in event.sender ? event.sender.title : '');
-        url.searchParams.set('role', 'role' in event.sender ? event.sender.role : '');
-        url.searchParams.set('id', event.sender.user_id.toString());
+        let url: URL;
+        if (env.WEB_ENDPOINT) {
+          url = new URL(`${env.WEB_ENDPOINT}/richHeader/${pair.apiKey}/${event.sender.user_id}`);
+          // 防止群名片刷新慢
+          url.searchParams.set('hash', md5B64(messageHeader).substring(0, 10));
+        }
+        else {
+          url = new URL('https://q2tg-header.clansty.workers.dev');
+          url.searchParams.set('name', sender);
+          url.searchParams.set('title', 'title' in event.sender ? event.sender.title : '');
+          url.searchParams.set('role', 'role' in event.sender ? event.sender.role : '');
+          url.searchParams.set('id', event.sender.user_id.toString());
+        }
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/generate/scheme/telegram_api.tl#L1841
         // https://github.com/gram-js/gramjs/pull/633
