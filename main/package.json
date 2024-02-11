@@ -13,6 +13,7 @@
     "assets"
   ],
   "devDependencies": {
+    "@fastify/static": "^7.0.1",
     "@types/cli-progress": "^3.11.5",
     "@types/date-and-time": "^3.0.3",
     "@types/dockerode": "^3.3.23",

@@ -59,6 +59,7 @@ COPY --from=build /app/deploy /app
 COPY main/prisma /app/
 RUN pnpm exec prisma generate
 COPY --from=build-front /app/ui/dist /app/front
+ENV UI_PATH=/app/front
 
 ENV DATA_DIR=/app/data
 EXPOSE 8080

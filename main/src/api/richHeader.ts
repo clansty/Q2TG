@@ -3,6 +3,7 @@ import { Pair } from '../models/Pair';
 import ejs from 'ejs';
 import fs from 'fs';
 import { Group } from 'icqq';
+import { format } from 'date-and-time';
 
 const template = ejs.compile(fs.readFileSync('./assets/richHeader.ejs', 'utf-8'));
 
@@ -29,6 +30,8 @@ export default ((fastify, opts, done) => {
       title: member.title,
       name: member.card || member.nickname,
       role: member.role,
+      joinTime: format(new Date(member.join_time * 1000), 'YYYY-MM-DD HH:mm'),
+      lastSentTime: format(new Date(member.last_sent_time * 1000), 'YYYY-MM-DD HH:mm'),
     });
   });
 

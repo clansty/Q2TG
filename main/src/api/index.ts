@@ -1,6 +1,7 @@
 import { getLogger } from 'log4js';
 import Fastify from 'fastify';
 import FastifyProxy from '@fastify/http-proxy';
+import FastifyStatic from '@fastify/static';
 import env from '../models/env';
 import richHeader from './richHeader';
 
@@ -19,6 +20,12 @@ if (env.UI_PROXY) {
     prefix: '/ui',
     rewritePrefix: '/ui',
     websocket: true,
+  });
+}
+else if (env.UI_PATH) {
+  fastify.register(FastifyStatic, {
+    root: env.UI_PATH,
+    prefix: '/ui',
   });
 }
 

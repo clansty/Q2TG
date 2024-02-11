@@ -6,7 +6,7 @@
     <% if (!!title) { %>
         <meta property="og:site_name" content="「<%= title %>」"/>
     <% }else { %>
-        <meta property="og:site_name" content="「<%= role %>」"/>
+        <meta property="og:site_name" content="<%= role %>"/>
     <% } %>
     <meta property="og:title" content="<%= name %>"/>
     <title>群成员：<%= name %></title>
@@ -14,13 +14,97 @@
       html, body {
         padding: 0;
         margin: 0;
+        color: #303133;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #app {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
+
+      #avatar, #card {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      #card {
+        padding: 0 20px;
+        line-height: 1.8em;
+      }
+
+      .badge {
+        border-radius: 0.5em;
+        color: #fff;
+        padding: 0 0.2em;
+      }
+
+      .badge-owner {
+        background-color: #FDCE3A !important;
+      }
+
+      .badge-admin {
+        background-color: #2FE1D8 !important;
+      }
+
+      .badge-member {
+        background-color: #ADB5CA;
+      }
+
+      .badge-hasTitle {
+        background-color: #D88BFF;
+      }
+
+      .secondary {
+        color: #606266;
+        font-size: small;
+      }
+
+      .detailItem {
+        font-size: smaller;
+        margin-top: 0.5em;
+      }
+
+      @media screen and (min-width: 900px) {
+        #app {
+          flex-direction: row;
+          height: 100%;
+        }
+
+        #avatar {
+          width: 400px;
+        }
+
+        #card {
+          width: fit-content;
+        }
       }
     </style>
 </head>
 <body>
-<img style="width: 100%" src="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0" alt="头像">
-<p><%= role %></p>
-<p><%= name %></p>
-<p><%= userId %></p>
+<div id="app">
+    <img id="avatar" src="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0" alt="头像">
+    <div id="card">
+        <div>
+            <span class="badge badge-<%= role %> <%= title && 'badge-hasTitle' %>"><%= title || role %></span>
+            <%= name %>
+        </div>
+        <div class="secondary"><%= userId %></div>
+        <div class="detailItem">
+            <div class="secondary">加入时间</div>
+            <%= joinTime %>
+        </div>
+        <div class="detailItem">
+            <div class="secondary">上次发言时间</div>
+            <%= lastSentTime %>
+        </div>
+    </div>
+</div>
 </body>
 </html>
