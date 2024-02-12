@@ -96,6 +96,7 @@ export default class ForwardController {
   private onTelegramUserMessage = async (message: Api.Message) => {
     if (!('bot' in message.sender) || !message.sender.bot) return;
     const pair = this.instance.forwardPairs.find(message.chat);
+    if (!pair) return;
     if ((pair.flags | this.instance.flags) & flags.NO_FORWARD_OTHER_BOT) return;
     await this.onTelegramMessage(message, pair);
   };
