@@ -2,7 +2,7 @@ import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { getLogger, Logger } from 'log4js';
-import { GroupMessageEvent, PrivateMessageEvent } from 'icqq';
+import { Group, GroupMessageEvent, PrivateMessageEvent } from 'icqq';
 import { Api } from 'telegram';
 import quotly from 'quote-api/methods/generate.js';
 import { CustomFile } from 'telegram/client/uploads';
@@ -13,6 +13,7 @@ import { getAvatarUrl } from '../utils/urls';
 import convert from '../helpers/convert';
 import { Pair } from '../models/Pair';
 import env from '../models/env';
+import flags from '../constants/flags';
 
 export default class {
   private readonly log: Logger;
@@ -55,16 +56,14 @@ export default class {
       this.log.error('找不到 sourceMessage');
       return true;
     }
-    setTimeout(async () => {
-      // 异步发送，为了让 /q 先到达
-      try {
-        await this.sendQuote(pair, sourceMessage);
-      }
-      catch (e) {
-        this.log.error(e);
-        await event.reply(e.toString(), true);
-      }
-    }, 50);
+    if (!((pair.flags | this.instance.flags) & flags.NO_QUOTE_PIN)) {
+      this.pinMessageOnBothSide(pair, sourceMessage).then();
+    }
+    // 异步发送，为了让 /q 先到达
+    this.sendQuote(pair, sourceMessage).catch(async e => {
+      this.log.error(e);
+      await event.reply(e.toString(), true);
+    });
   };
 
   private onTelegramMessage = async (message: Api.Message) => {
@@ -91,21 +90,38 @@ export default class {
       this.log.error('找不到 sourceMessage');
       return true;
     }
-    setTimeout(async () => {
-      try {
-        await this.sendQuote(pair, sourceMessage);
-      }
-      catch (e) {
-        this.log.error(e);
-        await message.reply({
-          message: e.toString(),
-        });
-      }
-    }, 50);
+    if (!((pair.flags | this.instance.flags) & flags.NO_QUOTE_PIN)) {
+      this.pinMessageOnBothSide(pair, sourceMessage).then();
+    }
+    // 异步发送，为了让 /q 先到达
+    this.sendQuote(pair, sourceMessage).catch(async e => {
+      this.log.error(e);
+      await message.reply({
+        message: e.toString(),
+      });
+    });
 
     // 个人模式下，/q 这条消息不转发到 QQ，怪话图只有自己可见
     if (this.instance.workMode === 'personal') return true;
   };
+
+  private async pinMessageOnBothSide(pair: Pair, sourceMessage: Awaited<ReturnType<typeof db.message.findFirst>>) {
+    if (pair.qq instanceof Group) {
+      try {
+        await pair.qq.addEssence(sourceMessage.seq, Number(sourceMessage.rand));
+      }
+      catch (e) {
+        this.log.warn('无法添加精华消息，群：', pair.qqRoomId, e);
+      }
+    }
+    try {
+      const tgMessage = await pair.tg.getMessage({ ids: sourceMessage.tgMsgId });
+      await tgMessage.pin({ notify: false, pmOneSide: false });
+    }
+    catch (e) {
+      this.log.warn('无法置顶消息，群：', pair.tgId, '消息 ID：', sourceMessage.tgMsgId, e);
+    }
+  }
 
   private async genQuote(message: Message) {
     const GROUP_ANONYMOUS_BOT = 1087968824n;
