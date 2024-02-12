@@ -7,6 +7,7 @@ enum flags {
   NO_AUTO_CREATE_PM = 1 << 5,
   COLOR_EMOJI_PREFIX = 1 << 6,
   RICH_HEADER = 1 << 7,
+  NO_QUOTE_PIN = 1 << 8,
 }
 
 export default flags;

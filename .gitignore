@@ -728,7 +728,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-data/
+data
 config.yaml
 build
 .yarn/*
