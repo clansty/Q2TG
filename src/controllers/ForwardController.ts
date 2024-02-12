@@ -17,7 +17,6 @@ import { getAvatar } from '../utils/urls';
 import { CustomFile } from 'telegram/client/uploads';
 import forwardHelper from '../helpers/forwardHelper';
 import helper from '../helpers/forwardHelper';
-import ZincSearch from 'zincsearch-node';
 import flags from '../constants/flags';
 
 export default class ForwardController {
@@ -37,6 +36,7 @@ export default class ForwardController {
     oicq.on('notice.friend.poke', this.onQqPoke);
     oicq.on('notice.group.poke', this.onQqPoke);
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
+    tgUser.addNewMessageEventHandler(this.onTelegramUserMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
     instance.workMode === 'group' && tgBot.addChannelParticipantEventHandler(this.onTelegramParticipant);
   }
@@ -93,10 +93,16 @@ export default class ForwardController {
     }
   };
 
-  private onTelegramMessage = async (message: Api.Message) => {
+  private onTelegramUserMessage = async (message: Api.Message) => {
+    if (!('bot' in message.sender) || !message.sender.bot) return;
+    const pair = this.instance.forwardPairs.find(message.chat);
+    if ((pair.flags | this.instance.flags) & flags.NO_FORWARD_OTHER_BOT) return;
+    await this.onTelegramMessage(message, pair);
+  };
+
+  private onTelegramMessage = async (message: Api.Message, pair = this.instance.forwardPairs.find(message.chat)) => {
     try {
       if (message.senderId?.eq(this.instance.botMe.id)) return true;
-      const pair = this.instance.forwardPairs.find(message.chat);
       if (!pair) return false;
       if ((pair.flags | this.instance.flags) & flags.DISABLE_TG2Q) return;
       const qqMessagesSent = await this.forwardService.forwardFromTelegram(message, pair);
