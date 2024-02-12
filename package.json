@@ -35,7 +35,7 @@
     "eviltransform": "^0.2.2",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
-    "icqq": "^0.6.8",
+    "icqq": "^0.6.10",
     "image-size": "^1.1.1",
     "lodash": "^4.17.21",
     "log4js": "^6.6.1",
