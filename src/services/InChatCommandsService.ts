@@ -146,4 +146,73 @@ export default class InChatCommandsService {
     });
     return rpy.join('\n');
   }
+
+  // 禁言 QQ 成员
+  public async mute(message: Api.Message, pair: Pair, args: string[]) {
+    try {
+      const group = pair.qq as Group;
+      if(!(group.is_admin||group.is_owner)){
+        await message.reply({
+          message: '<i>无管理员权限</i>',
+        });
+        return;
+      }
+      let target: number;
+      if (message.replyToMsgId) {
+        const dbEntry = await db.message.findFirst({
+          where: {
+            tgChatId: pair.tgId,
+            tgMsgId: message.replyToMsgId,
+          },
+        });
+        if (dbEntry) {
+          target = Number(dbEntry.qqSenderId);
+        }
+      }
+      if (!target) {
+        await message.reply({
+          message: '<i>请回复一条消息</i>',
+        });
+        return;
+      }
+      if (!args.length) {
+        await message.reply({
+          message: '<i>请输入禁言的时间</i>',
+        });
+        return;
+      }
+      let time = Number(args[0]);
+      if (isNaN(time)) {
+        const unit = args[0].substring(args[0].length - 1, args[0].length);
+        time = Number(args[0].substring(0, args[0].length - 1));
+
+        switch (unit) {
+          case 'd':
+            time *= 24;
+          case 'h':
+            time *= 60;
+          case 'm':
+            time *= 60;
+            break;
+          default:
+            time = NaN;
+        }
+      }
+      if (isNaN(time)) {
+        await message.reply({
+          message: '<i>请输入正确的时间</i>',
+        });
+        return;
+      }
+      await group.muteMember(target, time);
+      await message.reply({
+        message: '<i>成功</i>',
+      });
+    }
+    catch (e) {
+      await message.reply({
+        message: `<i>错误</i>\n${e.message}`,
+      });
+    }
+  }
 }

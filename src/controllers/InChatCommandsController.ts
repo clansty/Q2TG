@@ -44,6 +44,13 @@ export default class InChatCommandsController {
       case '/poke':
         await this.service.poke(message, pair);
         return true;
+      case '/unmute':
+        messageParts.unshift('0');
+      case '/mute':
+        if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
+        if (!(pair.qq instanceof Group)) return true;
+        await this.service.mute(message, pair, messageParts);
+        return true;
       case '/forwardoff':
         pair.flags |= flags.DISABLE_Q2TG | flags.DISABLE_TG2Q;
         await message.reply({ message: '转发已禁用' });
@@ -85,7 +92,7 @@ export default class InChatCommandsController {
         return true;
       case '/nick':
         if (this.instance.workMode !== 'personal' || !message.senderId?.eq(this.instance.owner)) return false;
-        if (!(pair.qq instanceof Group)) return;
+        if (!(pair.qq instanceof Group)) return true;
         if (!params) {
           await message.reply({
             message: `群名片：<i>${pair.qq.pickMember(this.instance.qqUin, true).card}</i>`,
