@@ -91,7 +91,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%252525252525252525252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -112,8 +112,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@types/dockerode':
-        specifier: ^3.3.23
-        version: 3.3.23
+        specifier: ^3.3.24
+        version: 3.3.24
       '@types/ejs':
         specifier: ^3.1.5
         version: 3.1.5
@@ -1569,8 +1569,8 @@ packages:
       '@types/ssh2': 1.11.18
     dev: true
 
-  /@types/dockerode@3.3.23:
-    resolution: {integrity: sha512-Lz5J+NFgZS4cEVhquwjIGH4oQwlVn2h7LXD3boitujBnzOE5o7s9H8hchEjoDK2SlRsJTogdKnQeiJgPPKLIEw==}
+  /@types/dockerode@3.3.24:
+    resolution: {integrity: sha512-679y69OYusf7Fr2HtdjXPUF6hnHxSA9K4EsuagsMuPno/XpJHjXxCOy2I5YL8POnWbzjsQAi0pyKIYM9HSpQog==}
     dependencies:
       '@types/docker-modem': 3.0.6
       '@types/node': 20.11.17
@@ -5611,7 +5611,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%252525252525252525252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10

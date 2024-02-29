@@ -15,7 +15,7 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
     "@types/date-and-time": "^3.0.3",
-    "@types/dockerode": "^3.3.23",
+    "@types/dockerode": "^3.3.24",
     "@types/ejs": "^3.1.5",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.14.202",
