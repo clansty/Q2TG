@@ -6,10 +6,8 @@ import {
   GroupMessageEvent,
   LogLevel,
   Platform, PrivateMessage,
-  PrivateMessageEvent, XmlElem,
+  PrivateMessageEvent,
 } from 'icqq';
-import Buffer from 'buffer';
-import { execSync } from 'child_process';
 import random from '../utils/random';
 import fs from 'fs';
 import fsP from 'fs/promises';
@@ -18,7 +16,7 @@ import dataPath from '../helpers/dataPath';
 import os from 'os';
 import { Converter, Image, rand2uuid } from 'icqq/lib/message';
 import { randomBytes } from 'crypto';
-import { escapeXml, gzip, timestamp } from 'icqq/lib/common';
+import { gzip, timestamp } from 'icqq/lib/common';
 import { pb } from 'icqq/lib/core';
 import env from '../models/env';
 

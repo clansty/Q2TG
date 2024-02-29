@@ -28,6 +28,10 @@ const personalPrivateCommands = [
     command: 'login',
     description: '当 QQ 处于下线状态时，使用此命令重新登录 QQ',
   }),
+  new Api.BotCommand({
+    command: 'flags',
+    description: 'WARNING: EXPERIMENTAL FEATURES AHEAD!',
+  }),
 ];
 
 // 服务器零号实例的管理员
@@ -56,6 +60,10 @@ const inChatCommands = [
   new Api.BotCommand({
     command: 'search',
     description: '搜索消息',
+  }),
+  new Api.BotCommand({
+    command: 'q',
+    description: '生成 QuotLy 图片',
   }),
 ];
 
@@ -92,6 +100,10 @@ const personalInChatCommands = [
   new Api.BotCommand({
     command: 'nick',
     description: '获取/设置群名片',
+  }),
+  new Api.BotCommand({
+    command: 'mute',
+    description: '设置 QQ 成员禁言',
   }),
 ];
 
