@@ -178,6 +178,7 @@ export default class ForwardController {
   private onQqPoke = async (event: FriendPokeEvent | GroupPokeEvent) => {
     const target = event.notice_type === 'friend' ? event.friend : event.group;
     const pair = this.instance.forwardPairs.find(target);
+    if (!pair) return;
     if ((pair?.flags | this.instance.flags) & flags.DISABLE_POKE) return;
     let operatorName: string, targetName: string;
     if (target instanceof Friend) {

@@ -60,8 +60,8 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       icqq:
-        specifier: ^0.6.8
-        version: 0.6.8
+        specifier: ^0.6.10
+        version: 0.6.10
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -91,7 +91,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%252525252525252525252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -3310,8 +3310,8 @@ packages:
       safer-buffer: 2.1.2
     dev: false
 
-  /icqq@0.6.8:
-    resolution: {integrity: sha512-+Whg6gcxomNshRhij3vuEnjaO/8ODAzl3ZVda6KKwZtWTwuD23iX4pR57Kv7+VGw6Lp5fEGF6hjSxPHw9Rvqcg==}
+  /icqq@0.6.10:
+    resolution: {integrity: sha512-3LfK9r7WUnuVFyrVDH92DgFhsqNK/Itp91XJAD+DZHKEQK6UlR7F+xoEcpUIEfi9dy8GWqOgr5ZTunjd5GhMdA==}
     engines: {node: '>= v14'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     dependencies:
@@ -3320,6 +3320,7 @@ packages:
       long: 4.0.0
       pngjs: 6.0.0
       probe-image-size: 7.2.3
+      silk-wasm: 3.2.3
       triptrap: 0.0.17
     transitivePeerDependencies:
       - debug
@@ -4711,6 +4712,10 @@ packages:
       cac: 6.7.14
     dev: false
 
+  /silk-wasm@3.2.3:
+    resolution: {integrity: sha512-zZ3hgMpiPR6cFnKvCPgPpCwx6n5RoJCbEGIFlge2kAxAmgzBTf0b2F2xIPG5W4obUhQPQXXTTH074eGZJK01xw==}
+    dev: false
+
   /simple-concat@1.0.1:
     resolution: {integrity: sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==}
     dev: false
@@ -5611,7 +5616,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%252525252525252525252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10
