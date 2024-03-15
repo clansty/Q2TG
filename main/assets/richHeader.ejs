@@ -2,7 +2,9 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta property="og:image" content="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0"/>
+    <% const now = new Date() %>
+    <meta property="og:image"
+          content="https://q1.qlogo.cn/g?b=qq&nk=<%= userId %>&s=0&time=<%= now.getFullYear() %>-<%= now.getMonth() %>-<%= now.getDate() %>"/>
     <% if (!!title) { %>
         <meta property="og:site_name" content="「<%= title %>」"/>
     <% }else { %>
