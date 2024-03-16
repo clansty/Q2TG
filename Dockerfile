@@ -19,6 +19,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     python3 build-essential pkg-config \
     libpixman-1-dev libcairo2-dev libpango1.0-dev libgif-dev libjpeg62-turbo-dev libpng-dev librsvg2-dev libvips-dev
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml /app/
+COPY patches /app/patches
 COPY main/package.json /app/main/
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
@@ -44,6 +45,7 @@ RUN cmake CMakeLists.txt && make
 
 FROM base AS build-front
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml /app/
+COPY patches /app/patches
 COPY ui/package.json /app/ui/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
 COPY ui/index.html ui/tsconfig.json ui/vite.config.ts /app/ui/
