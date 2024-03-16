@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  icqq@0.6.10:
+    hash: lvxibeykgrherv3ldsrdfzrnaq
+    path: patches/icqq@0.6.10.patch
+
 importers:
 
   .:
@@ -61,7 +66,7 @@ importers:
         version: 2.1.2
       icqq:
         specifier: ^0.6.10
-        version: 0.6.10
+        version: 0.6.10(patch_hash=lvxibeykgrherv3ldsrdfzrnaq)
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -91,7 +96,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -3347,7 +3352,7 @@ packages:
       safer-buffer: 2.1.2
     dev: false
 
-  /icqq@0.6.10:
+  /icqq@0.6.10(patch_hash=lvxibeykgrherv3ldsrdfzrnaq):
     resolution: {integrity: sha512-3LfK9r7WUnuVFyrVDH92DgFhsqNK/Itp91XJAD+DZHKEQK6UlR7F+xoEcpUIEfi9dy8GWqOgr5ZTunjd5GhMdA==}
     engines: {node: '>= v14'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
@@ -3363,6 +3368,7 @@ packages:
       - debug
       - supports-color
     dev: false
+    patched: true
 
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -5663,7 +5669,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%25252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10

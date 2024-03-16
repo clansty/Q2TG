@@ -6,5 +6,10 @@
   },
   "devDependencies": {
     "typescript": "^5.4.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "icqq@0.6.10": "patches/icqq@0.6.10.patch"
+    }
   }
 }
