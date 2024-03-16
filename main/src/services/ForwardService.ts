@@ -169,6 +169,10 @@ export default class ForwardService {
           case 'at': {
             if (event.source?.user_id === elem.qq || event.source?.user_id === this.oicq.uin)
               break;
+            if (env.WEB_ENDPOINT && typeof elem.qq === 'number') {
+              message += `<a href="${helper.generateRichHeaderUrl(pair.apiKey, elem.qq)}">[<i>${helper.htmlEscape(elem.text)}</i>]</a>`;
+              break;
+            }
           }
           case 'face':
           case 'sface': {
@@ -382,27 +386,14 @@ export default class ForwardService {
       else if (files.length) {
         messageToSend.file = files;
       }
-      else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER) {
+      else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER && env.WEB_ENDPOINT) {
         // 没有文件时才能显示链接预览
         richHeaderUsed = true;
-        let url: URL;
-        if (env.WEB_ENDPOINT) {
-          url = new URL(`${env.WEB_ENDPOINT}/richHeader/${pair.apiKey}/${event.sender.user_id}`);
-          // 防止群名片刷新慢
-          url.searchParams.set('hash', md5B64(messageHeader).substring(0, 10));
-        }
-        else {
-          url = new URL('https://q2tg-header.clansty.workers.dev');
-          url.searchParams.set('name', sender);
-          url.searchParams.set('title', 'title' in event.sender ? event.sender.title : '');
-          url.searchParams.set('role', 'role' in event.sender ? event.sender.role : '');
-          url.searchParams.set('id', event.sender.user_id.toString());
-        }
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/generate/scheme/telegram_api.tl#L1841
         // https://github.com/gram-js/gramjs/pull/633
         messageToSend.file = new Api.InputMediaWebPage({
-          url: url.toString(),
+          url: helper.generateRichHeaderUrl(pair.apiKey, event.sender.user_id, messageHeader),
           forceSmallMedia: true,
           optional: true,
         });

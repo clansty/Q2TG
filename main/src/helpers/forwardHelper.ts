@@ -6,6 +6,8 @@ import { Entity } from 'telegram/define';
 import { ForwardMessage } from 'icqq';
 import { Api } from 'telegram';
 import { imageSize } from 'image-size';
+import env from '../models/env';
+import { md5B64 } from '../utils/hashing';
 
 const log = getLogger('ForwardHelper');
 
@@ -30,7 +32,7 @@ export default {
         || dimensions.width + dimensions.height > 10000
       ) {
         // 让 Telegram 服务器下载
-        return url
+        return url;
       }
     }
     if (allowWebp) {
@@ -191,5 +193,12 @@ export default {
       return BigInt(media.id.toString());
     }
     return null;
+  },
+
+  generateRichHeaderUrl(apiKey: string, userId: number, messageHeader = '') {
+    const url = new URL(`${env.WEB_ENDPOINT}/richHeader/${apiKey}/${userId}`);
+    // 防止群名片刷新慢
+    messageHeader && url.searchParams.set('hash', md5B64(messageHeader).substring(0, 10));
+    return url.toString();
   },
 };
