@@ -42,6 +42,9 @@ services:
       - postgres
       - zinclabs
       - sign
+    ports:
+      # 如果要使用 RICH_HEADER 取消注释并将端口发布到公网 
+      #- 8080:8080
     volumes:
       - q2tg:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -64,6 +67,8 @@ services:
       - BAIDU_APP_ID=
       - BAIDU_API_KEY=
       - BAIDU_SECRET_KEY=
+      # 如果你需要使用 /flags set RICH_HEADER 来显示头像，则需将 q2tg 8080 端口发布到公网，可以使用 cloudflare tunnel
+      #- WEB_ENDPOINT=https://yourichheader.com 填写你发布到公网的域名
       # 如果需要通过代理联网，那么设置下面两个变量
       #- PROXY_IP=
       #- PROXY_PORT=
