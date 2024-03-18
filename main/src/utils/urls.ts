@@ -32,3 +32,7 @@ export async function fetchFile(url: string): Promise<Buffer> {
 export function getAvatar(room: number | Friend | Group) {
   return fetchFile(getAvatarUrl(room));
 }
+
+export function isContainsUrl(msg: string): boolean {
+  return msg.includes("https://") || msg.includes("http://")
+}
