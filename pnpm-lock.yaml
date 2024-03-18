@@ -96,7 +96,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -156,8 +156,8 @@ importers:
         specifier: ^3.4.21
         version: 3.4.21(typescript@5.4.2)
       vue-tg:
-        specifier: ^0.3.0
-        version: 0.3.0(typescript@5.4.2)
+        specifier: ^0.4.0
+        version: 0.4.0(typescript@5.4.2)
 
 packages:
 
@@ -5379,8 +5379,8 @@ packages:
       vue: 3.4.21(typescript@5.4.2)
     dev: true
 
-  /vue-tg@0.3.0(typescript@5.4.2):
-    resolution: {integrity: sha512-DZ5wt9ZY1Ux3yFH+KWeYyVo4Fd3R4UDoq07XWhA6EqpyfxII9zxT7xPKjTjrpDbvjHRzeuukZBBi4EIiQxtDaQ==}
+  /vue-tg@0.4.0(typescript@5.4.2):
+    resolution: {integrity: sha512-NT1uvb9xLz0iOsg8ef7pI7Z4v4+YvKA90u7AbQ2EeOhXcoIPiNlsV0hVDltQxKYivNd4IHndEks6BH04keVbaw==}
     dependencies:
       '@types/telegram-web-app': 7.1.0
       vue: 3.4.21(typescript@5.4.2)
@@ -5669,7 +5669,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10
