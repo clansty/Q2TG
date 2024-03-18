@@ -11,7 +11,7 @@ import {
   segment,
   Sendable,
 } from 'icqq';
-import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
+import { fetchFile, getBigFaceUrl, getImageUrlByMd5, isContainsUrl } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
 import path from 'path';
@@ -386,7 +386,9 @@ export default class ForwardService {
       else if (files.length) {
         messageToSend.file = files;
       }
-      else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER && env.WEB_ENDPOINT) {
+      else if (event.message_type === 'group' && (pair.flags | this.instance.flags) & flags.RICH_HEADER && env.WEB_ENDPOINT 
+      // 当消息包含链接时不显示 RICH HEADER
+      && !isContainsUrl(message)) {
         // 没有文件时才能显示链接预览
         richHeaderUsed = true;
         // https://github.com/tdlib/td/blob/437c2d0c6e0ad104022d5ad86ddc8aedc41cb7a8/td/telegram/MessageContent.cpp#L2575
