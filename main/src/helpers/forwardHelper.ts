@@ -7,7 +7,7 @@ import { ForwardMessage } from 'icqq';
 import { Api } from 'telegram';
 import { imageSize } from 'image-size';
 import env from '../models/env';
-import { md5B64 } from '../utils/hashing';
+import { md5Hex } from '../utils/hashing';
 
 const log = getLogger('ForwardHelper');
 
@@ -198,7 +198,7 @@ export default {
   generateRichHeaderUrl(apiKey: string, userId: number, messageHeader = '') {
     const url = new URL(`${env.WEB_ENDPOINT}/richHeader/${apiKey}/${userId}`);
     // 防止群名片刷新慢
-    messageHeader && url.searchParams.set('hash', md5B64(messageHeader).substring(0, 10));
+    messageHeader && url.searchParams.set('hash', md5Hex(messageHeader).substring(0, 10));
     return url.toString();
   },
 };
