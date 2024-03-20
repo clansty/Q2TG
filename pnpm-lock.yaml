@@ -20,8 +20,8 @@ importers:
   main:
     dependencies:
       '@fastify/http-proxy':
-        specifier: ^9.4.0
-        version: 9.4.0
+        specifier: ^9.5.0
+        version: 9.5.0
       '@fastify/static':
         specifier: ^7.0.1
         version: 7.0.1
@@ -96,7 +96,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -734,8 +734,8 @@ packages:
       fast-json-stringify: 5.13.0
     dev: false
 
-  /@fastify/http-proxy@9.4.0:
-    resolution: {integrity: sha512-oXdvWBETRI2fJYJnRfFP/qJ6fQddUJz47X71WP7SkHdm4D5OejlNwrgnEJLUS5Kr4BSXHE5Nq5K6mmUlkivKiA==}
+  /@fastify/http-proxy@9.5.0:
+    resolution: {integrity: sha512-1iqIdV10d5k9YtfHq9ylX5zt1NiM50fG+rIX40qt00R694sqWso3ukyTFZVk33SDoSiBW8roB7n11RUVUoN+Ag==}
     dependencies:
       '@fastify/reply-from': 9.7.0
       fast-querystring: 1.1.2
@@ -5669,7 +5669,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10
