@@ -44,7 +44,7 @@
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",
     "nodejs-base64": "^2.0.0",
-    "prisma": "5.9.1",
+    "prisma": "5.11.0",
     "prompts": "^2.4.2",
     "quote-api": "https://github.com/Clansty/quote-api/archive/014b21138afbbe0e12c91b00561414b1e851fc0f.tar.gz",
     "sharp": "^0.33.2",
