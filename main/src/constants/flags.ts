@@ -9,6 +9,7 @@ enum flags {
   RICH_HEADER = 1 << 7,
   NO_QUOTE_PIN = 1 << 8,
   NO_FORWARD_OTHER_BOT = 1 << 9,
+  USE_MARKDOWN = 1 << 10,
 }
 
 export default flags;

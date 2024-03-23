@@ -45,6 +45,9 @@ import env from '../models/env';
 import { CustomFile } from 'telegram/client/uploads';
 import flags from '../constants/flags';
 import BigInteger from 'big-integer';
+import { Image } from '@icqqjs/icqq/lib/message';
+import probe from 'probe-image-size';
+import markdownEscape from 'markdown-escape';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 
@@ -461,10 +464,10 @@ export default class ForwardService {
   }
 
   public async forwardFromTelegram(message: Api.Message, pair: Pair): Promise<Array<QQMessageSent>> {
-    // console.log(message);
     try {
       const tempFiles: FileResult[] = [];
-      let chain: Sendable = [];
+      let chain: (string | MessageElem)[] = [];
+      let markdown: string[] = [], markdownCompatible = true;
       const senderId = Number(message.senderId || message.sender?.id);
       // 这条消息在 tg 中被回复的时候显示的
       let brief = '', isSpoilerPhoto = false;
@@ -473,8 +476,31 @@ export default class ForwardService {
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
           (message.fwdFrom?.fromName ||
             helper.getUserDisplayName(await message.forward.getChat() || await message.forward.getSender())) :
-          '') +
-        ': \n';
+          '');
+      markdown.push(`![头像 #30px#30px](${helper.generateTelegramAvatarUrl(this.instance.id, senderId)}) **${messageHeader}**`);
+      messageHeader += ': \n';
+
+      const useImage = (image: Buffer, asface: boolean) => {
+        const md5 = md5Hex(image);
+        const dimensions = probe.sync(image);
+        let width = dimensions.width;
+        let height = dimensions.height;
+        if (asface) {
+          width /= 2;
+          height /= 2;
+        }
+        markdown.push(`![image #${width}px#${height}px](${getImageUrlByMd5(md5)})`);
+        chain.push({
+          type: 'image',
+          file: image,
+          asface,
+        });
+      };
+      const useText = (text: string) => {
+        markdown.push(markdownEscape(text));
+        chain.push(text);
+      };
+
       if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
         messageHeader = emoji.tgColor((message.sender as Api.User)?.color || message.senderId.toJSNumber()) + messageHeader;
       }
@@ -515,13 +541,10 @@ export default class ForwardService {
 ></item><source name="Q2TG" icon="" action="" appid="-1" /></msg>`.replaceAll('\n', ''),
           });
           brief += '[Spoiler 图片]';
+          markdownCompatible = false;
         }
         else {
-          chain.push({
-            type: 'image',
-            file: await message.downloadMedia({}),
-            asface: !!message.sticker,
-          });
+          useImage(await message.downloadMedia({}) as Buffer, !!message.sticker);
           brief += '[图片]';
         }
       }
@@ -533,28 +556,24 @@ export default class ForwardService {
         else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
           const convertedPath = await convert.webm2gif(message.document.id.toString(16), () => message.downloadMedia({}));
-          chain.push({
-            type: 'image',
-            file: convertedPath,
-            asface: true,
-          });
+          // markdown 里的 gif 不能动
+          markdownCompatible = false;
+          useImage(await fsP.readFile(convertedPath), true);
         }
         else {
           const temp = await createTempFile();
           tempFiles.push(temp);
           await fsP.writeFile(temp.path, await message.downloadMedia({}));
           chain.push(segment.video(temp.path));
+          markdownCompatible = false;
         }
         brief += '[视频]';
       }
       else if (message.sticker) {
         // 一定是 tgs
         const gifPath = await convert.tgs2gif(message.sticker.id.toString(16), () => message.downloadMedia({}));
-        chain.push({
-          type: 'image',
-          file: gifPath,
-          asface: true,
-        });
+        useImage(await fsP.readFile(gifPath), true);
+        markdownCompatible = false;
         brief += '[贴纸]';
       }
       else if (message.voice) {
@@ -563,6 +582,7 @@ export default class ForwardService {
         await fsP.writeFile(temp.path, await message.downloadMedia({}));
         const bufSilk = await silk.encode(temp.path);
         chain.push(segment.record(bufSilk));
+        markdownCompatible = false;
         if (this.speechClient) {
           const pcmPath = await createTempFile({ postfix: '.pcm' });
           tempFiles.push(pcmPath);
@@ -583,13 +603,14 @@ export default class ForwardService {
       }
       else if (message.poll) {
         const poll = message.poll.poll;
-        chain.push(`${poll.multipleChoice ? '多' : '单'}选投票：\n${poll.question}`);
-        chain.push(...poll.answers.map(answer => `\n - ${answer.text}`));
+        useText(`${poll.multipleChoice ? '多' : '单'}选投票：\n${poll.question}`);
+        chain.push('\n');
+        useText(poll.answers.map(answer => ` - ${answer.text}`).join('\n'));
         brief += '[投票]';
       }
       else if (message.contact) {
         const contact = message.contact;
-        chain.push(`名片：\n` +
+        useText(`名片：\n` +
           contact.firstName + (contact.lastName ? ' ' + contact.lastName : '') +
           (contact.phoneNumber ? `\n电话：${contact.phoneNumber}` : ''));
         brief += '[名片]';
@@ -599,22 +620,25 @@ export default class ForwardService {
         const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.venue.geo.lat, message.venue.geo.long);
         chain.push(segment.location(geo.lat, geo.lng, `${message.venue.title} (${message.venue.address})`));
         brief += `[位置：${message.venue.title}]`;
+        markdownCompatible = false;
       }
       else if (message.geo instanceof Api.GeoPoint) {
         // 普通的位置，没有名字
         const geo: { lat: number, lng: number } = eviltransform.wgs2gcj(message.geo.lat, message.geo.long);
         chain.push(segment.location(geo.lat, geo.lng, '选中的位置'));
         brief += '[位置]';
+        markdownCompatible = false;
       }
       else if (message.media instanceof Api.MessageMediaDocument && message.media.document instanceof Api.Document) {
         const file = message.media.document;
         const fileNameAttribute =
           file.attributes.find(attribute => attribute instanceof Api.DocumentAttributeFilename) as Api.DocumentAttributeFilename;
-        chain.push(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
+        useText(`文件：${fileNameAttribute ? fileNameAttribute.fileName : ''}\n` +
           `类型：${file.mimeType}\n` +
           `大小：${file.size}`);
         if (file.size.leq(50 * 1024 * 1024)) {
-          chain.push('\n文件正在上传中…');
+          chain.push('\n');
+          useText('文件正在上传中…');
           if (pair.qq instanceof Group) {
             pair.qq.fs.upload(await message.downloadMedia({}), '/',
               fileNameAttribute ? fileNameAttribute.fileName : 'file')
@@ -651,20 +675,21 @@ export default class ForwardService {
           }
           chain.push(messageLeft, ...newChain);
           brief += message.message;
+          markdown.push(markdownEscape(message.message));
         }
         // Q2TG Bot 转发的消息目前不会包含 custom emoji
         else if (message.forward?.senderId?.eq?.(this.tgBot.me.id) && /^.*: ?$/.test(message.message.split('\n')[0])) {
           // 复读了某一条来自 QQ 的消息 (Repeat as forward)
           const originalMessage = message.message.includes('\n') ?
             message.message.substring(message.message.indexOf('\n') + 1) : '';
-          chain.push(originalMessage);
+          useText(originalMessage);
           brief += originalMessage;
 
           messageHeader = helper.getUserDisplayName(message.sender) + ' 转发自 ' +
             message.message.substring(0, message.message.indexOf(':')) + ': \n';
         }
         else {
-          chain.push(message.message);
+          useText(message.message);
           brief += message.message;
         }
       }
@@ -751,6 +776,12 @@ export default class ForwardService {
 
       if (this.instance.workMode === 'group' && !isSpoilerPhoto) {
         chainableElements.unshift(messageHeader);
+        if (markdownCompatible && (pair.flags | this.instance.flags) & flags.USE_MARKDOWN) {
+          chainableElements.push({
+            type: 'markdown',
+            content: markdown.join('\n'),
+          });
+        }
       }
       const qqMessages = [] as Array<QQMessageSent>;
       if (chainableElements.length) {
@@ -761,8 +792,13 @@ export default class ForwardService {
             eqq: { type: 'tg', tgUid: senderId, noSplitSender: this.instance.workMode === 'personal', version: 2 },
           }, undefined, 0),
         });
+        let messageToSend: Sendable = chainableElements;
+        if (chainableElements.some(it => typeof it === 'object' && it.type === 'markdown')) {
+          this.log.debug(chainableElements);
+          messageToSend = await this.instance.oicq.makeLongMsg(chainableElements);
+        }
         qqMessages.push({
-          ...await pair.qq.sendMsg(chainableElements, source),
+          ...await pair.qq.sendMsg(messageToSend, source),
           brief,
           senderId: this.oicq.uin,
         });

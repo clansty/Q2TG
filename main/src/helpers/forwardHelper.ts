@@ -201,4 +201,9 @@ export default {
     messageHeader && url.searchParams.set('hash', md5B64(messageHeader).substring(0, 10));
     return url.toString();
   },
+
+  generateTelegramAvatarUrl(instanceId: number, userId: number) {
+    const url = new URL(`${env.WEB_ENDPOINT}/telegramAvatar/${instanceId}/${userId}`);
+    return url.toString();
+  },
 };

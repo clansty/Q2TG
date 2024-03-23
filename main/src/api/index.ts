@@ -4,6 +4,7 @@ import FastifyProxy from '@fastify/http-proxy';
 import FastifyStatic from '@fastify/static';
 import env from '../models/env';
 import richHeader from './richHeader';
+import telegramAvatar from './telegramAvatar';
 
 const log = getLogger('Web Api');
 const fastify = Fastify();
@@ -13,6 +14,7 @@ fastify.get('/', async (request, reply) => {
 });
 
 fastify.register(richHeader, { prefix: '/richHeader' });
+fastify.register(telegramAvatar, { prefix: '/telegramAvatar' });
 
 if (env.UI_PROXY) {
   fastify.register(FastifyProxy, {

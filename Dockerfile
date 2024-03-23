@@ -22,7 +22,9 @@ COPY pnpm-workspace.yaml package.json pnpm-lock.yaml /app/
 COPY patches /app/patches
 COPY main/package.json /app/main/
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
+    --mount=type=secret,id=npmrc,target=/root/.npmrc \
+    pnpm install --frozen-lockfile
 COPY main/src main/tsconfig.json /app/main/
 COPY main/prisma /app/main/
 RUN cd main && pnpm exec prisma generate
