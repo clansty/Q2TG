@@ -4,9 +4,9 @@ import {
   Friend,
   Group,
   GroupMessageEvent,
-  LogLevel,
+  LogLevel, MessageElem,
   Platform, PrivateMessage,
-  PrivateMessageEvent,
+  PrivateMessageEvent, Sendable,
 } from '@icqqjs/icqq';
 import random from '../utils/random';
 import fs from 'fs';
@@ -14,7 +14,7 @@ import fsP from 'fs/promises';
 import { Config } from '@icqqjs/icqq/lib/client';
 import dataPath from '../helpers/dataPath';
 import os from 'os';
-import { Converter, Image, rand2uuid } from '@icqqjs/icqq/lib/message';
+import { Converter, Image, LongMsgElem, rand2uuid } from '@icqqjs/icqq/lib/message';
 import { randomBytes } from 'crypto';
 import { gzip, timestamp } from '@icqqjs/icqq/lib/common';
 import { pb } from '@icqqjs/icqq/lib/core';
@@ -227,6 +227,17 @@ export default class OicqClient extends Client {
     return {
       tSum: nodes.length,
       resid,
+    };
+  }
+
+  public async makeLongMsg(message: Sendable): Promise<LongMsgElem> {
+    const forward = await this.makeForwardMsgSelf({
+      message,
+      user_id: this.uin,
+    });
+    return {
+      type: 'longmsg',
+      resId: forward.resid,
     };
   }
 }

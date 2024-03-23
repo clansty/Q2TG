@@ -1,0 +1,97 @@
+diff --git a/lib/message/converter.d.ts b/lib/message/converter.d.ts
+index 72bb7f63a49d360b8954f1c196fb22973c2ae07c..870ac46e22d3cc00f53586872294b320ba943e10 100644
+--- a/lib/message/converter.d.ts
++++ b/lib/message/converter.d.ts
+@@ -54,6 +54,7 @@ export declare class Converter {
+     private mirai;
+     private file;
+     private reply;
++    private longmsg;
+     /** 转换为分片消息 */
+     toFragments(): Uint8Array[];
+     private _divideText;
+diff --git a/lib/message/converter.js b/lib/message/converter.js
+index c821bb3cdb5a404b1a7ef66883c3b22192b0c16d..bbf9687b48391968fab291c9dd59a05b84e21bac 100644
+--- a/lib/message/converter.js
++++ b/lib/message/converter.js
+@@ -92,7 +92,7 @@ class Converter {
+             return;
+         }
+         if (qq === "all") {
+-            var q = 0, flag = 1, display = "全体成员";
++            var q = 0, flag = 1, display = text || "全体成员";
+         }
+         else {
+             var q = Number(qq), flag = 0, display = text || String(qq);
+@@ -101,7 +101,6 @@ class Converter {
+                 display = member?.card || member?.nickname || display;
+             }
+         }
+-        display = "@" + display;
+         if (dummy)
+             return this._text(display);
+         const buf = Buffer.allocUnsafe(6);
+@@ -437,6 +436,15 @@ class Converter {
+         });
+         this.brief += data;
+     }
++    longmsg(elem) {
++        const { resId } = elem;
++        this.elems.push({
++            37: {
++                6: 1,
++                7: resId
++            }
++        });
++    }
+     file(elem) {
+         throw new Error("暂不支持发送或转发file元素，请调用文件相关API完成该操作");
+     }
+diff --git a/lib/message/elements.d.ts b/lib/message/elements.d.ts
+index 3484802aeb6b9a26593dbc672284b30e42a6457e..3c606ea5e5650c3e60ea703ee2717f399d0e3601 100644
+--- a/lib/message/elements.d.ts
++++ b/lib/message/elements.d.ts
+@@ -182,6 +182,10 @@ export interface ButtonElem {
+         }[];
+     };
+ }
++export interface LongMsgElem {
++    type: "longmsg";
++    resId: string;
++}
+ export interface Button {
+     /** 按钮ID：在一个keyboard消息内设置唯一 */
+     id?: string;
+@@ -288,7 +292,7 @@ export interface ForwardNode extends Forwardable {
+ export type ChainElem = TextElem | FaceElem | BfaceElem | MfaceElem | ImageElem | AtElem | MiraiElem | ReplyElem | ForwardNode | QuoteElem | MarkdownElem | ButtonElem;
+ export declare const ChainElemTypes: ChainElem["type"][];
+ /** 注意：只有`ChainElem`中的元素可以组合发送，其他元素只能单独发送 */
+-export type MessageElem = TextElem | FaceElem | BfaceElem | MfaceElem | ImageElem | AtElem | MiraiElem | ReplyElem | FlashElem | PttElem | VideoElem | JsonElem | XmlElem | PokeElem | LocationElem | ShareElem | MusicElem | FileElem | ForwardNode | QuoteElem | MarkdownElem | ButtonElem;
++export type MessageElem = TextElem | FaceElem | BfaceElem | MfaceElem | ImageElem | AtElem | MiraiElem | ReplyElem | FlashElem | PttElem | VideoElem | JsonElem | XmlElem | PokeElem | LocationElem | ShareElem | MusicElem | FileElem | ForwardNode | QuoteElem | MarkdownElem | ButtonElem | LongMsgElem;
+ /** 可通过`sendMsg`发送的类型集合 (字符串、元素对象，或它们的数组) */
+ export type Sendable = string | MessageElem | (string | MessageElem)[];
+ /** 用于构造消息元素 */
+@@ -321,6 +325,7 @@ export declare const segment: {
+     xml(data: string, id?: number): XmlElem;
+     markdown(content: string): MarkdownElem;
+     button(content: ButtonElem["content"]): ButtonElem;
++    longmsg(resId: string): LongMsgElem;
+     /** 一种特殊消息(官方客户端无法解析) */
+     mirai(data: string): MiraiElem;
+     /** 音乐 */
+diff --git a/lib/message/elements.js b/lib/message/elements.js
+index de3a1d116c794ae2ee9e18836d6669a4d89d59d0..9c6c5c1fc5949eb49636d539aed4ed140bb3ec0a 100644
+--- a/lib/message/elements.js
++++ b/lib/message/elements.js
+@@ -99,6 +99,11 @@ exports.segment = {
+             type: "button", content
+         };
+     },
++    longmsg(resId) {
++        return {
++            type: "longmsg", resId
++        };
++    },
+     /** 一种特殊消息(官方客户端无法解析) */
+     mirai(data) {
+         return {
