@@ -10,6 +10,7 @@ enum flags {
   NO_QUOTE_PIN = 1 << 8,
   NO_FORWARD_OTHER_BOT = 1 << 9,
   USE_MARKDOWN = 1 << 10,
+  DISABLE_SEAMLESS = 1 << 11,
 }
 
 export default flags;

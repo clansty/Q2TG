@@ -749,6 +749,7 @@ export default class ForwardService {
         && chainableElements.length
         && this.instance.workMode
         && pair.instanceMapForTg[senderId]
+        && !((pair.flags | this.instance.flags) & flags.DISABLE_SEAMLESS)
       ) {
         try {
           const messageSent = await pair.instanceMapForTg[senderId].sendMsg([
