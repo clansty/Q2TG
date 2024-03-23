@@ -2,6 +2,7 @@ import { configure, getLogger } from 'log4js';
 import Instance from './models/Instance';
 import db from './models/db';
 import api from './api';
+import env from './models/env';
 
 (async () => {
   configure({
@@ -9,7 +10,7 @@ import api from './api';
       console: { type: 'console' },
     },
     categories: {
-      default: { level: 'debug', appenders: ['console'] },
+      default: { level: env.LOG_LEVEL, appenders: ['console'] },
     },
   });
   const log = getLogger('Main');

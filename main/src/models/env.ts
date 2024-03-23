@@ -3,6 +3,7 @@ import path from 'path';
 
 const configParsed = z.object({
   DATA_DIR: z.string().default(path.resolve('./data')),
+  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'mark', 'off']).default('info'),
   OICQ_LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'mark', 'off']).default('warn'),
   TG_LOG_LEVEL: z.enum(['none', 'error', 'warn', 'info', 'debug']).default('warn'),
   FFMPEG_PATH: z.string().optional(),
