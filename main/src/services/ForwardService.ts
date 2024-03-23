@@ -479,6 +479,9 @@ export default class ForwardService {
           '');
       markdown.push(`![头像 #30px#30px](${helper.generateTelegramAvatarUrl(this.instance.id, senderId)}) **${messageHeader}**`);
       messageHeader += ': \n';
+      if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
+        messageHeader = emoji.tgColor((message.sender as Api.User)?.color || message.senderId.toJSNumber()) + messageHeader;
+      }
 
       const useImage = (image: Buffer, asface: boolean) => {
         const md5 = md5Hex(image);
@@ -501,9 +504,6 @@ export default class ForwardService {
         chain.push(text);
       };
 
-      if ((pair.flags | this.instance.flags) & flags.COLOR_EMOJI_PREFIX) {
-        messageHeader = emoji.tgColor((message.sender as Api.User)?.color || message.senderId.toJSNumber()) + messageHeader;
-      }
       if (message.photo instanceof Api.Photo ||
         // stickers 和以文件发送的图片都是这个
         message.document?.mimeType?.startsWith('image/')) {
@@ -697,6 +697,7 @@ export default class ForwardService {
       // 处理回复
       let source: Quotable;
       if (message.replyToMsgId) {
+        markdownCompatible = false;
         try {
           const quote = await db.message.findFirst({
             where: {
