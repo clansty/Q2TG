@@ -1,7 +1,7 @@
 import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
-import { GroupMessageEvent, MiraiElem, PrivateMessageEvent } from 'icqq';
+import { GroupMessageEvent, MiraiElem, PrivateMessageEvent } from '@icqqjs/icqq';
 
 export default class {
   constructor(private readonly instance: Instance,

@@ -9,7 +9,7 @@ import {
   MemberDecreaseEvent,
   MemberIncreaseEvent,
   PrivateMessageEvent,
-} from 'icqq';
+} from '@icqqjs/icqq';
 import Instance from '../models/Instance';
 import { getLogger, Logger } from 'log4js';
 import { editFlags } from '../utils/flagControl';

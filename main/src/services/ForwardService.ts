@@ -10,7 +10,7 @@ import {
   Quotable,
   segment,
   Sendable,
-} from 'icqq';
+} from '@icqqjs/icqq';
 import { fetchFile, getBigFaceUrl, getImageUrlByMd5 } from '../utils/urls';
 import { ButtonLike, FileLike } from 'telegram/define';
 import { getLogger, Logger } from 'log4js';
@@ -38,7 +38,7 @@ import { QQMessageSent } from '../types/definitions';
 import ZincSearch from 'zincsearch-node';
 import { speech as AipSpeechClient } from 'baidu-aip-sdk';
 import random from '../utils/random';
-import { escapeXml } from 'icqq/lib/common';
+import { escapeXml } from '@icqqjs/icqq/lib/common';
 import Docker from 'dockerode';
 import ReplyKeyboardHide = Api.ReplyKeyboardHide;
 import env from '../models/env';

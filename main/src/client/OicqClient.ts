@@ -7,17 +7,17 @@ import {
   LogLevel,
   Platform, PrivateMessage,
   PrivateMessageEvent,
-} from 'icqq';
+} from '@icqqjs/icqq';
 import random from '../utils/random';
 import fs from 'fs';
 import fsP from 'fs/promises';
-import { Config } from 'icqq/lib/client';
+import { Config } from '@icqqjs/icqq/lib/client';
 import dataPath from '../helpers/dataPath';
 import os from 'os';
-import { Converter, Image, rand2uuid } from 'icqq/lib/message';
+import { Converter, Image, rand2uuid } from '@icqqjs/icqq/lib/message';
 import { randomBytes } from 'crypto';
-import { gzip, timestamp } from 'icqq/lib/common';
-import { pb } from 'icqq/lib/core';
+import { gzip, timestamp } from '@icqqjs/icqq/lib/common';
+import { pb } from '@icqqjs/icqq/lib/core';
 import env from '../models/env';
 
 const LOG_LEVEL: LogLevel = env.OICQ_LOG_LEVEL;

@@ -2,7 +2,7 @@ import { FastifyPluginCallback } from 'fastify';
 import { Pair } from '../models/Pair';
 import ejs from 'ejs';
 import fs from 'fs';
-import { Group } from 'icqq';
+import { Group } from '@icqqjs/icqq';
 import { format } from 'date-and-time';
 
 const template = ejs.compile(fs.readFileSync('./assets/richHeader.ejs', 'utf-8'));

@@ -26,6 +26,7 @@
   "dependencies": {
     "@fastify/http-proxy": "^9.4.0",
     "@fastify/static": "^7.0.1",
+    "@icqqjs/icqq": "^1.1.2",
     "@prisma/client": "5.9.1",
     "axios": "^1.6.8",
     "baidu-aip-sdk": "^4.16.15",
@@ -39,7 +40,6 @@
     "fastify": "^4.26.2",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
-    "icqq": "^0.6.10",
     "image-size": "^1.1.1",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",

@@ -8,7 +8,7 @@ import { Pair } from '../models/Pair';
 import { CustomFile } from 'telegram/client/uploads';
 import { getAvatar } from '../utils/urls';
 import db from '../models/db';
-import { Friend, Group } from 'icqq';
+import { Friend, Group } from '@icqqjs/icqq';
 import { format } from 'date-and-time';
 import ZincSearch from 'zincsearch-node';
 import env from '../models/env';

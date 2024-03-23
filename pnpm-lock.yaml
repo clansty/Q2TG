@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  icqq@0.6.10:
+  '@icqqjs/icqq@1.1.2':
     hash: lvxibeykgrherv3ldsrdfzrnaq
     path: patches/icqq@0.6.10.patch
 
@@ -25,6 +25,9 @@ importers:
       '@fastify/static':
         specifier: ^7.0.1
         version: 7.0.1
+      '@icqqjs/icqq':
+        specifier: ^1.1.2
+        version: 1.1.2(patch_hash=lvxibeykgrherv3ldsrdfzrnaq)
       '@prisma/client':
         specifier: 5.9.1
         version: 5.9.1(prisma@5.9.1)
@@ -64,9 +67,6 @@ importers:
       fluent-ffmpeg:
         specifier: ^2.1.2
         version: 2.1.2
-      icqq:
-        specifier: ^0.6.10
-        version: 0.6.10(patch_hash=lvxibeykgrherv3ldsrdfzrnaq)
       image-size:
         specifier: ^1.1.1
         version: 1.1.1
@@ -96,7 +96,7 @@ importers:
         version: 0.2.2
       telegram:
         specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz'
+        version: '@github.com/clansty/gramjs/releases/download/2.19.10%2525252525252Brevert_media/telegram-2.19.10.tgz'
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -785,6 +785,23 @@ packages:
       fastq: 1.17.1
       glob: 10.3.10
     dev: false
+
+  /@icqqjs/icqq@1.1.2(patch_hash=lvxibeykgrherv3ldsrdfzrnaq):
+    resolution: {integrity: sha512-5hvFVYlV6qp7leC60c+HGfgjhK5udSIN92mEUfzbWKK+Xx8Z2ruMEAzIzfOcFkBugyzmjX5vxhymDH3diQm0pA==, tarball: https://npm.pkg.github.com/download/@icqqjs/icqq/1.1.2/aa71ad688f4e2ca32f883cef340f2387968d12c6}
+    engines: {node: '>= v14'}
+    dependencies:
+      axios: 1.6.8
+      log4js: 6.9.1
+      long: 5.2.3
+      pngjs: 7.0.0
+      probe-image-size: 7.2.3
+      silk-wasm: 3.2.3
+      triptrap: 0.0.17
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+    dev: false
+    patched: true
 
   /@img/sharp-darwin-arm64@0.33.2:
     resolution: {integrity: sha512-itHBs1rPmsmGF9p4qRe++CzCgd+kFYktnsoR1sbIAfsRMrJZau0Tt1AH9KVnufc2/tU02Gf6Ibujx+15qRE03w==}
@@ -3352,24 +3369,6 @@ packages:
       safer-buffer: 2.1.2
     dev: false
 
-  /icqq@0.6.10(patch_hash=lvxibeykgrherv3ldsrdfzrnaq):
-    resolution: {integrity: sha512-3LfK9r7WUnuVFyrVDH92DgFhsqNK/Itp91XJAD+DZHKEQK6UlR7F+xoEcpUIEfi9dy8GWqOgr5ZTunjd5GhMdA==}
-    engines: {node: '>= v14'}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    dependencies:
-      axios: 1.6.8
-      log4js: 6.9.1
-      long: 4.0.0
-      pngjs: 6.0.0
-      probe-image-size: 7.2.3
-      silk-wasm: 3.2.3
-      triptrap: 0.0.17
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-    dev: false
-    patched: true
-
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
     dev: false
@@ -3798,8 +3797,8 @@ packages:
       - supports-color
     dev: false
 
-  /long@4.0.0:
-    resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
+  /long@5.2.3:
+    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
     dev: false
 
   /lottie-node@2.0.0(canvas@2.11.2)(jsdom@16.7.0)(lottie-web@5.12.2):
@@ -4305,6 +4304,11 @@ packages:
   /pngjs@6.0.0:
     resolution: {integrity: sha512-TRzzuFRRmEoSW/p1KVAmiOgPco2Irlah+bGFCeNfJXxxYGwSw7YwAOAcd7X28K/m5bjBWKsC29KyoMfHbypayg==}
     engines: {node: '>=12.13.0'}
+    dev: false
+
+  /pngjs@7.0.0:
+    resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
+    engines: {node: '>=14.19.0'}
     dev: false
 
   /postcss@8.4.35:
@@ -5669,7 +5673,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252Brevert_media/telegram-2.19.10.tgz':
+  '@github.com/clansty/gramjs/releases/download/2.19.10%2525252525252Brevert_media/telegram-2.19.10.tgz':
     resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
     name: telegram
     version: 2.19.10

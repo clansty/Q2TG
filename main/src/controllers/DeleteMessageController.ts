@@ -2,7 +2,7 @@ import DeleteMessageService from '../services/DeleteMessageService';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
-import { FriendRecallEvent, GroupRecallEvent } from 'icqq';
+import { FriendRecallEvent, GroupRecallEvent } from '@icqqjs/icqq';
 import { DeletedMessageEvent } from 'telegram/events/DeletedMessage';
 import Instance from '../models/Instance';
 

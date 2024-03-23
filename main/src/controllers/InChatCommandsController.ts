@@ -4,7 +4,7 @@ import Instance from '../models/Instance';
 import Telegram from '../client/Telegram';
 import OicqClient from '../client/OicqClient';
 import { Api } from 'telegram';
-import { Group } from 'icqq';
+import { Group } from '@icqqjs/icqq';
 import RecoverMessageHelper from '../helpers/RecoverMessageHelper';
 import flags from '../constants/flags';
 import { editFlags } from '../utils/flagControl';

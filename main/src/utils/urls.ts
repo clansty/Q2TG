@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Friend, Group } from 'icqq';
+import { Friend, Group } from '@icqqjs/icqq';
 
 export function getAvatarUrl(room: number | bigint | Friend | Group): string {
   if (!room) return '';
