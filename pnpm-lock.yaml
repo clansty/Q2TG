@@ -8,6 +8,9 @@ patchedDependencies:
   '@icqqjs/icqq@1.2.0':
     hash: b62fm7z6sx5w22w3vrzouur4ai
     path: patches/@icqqjs__icqq@1.2.0.patch
+  telegram@2.20.15:
+    hash: w55ltxmvkfjk6y73vgvsjq5y5a
+    path: patches/telegram@2.20.15.patch
 
 importers:
 
@@ -101,8 +104,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       telegram:
-        specifier: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz
-        version: '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252Brevert_media/telegram-2.19.10.tgz'
+        specifier: ^2.20.15
+        version: 2.20.15(patch_hash=w55ltxmvkfjk6y73vgvsjq5y5a)
       tmp-promise:
         specifier: ^3.0.3
         version: 3.0.3
@@ -5132,6 +5135,31 @@ packages:
       - supports-color
     dev: false
 
+  /telegram@2.20.15(patch_hash=w55ltxmvkfjk6y73vgvsjq5y5a):
+    resolution: {integrity: sha512-yc5ScUlg5X47z9BhGTJEaHqSYe8cGsyjUHw1+vGD2vj9ntrbp2C/YpOvP0cepTJk/k5xJ39ZJeFY0xQzkk/LMg==}
+    dependencies:
+      '@cryptography/aes': 0.1.1
+      async-mutex: 0.3.2
+      big-integer: 1.6.52
+      buffer: 6.0.3
+      htmlparser2: 6.1.0
+      mime: 3.0.0
+      node-localstorage: 2.2.1
+      pako: 2.1.0
+      path-browserify: 1.0.1
+      real-cancellable-promise: 1.2.0
+      socks: 2.8.3
+      store2: 2.14.3
+      ts-custom-error: 3.3.1
+      websocket: 1.0.34
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 5.0.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+    patched: true
+
   /thread-stream@2.7.0:
     resolution: {integrity: sha512-qQiRWsU/wvNolI6tbbCKd9iKaTnCXsTwVxhhKM6nctPdujTyztjlbUkUTUymidWcMnZ5pWR0ej4a0tjsW021vw==}
     dependencies:
@@ -5745,30 +5773,4 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
-    dev: false
-
-  '@github.com/clansty/gramjs/releases/download/2.19.10%25252525252525252Brevert_media/telegram-2.19.10.tgz':
-    resolution: {tarball: https://github.com/clansty/gramjs/releases/download/2.19.10%2Brevert_media/telegram-2.19.10.tgz}
-    name: telegram
-    version: 2.19.10
-    dependencies:
-      '@cryptography/aes': 0.1.1
-      async-mutex: 0.3.2
-      big-integer: 1.6.52
-      buffer: 6.0.3
-      htmlparser2: 6.1.0
-      mime: 3.0.0
-      node-localstorage: 2.2.1
-      pako: 2.1.0
-      path-browserify: 1.0.1
-      real-cancellable-promise: 1.2.0
-      socks: 2.8.3
-      store2: 2.14.3
-      ts-custom-error: 3.3.1
-      websocket: 1.0.34
-    optionalDependencies:
-      bufferutil: 4.0.8
-      utf-8-validate: 5.0.10
-    transitivePeerDependencies:
-      - supports-color
     dev: false

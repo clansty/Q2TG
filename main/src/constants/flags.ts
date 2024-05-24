@@ -12,6 +12,7 @@ enum flags {
   USE_MARKDOWN = 1 << 10,
   DISABLE_SEAMLESS = 1 << 11,
   NO_FLASH_PIC = 1 << 12,
+  DISABLE_REACTIONS = 1 << 13,
 }
 
 export default flags;

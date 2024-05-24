@@ -161,6 +161,13 @@ export default class Telegram {
     }));
   }
 
+  public addBotMessageReactionHandler(handler: (event: Api.UpdateBotMessageReaction) => any) {
+    this.client.on
+    this.client.addEventHandler(handler, new Raw({
+      types: [Api.UpdateBotMessageReaction],
+    }));
+  }
+
   public async getChat(entity: EntityLike) {
     return new TelegramChat(this, this.client, await this.client.getEntity(entity), this.waitForMessageHelper);
   }

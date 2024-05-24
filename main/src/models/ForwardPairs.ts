@@ -8,6 +8,7 @@ import { BigInteger } from 'big-integer';
 import { Pair } from './Pair';
 import { getLogger, Logger } from 'log4js';
 import Instance from './Instance';
+import { Api } from 'telegram';
 
 export default class ForwardPairs {
   private pairs: Pair[] = [];

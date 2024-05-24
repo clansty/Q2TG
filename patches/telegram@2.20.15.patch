@@ -1,0 +1,118 @@
+diff --git a/client/messages.d.ts b/client/messages.d.ts
+index 14f3730e5b406fcfeffe22e6735a1e109f496202..5fc73f3479e61255c1c8a6c0333c39bbc5643506 100644
+--- a/client/messages.d.ts
++++ b/client/messages.d.ts
+@@ -113,7 +113,7 @@ export interface SendMessageParams {
+     /** A list of message formatting entities. When provided, the parseMode is ignored. */
+     formattingEntities?: Api.TypeMessageEntity[];
+     /** Should the link preview be shown? */
+-    linkPreview?: boolean;
++    linkPreview?: boolean | { showAboveText: boolean};
+     /** Sends a message with a file attached (e.g. a photo, video, audio or document). The message may be empty. */
+     file?: FileLike | FileLike[];
+     /** Optional JPEG thumbnail (for documents). Telegram will ignore this parameter unless you pass a .jpg file!<br/>
+@@ -181,7 +181,7 @@ export interface EditMessageParams {
+     /** A list of message formatting entities. When provided, the parseMode is ignored. */
+     formattingEntities?: Api.TypeMessageEntity[];
+     /** Should the link preview be shown? */
+-    linkPreview?: boolean;
++    linkPreview?: boolean | { showAboveText: boolean};
+     /** The file object that should replace the existing media in the message. Does nothing if entity was a Message */
+     file?: FileLike;
+     /** Whether to send the given file as a document or not. */
+diff --git a/client/messages.js b/client/messages.js
+index 404edc1a1351212bf52bd6431f4ff259e7001b28..a6239c36688550c0dda5609fd557882da5eb67ae 100644
+--- a/client/messages.js
++++ b/client/messages.js
+@@ -461,6 +461,7 @@ entity,
+             noforwards: noforwards,
+             commentTo: commentTo,
+             topMsgId: topMsgId,
++            invertMedia: typeof linkPreview === 'object' ? linkPreview.showAboveText : false,
+         });
+     }
+     entity = await client.getInputEntity(entity);
+@@ -508,6 +509,7 @@ entity,
+             entities: message.entities,
+             clearDraft: clearDraft,
+             noWebpage: !(message.media instanceof tl_1.Api.MessageMediaWebPage),
++            invertMedia: typeof linkPreview === 'object' ? linkPreview.showAboveText : false,
+             scheduleDate: schedule,
+             noforwards: noforwards,
+         });
+@@ -525,6 +527,7 @@ entity,
+             message: message.toString(),
+             entities: formattingEntities,
+             noWebpage: !linkPreview,
++            invertMedia: typeof linkPreview === 'object' ? linkPreview.showAboveText : false,   
+             replyTo: replyObject,
+             clearDraft: clearDraft,
+             silent: silent,
+@@ -658,6 +661,7 @@ async function editMessage(client, entity, { message, text, parseMode, formattin
+         id,
+         message: text,
+         noWebpage: !linkPreview,
++        invertMedia: typeof linkPreview === 'object' ? linkPreview.showAboveText : false,
+         entities,
+         media: inputMedia,
+         replyMarkup: markup,
+diff --git a/client/uploads.d.ts b/client/uploads.d.ts
+index ff7af2d3be9b32162b5e1630d4b16ab0c7547649..3782cdd3c6965b4dd1be680b36dc3292873b2fa5 100644
+--- a/client/uploads.d.ts
++++ b/client/uploads.d.ts
+@@ -109,6 +109,10 @@ export interface SendFileInterface {
+      * Used for threads to reply to a specific thread
+      */
+     topMsgId?: number | Api.Message;
++    /**
++     * Show media (usually link preview) on the top of message text
++     */
++    invertMedia?: boolean;
+ }
+ interface FileToMediaInterface {
+     file: FileLike;
+diff --git a/client/uploads.js b/client/uploads.js
+index ec48c1020c58da23c52e45c32a227e503d774dda..6d1471edcfb092ad9da687e234082c27d97eb207 100644
+--- a/client/uploads.js
++++ b/client/uploads.js
+@@ -308,7 +308,7 @@ async function _fileToMedia(client, { file, forceDocument, fileSize, progressCal
+ }
+ exports._fileToMedia = _fileToMedia;
+ /** @hidden */
+-async function _sendAlbum(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, voiceNote = false, videoNote = false, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, }) {
++async function _sendAlbum(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, voiceNote = false, videoNote = false, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, invertMedia = false, }) {
+     entity = await client.getInputEntity(entity);
+     let files = [];
+     if (!Array.isArray(file)) {
+@@ -400,13 +400,14 @@ async function _sendAlbum(client, entity, { file, caption, forceDocument = false
+         scheduleDate: scheduleDate,
+         clearDraft: clearDraft,
+         noforwards: noforwards,
++        invertMedia: invertMedia,
+     }));
+     const randomIds = albumFiles.map((m) => m.randomId);
+     return client._getResponseMessage(randomIds, result, entity);
+ }
+ exports._sendAlbum = _sendAlbum;
+ /** @hidden */
+-async function sendFile(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, formattingEntities, voiceNote = false, videoNote = false, buttons, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, }) {
++async function sendFile(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, formattingEntities, voiceNote = false, videoNote = false, buttons, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, invertMedia = false, }) {
+     if (!file) {
+         throw new Error("You need to specify a file");
+     }
+@@ -436,6 +437,7 @@ async function sendFile(client, entity, { file, caption, forceDocument = false,
+             forceDocument: forceDocument,
+             noforwards: noforwards,
+             topMsgId: topMsgId,
++            invertMedia: invertMedia,
+         });
+     }
+     if (Array.isArray(caption)) {
+@@ -483,6 +485,7 @@ async function sendFile(client, entity, { file, caption, forceDocument = false,
+         scheduleDate: scheduleDate,
+         clearDraft: clearDraft,
+         noforwards: noforwards,
++        invertMedia: invertMedia,
+     });
+     const result = await client.invoke(request);
+     return client._getResponseMessage(request, result, entity);

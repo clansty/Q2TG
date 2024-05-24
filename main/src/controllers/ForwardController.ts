@@ -18,6 +18,7 @@ import { CustomFile } from 'telegram/client/uploads';
 import forwardHelper from '../helpers/forwardHelper';
 import helper from '../helpers/forwardHelper';
 import flags from '../constants/flags';
+import { peerToId } from '../utils/peerId';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
@@ -38,6 +39,7 @@ export default class ForwardController {
     tgBot.addNewMessageEventHandler(this.onTelegramMessage);
     tgUser.addNewMessageEventHandler(this.onTelegramUserMessage);
     tgBot.addEditedMessageEventHandler(this.onTelegramMessage);
+    tgBot.addBotMessageReactionHandler(this.onTelegramReaction);
     instance.workMode === 'group' && tgBot.addChannelParticipantEventHandler(this.onTelegramParticipant);
   }
 
@@ -144,6 +146,7 @@ export default class ForwardController {
   private onQqGroupMemberIncrease = async (event: MemberIncreaseEvent) => {
     try {
       const pair = this.instance.forwardPairs.find(event.group);
+      if (!pair) return false;
       if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       const avatar = await getAvatar(event.user_id);
       await pair.tg.sendMessage({
@@ -160,6 +163,7 @@ export default class ForwardController {
   private onTelegramParticipant = async (event: Api.UpdateChannelParticipant) => {
     try {
       const pair = this.instance.forwardPairs.find(event.channelId);
+      if (!pair) return false;
       if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       if (
         !(event.newParticipant instanceof Api.ChannelParticipantAdmin) &&
@@ -215,5 +219,12 @@ export default class ForwardController {
       message: `<i><b>${operatorName}</b>${event.action}<b>${targetName}</b>${event.suffix}</i>`,
       silent: true,
     });
+  };
+
+  private onTelegramReaction = async (event: Api.UpdateBotMessageReaction) => {
+    console.log(event);
+    const pair = this.instance.forwardPairs.find(peerToId(event.peer));
+    if (!pair) return false;
+    if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
   };
 }

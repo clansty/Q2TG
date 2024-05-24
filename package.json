@@ -9,7 +9,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@icqqjs/icqq@1.2.0": "patches/@icqqjs__icqq@1.2.0.patch"
+      "@icqqjs/icqq@1.2.0": "patches/@icqqjs__icqq@1.2.0.patch",
+      "telegram@2.20.15": "patches/telegram@2.20.15.patch"
     }
   }
 }
