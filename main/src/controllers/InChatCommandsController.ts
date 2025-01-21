@@ -120,7 +120,7 @@ export default class InChatCommandsController {
           return true;
         }
         try {
-          if(await (pair.qq as Group).announce(params.trim())) {
+          if (await (pair.qq as Group).announce(params.trim())) {
             await message.reply({ message: '发送成功' });
           }
           else {

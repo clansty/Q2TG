@@ -6,6 +6,7 @@ import fsP from 'fs/promises';
 import env from '../../models/env';
 import fs from 'fs';
 import { Readable } from 'node:stream';
+import { FaceElem } from '@icqqjs/icqq/lib/message/elements';
 
 const createTempFile = (options: Parameters<typeof createTempFileBase>[0] = {}) => createTempFileBase({
   tmpdir: env.CACHE_DIR,
@@ -98,7 +99,12 @@ export type NapCatForwardElem = {
   content: ForwardMessage[],
 }
 
-export const napCatReceiveToMessageElem = (data: Receive[keyof Receive]): MessageElem | NapCatForwardElem => {
+export type FaceElemEx = FaceElem & {
+  resultId?: string,
+  chainCount?: number,
+}
+
+export const napCatReceiveToMessageElem = (data: Receive[keyof Receive]): MessageElem | NapCatForwardElem | FaceElemEx => {
   switch (data.type) {
     case 'text':
     case 'face':

@@ -44,6 +44,7 @@ import fsP from 'fs/promises';
 import regExps from '../constants/regExps';
 import qface from '../constants/qface';
 import qfaceChannelMap from '../constants/qfaceChannelMap';
+import { FaceElemEx } from '../client/NapCatClient/convert';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/apng', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon', 'image/avif', 'image/heic', 'image/heif'];
@@ -102,24 +103,32 @@ export default class ForwardService {
     }
   }
 
-  private getStickerByQQFaceId(id: number) {
+  private getStickerByQQFaceId(id: number | string, resultId?: number | string) {
     for (const [pack, ids] of Object.entries(lottie.packInfo)) {
-      if (ids.includes(id)) {
+      if(resultId && ids.includes(`${id}_${resultId}`)) {
         if (this.stickerPackMap[pack])
-          return this.stickerPackMap[pack][ids.indexOf(id)] as Api.Document;
+          return this.stickerPackMap[pack][ids.indexOf(`${id}_${resultId}`)] as Api.Document;
+      }
+      if (ids.includes(id.toString())) {
+        if (this.stickerPackMap[pack])
+          return this.stickerPackMap[pack][ids.indexOf(id.toString())] as Api.Document;
       }
     }
   }
 
-  private getFaceByTgFileId(fileId: BigInteger.BigNumber): FaceElem | undefined {
+  private getFaceByTgFileId(fileId: BigInteger.BigNumber): FaceElemEx | undefined {
     for (const [pack, documents] of Object.entries(this.stickerPackMap)) {
       for (const document of documents) {
-        if (document.id.eq(fileId))
+        if (document.id.eq(fileId)) {
+          const id: string = lottie.packInfo[pack][documents.indexOf(document)];
+          const ids = id.split('_');
           return {
             type: 'face',
-            id: lottie.packInfo[pack][documents.indexOf(document)],
+            id: parseInt(ids[0]),
+            resultId: ids[1],
             stickerType: 1,
           };
+        }
       }
     }
   }
@@ -288,7 +297,7 @@ export default class ForwardService {
           }
           case 'face':
             // 判断 tgs 表情
-            const tgs = this.getStickerByQQFaceId(Number(elem.id));
+            const tgs = this.getStickerByQQFaceId(elem.id, (elem as FaceElemEx).resultId);
             if (tgs && chain.length === 1) {
               useSticker(tgs);
             }
@@ -752,7 +761,11 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        if (file.size.gt(200 * 1024 * 1024)) {
+        const face = this.getFaceByTgFileId(message.sticker.id);
+        if (face) {
+          chain.push(face);
+        }
+        else if (file.size.gt(200 * 1024 * 1024)) {
           chain.push('[视频大于 200MB]');
         }
         else if (file.mimeType === 'video/webm' || message.gif) {
