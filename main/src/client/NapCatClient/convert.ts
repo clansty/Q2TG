@@ -122,6 +122,7 @@ export const napCatReceiveToMessageElem = (data: Receive[keyof Receive]): Messag
       return {
         ...data.data,
         type: data.type,
+        asface: 'sub_type' in data.data && parseInt(data.data.sub_type) > 0,
       } as any;
     // @ts-ignore
     case 'mface':
