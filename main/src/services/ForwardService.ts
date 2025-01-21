@@ -45,6 +45,9 @@ import regExps from '../constants/regExps';
 import qface from '../constants/qface';
 import qfaceChannelMap from '../constants/qfaceChannelMap';
 import { FaceElemEx } from '../client/NapCatClient/convert';
+import nameColor from '../constants/nameColor';
+import memberRoleCache from '../helpers/memberRoleCache';
+import { GroupRole } from '@icqqjs/icqq/lib/common';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/apng', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon', 'image/avif', 'image/heic', 'image/heif'];
@@ -455,8 +458,6 @@ export default class ForwardService {
               files.push(temp.path);
             }
             else {
-              // 得处理 /root/.config/QQ/nt_qq_6f9659ab3c6cc5913ddda6cc8700f48f/nt_data/Ptt/2024-07/Ori/8b0da2f31eeae8231a17cce76ebe43d2.amr 这样的路径，把 /root/.config/QQ/nt_qq_6f9659ab3c6cc5913ddda6cc8700f48f volume 出来
-              // 目前思路是 docker exec 进去 cp 出来
               message += '<i>[语音]</i>';
             }
             break;
@@ -1012,7 +1013,46 @@ export default class ForwardService {
       }
 
       if (this.instance.workMode === 'group' && !isSpoilerPhoto) {
-        chainableElements.unshift(messageHeader);
+        let headerImage: string;
+        if ((pair.flags | this.instance.flags) & flags.QQ_HEADER_IMAGE && (message.sender as Api.User)?.photo instanceof Api.UserProfilePhoto) {
+          try {
+            this.log.debug('准备制作 header 图片');
+            const sender = message.sender as Api.User;
+            const part = await memberRoleCache.getEx(pair, senderId, () => pair.tg.getMember(sender));
+            let role: GroupRole = 'member';
+            let title: string;
+            if ('rank' in part.participant) {
+              title = part.participant.rank;
+            }
+            if (part.participant instanceof Api.ChannelParticipantCreator) {
+              role = 'owner';
+              title = title || '群主';
+            }
+            else if (part.participant instanceof Api.ChannelParticipantAdmin) {
+              role = 'admin';
+              title = title || '管理员';
+            }
+            const avatarHash = (sender.photo as Api.UserProfilePhoto).photoId.toString(16);
+            this.log.debug('avatarHash', avatarHash);
+            headerImage = helper.headImageForQQ(nameColor(senderId), avatarHash, () => convert.cachedBuffer(`${avatarHash}.jpg`, () => this.tgBot.downloadEntityPhoto(sender)),
+              userDisplayName, title, role);
+            this.log.debug('headerImage', headerImage);
+          }
+          catch (e) {
+            this.log.error('准备制作 header 图片出错', e);
+            posthog.capture('准备制作 header 图片出错', { error: e });
+          }
+        }
+        if (headerImage) {
+          chainableElements.unshift({
+            type: 'image',
+            file: headerImage,
+            asface: true,
+          });
+        }
+        else {
+          chainableElements.unshift(messageHeader);
+        }
       }
       const qqMessages = [] as Array<QQMessageSent>;
       if (chainableElements.length) {

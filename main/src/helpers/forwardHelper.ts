@@ -12,6 +12,11 @@ import posthog from '../models/posthog';
 import fs from 'fs';
 import { format } from 'date-fns';
 import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
+import { GroupRole } from '@icqqjs/icqq/lib/common';
+import { createCanvas, loadImage } from 'canvas';
+import path from 'path';
+import makeHeaderImage from './makeHeaderImage';
+import fsP from 'fs/promises';
 
 const log = getLogger('ForwardHelper');
 
@@ -31,6 +36,8 @@ const bufferOrPathCustomFile = (filename: string, bufferOrPath: Buffer | string)
   }
   return new CustomFile(filename, size, isBuffer ? '' : bufferOrPath, isBuffer ? bufferOrPath : undefined);
 };
+
+const headImageBlockMap = new Map<string, Promise<void>>();
 
 export default {
   async downloadToCustomFile(url: string, allowWebp = false, filename?: string) {
@@ -260,5 +267,31 @@ export default {
       return peer.channelId.toJSNumber();
     }
     return undefined;
+  },
+
+  headImageForQQ(nameColor: string, avatarHash: string, avatarPath: () => Promise<string>, name: string, title: string, role: GroupRole) {
+    const hashKey = md5Hex(nameColor + avatarHash + name + title + role);
+    const cachedPath = path.join(env.CACHE_DIR, hashKey + '.png');
+    if (fs.existsSync(cachedPath)) {
+      return cachedPath;
+    }
+    if (headImageBlockMap.has(hashKey)) {
+      return null;
+    }
+
+    headImageBlockMap.set(hashKey, (async () => {
+      try {
+        const avatar = await avatarPath();
+        const img = await makeHeaderImage(nameColor, avatar, name, title, role);
+        await fsP.writeFile(cachedPath, img);
+        headImageBlockMap.delete(hashKey);
+      }
+      catch (e) {
+        log.error('生成头像时出错', e);
+        posthog.capture('生成头像时出错', { error: e });
+        headImageBlockMap.delete(hashKey);
+      }
+    })());
+    return null;
   },
 };

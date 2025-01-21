@@ -18,6 +18,7 @@ enum flags {
   HIDE_ALL_QQ_NUMBER = 1 << 16,
   NAME_LOCKED = 1 << 17,
   ALWAYS_FORWARD_TG_FILE = 1 << 18,
+  QQ_HEADER_IMAGE = 1 << 19,
 }
 
 export default flags;

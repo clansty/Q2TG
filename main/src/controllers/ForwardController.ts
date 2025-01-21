@@ -20,6 +20,7 @@ import {
 } from '../client/QQClient';
 import posthog from '../models/posthog';
 import env from '../models/env';
+import memberRoleCache from '../helpers/memberRoleCache';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
@@ -166,6 +167,7 @@ export default class ForwardController {
     try {
       this.log.debug('收到 TG 群成员事件', event);
       const pair = this.instance.forwardPairs.find(event.channelId);
+      memberRoleCache.delete(pair, event.userId.toJSNumber());
       if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       if (event.prevParticipant && !(event.prevParticipant instanceof Api.ChannelParticipantBanned)) return false;
       if (

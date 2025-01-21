@@ -55,6 +55,7 @@
     "@bogeychan/elysia-polyfills": "^0.6.4",
     "@icqqjs/icqq": "1.4.0",
     "@prisma/client": "6.1.0",
+    "canvas": "^3.0.1",
     "dockerode": "^4.0.2",
     "prisma": "6.1.0",
     "quote-api": "https://github.com/Clansty/quote-api/archive/014b21138afbbe0e12c91b00561414b1e851fc0f.tar.gz",
