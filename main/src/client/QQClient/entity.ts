@@ -1,9 +1,10 @@
 import type { MessageElem, MessageRet, MfaceElem, Quotable } from '@icqqjs/icqq';
 import { Gender, GroupRole } from '@icqqjs/icqq/lib/common';
 import { AtElem, FaceElem, ForwardNode, ImageElem, PttElem, TextElem, VideoElem } from '@icqqjs/icqq/lib/message/elements';
+import { FaceElemEx, ImageElemEx } from '../NapCatClient/convert';
 
 // 全平台支持的 Elem
-export type SendableElem = TextElem | FaceElem | ImageElem | AtElem | PttElem | VideoElem | MfaceElem | ForwardNode;
+export type SendableElem = TextElem | FaceElem | ImageElem | AtElem | PttElem | VideoElem | MfaceElem | ForwardNode | FaceElemEx | ImageElemEx;
 export type Sendable = SendableElem | string | (SendableElem | string)[];
 
 export interface QQEntity {

@@ -294,4 +294,10 @@ export default {
     })());
     return null;
   },
+
+  getStickerBrief(sticker: Api.Document) {
+    const emojis = sticker.attributes.find((attr) => attr instanceof Api.DocumentAttributeSticker)?.alt || '';
+    if (!emojis) return '[贴纸]';
+    return `[贴纸 ${emojis}]`;
+  },
 };

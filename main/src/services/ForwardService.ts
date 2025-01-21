@@ -741,11 +741,12 @@ export default class ForwardService {
 
       this.crhPlayerInfo.delete(pair);
 
-      const useImage = (image: string | Buffer, asface: boolean) => {
+      const useImage = (image: string | Buffer, asface: boolean, brief?: string) => {
         chain.push({
           type: 'image',
           file: image,
           asface,
+          brief,
         });
       };
       const useText = (text: string) => {
@@ -783,7 +784,7 @@ export default class ForwardService {
         else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
           const convertedPath = await convert.webm2gif(message.document.id.toString(16), () => message.downloadMedia({}));
-          useImage(convertedPath, true);
+          useImage(convertedPath, true, helper.getStickerBrief(file));
         }
         else {
           const temp = await createTempFile();
@@ -795,13 +796,14 @@ export default class ForwardService {
       }
       else if (message.sticker) {
         // 一定是 tgs
+        this.log.debug('sticker', message.sticker);
         const face = this.getFaceByTgFileId(message.sticker.id);
         if (face) {
           chain.push(face);
         }
         else {
           const gifPath = await convert.tgs2gif(message.sticker.id.toString(16), () => message.downloadMedia({}));
-          useImage(gifPath, true);
+          useImage(gifPath, true, helper.getStickerBrief(message.sticker));
         }
         brief += '[贴纸]';
       }
@@ -1048,6 +1050,7 @@ export default class ForwardService {
             type: 'image',
             file: headerImage,
             asface: true,
+            brief: messageHeader,
           });
         }
         else {

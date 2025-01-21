@@ -1,6 +1,6 @@
 import type { Receive, Send, WSSendReturn } from 'node-napcat-ts';
 import { ForwardMessage, SendableElem } from '../QQClient';
-import { MessageElem } from '@icqqjs/icqq';
+import { ImageElem, MessageElem } from '@icqqjs/icqq';
 import { file as createTempFileBase, FileResult } from 'tmp-promise';
 import fsP from 'fs/promises';
 import env from '../../models/env';
@@ -63,8 +63,9 @@ export const messageElemToNapCatSendable = async (elem: SendableElem): Promise<{
         elem: {
           type: elem.type,
           data: {
+            ...elem,
             file: elem.file,
-            summary: env.IMAGE_SUMMARY || (`[Q2TG ${elem.type}]`),
+            summary: ('brief' in elem && elem.brief) || env.IMAGE_SUMMARY || (`[Q2TG ${elem.type}]`),
             name: elem.type,
             subType: 'asface' in elem && elem.asface ? 1 : 0,
           },
@@ -104,6 +105,10 @@ export type NapCatForwardElem = {
 export type FaceElemEx = FaceElem & {
   resultId?: string,
   chainCount?: number,
+}
+
+export type ImageElemEx = ImageElem & {
+  brief?: string,
 }
 
 export const napCatReceiveToMessageElem = (data: Receive[keyof Receive]): MessageElem | NapCatForwardElem | FaceElemEx => {
