@@ -10,6 +10,8 @@ import { getLogger, Logger } from 'log4js';
 import flags from '../constants/flags';
 import { MessageEvent, QQClient, Group, GroupMemberInfo, Sendable } from '../client/QQClient';
 import { Member as OicqMember } from '@icqqjs/icqq/lib/member';
+import env from '../models/env';
+import forwardHelper from '../helpers/forwardHelper';
 
 type ActionSubjectTg = {
   name: string;
@@ -189,6 +191,13 @@ export default class {
           text: subject.name,
           qq: subject.id,
         });
+        if (!((pair.flags | this.instance.flags) & flags.DISABLE_RICH_HEADER) && env.WEB_ENDPOINT) {
+          tgEntities.push(new Api.MessageEntityTextUrl({
+            offset: tgText.length,
+            length: subject.name.length,
+            url: forwardHelper.generateRichHeaderUrl(pair.apiKey, subject.id, subject.name),
+          }));
+        }
       }
       tgText += subject.name;
     };
