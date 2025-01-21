@@ -210,9 +210,6 @@ export default {
     else {
       res = '未知';
     }
-    if (res.length > 25) {
-      res = res.slice(0, 25) + '…';
-    }
     return res;
   },
 

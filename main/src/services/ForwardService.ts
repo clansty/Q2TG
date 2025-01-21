@@ -721,7 +721,7 @@ export default class ForwardService {
       if (senderId === pair.tgId && !message.sender) {
         userDisplayName = helper.getUserDisplayName(message.chat);
       }
-      let messageHeader = userDisplayName +
+      let messageHeader = (userDisplayName.length > 25 ? userDisplayName.substring(0, 25) + '…' : userDisplayName) +
         (message.forward ? ' 转发自 ' +
           // 要是隐私设置了，应该会有这个，然后下面两个都获取不到
           (message.fwdFrom?.fromName ||
