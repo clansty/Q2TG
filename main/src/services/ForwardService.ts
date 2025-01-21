@@ -1036,7 +1036,8 @@ export default class ForwardService {
             }
             const avatarHash = (sender.photo as Api.UserProfilePhoto).photoId.toString(16);
             this.log.debug('avatarHash', avatarHash);
-            headerImage = helper.headImageForQQ(nameColor(senderId), avatarHash, () => convert.cachedBuffer(`${avatarHash}.jpg`, () => this.tgBot.downloadEntityPhoto(sender)),
+            headerImage = helper.headImageForQQ(nameColor(sender.color?.color || senderId), avatarHash,
+              () => convert.cachedBuffer(`${avatarHash}.jpg`, () => this.tgBot.downloadEntityPhoto(sender)),
               userDisplayName, title, role);
             this.log.debug('headerImage', headerImage);
           }
