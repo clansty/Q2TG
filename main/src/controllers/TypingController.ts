@@ -20,8 +20,7 @@ export default class TypingController {
     if ((pair.flags | this.instance.flags) & flags.DISABLE_Q2TG) return;
 
     if (event.typing) {
-      console.log(await pair.tg.setTyping())
-
+      await pair.tg.setTyping()
     }
     else {
       await pair.tg.setTyping(new Api.SendMessageCancelAction());

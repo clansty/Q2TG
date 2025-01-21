@@ -105,7 +105,7 @@ export default class ForwardService {
 
   private getStickerByQQFaceId(id: number | string, resultId?: number | string) {
     for (const [pack, ids] of Object.entries(lottie.packInfo)) {
-      if(resultId && ids.includes(`${id}_${resultId}`)) {
+      if (resultId && ids.includes(`${id}_${resultId}`)) {
         if (this.stickerPackMap[pack])
           return this.stickerPackMap[pack][ids.indexOf(`${id}_${resultId}`)] as Api.Document;
       }
@@ -325,10 +325,21 @@ export default class ForwardService {
           }
           case 'video':
             // 先获取 URL，要传给下面
-            url = await pair.qq.getVideoUrl(elem.fid, elem.md5);
+            if (!(elem as any).url) {
+              url = await pair.qq.getVideoUrl(elem.fid, elem.md5);
+            }
           case 'image':
             if ('url' in elem)
               url = elem.url;
+            if (this.oicq instanceof NapCatClient && !url.startsWith('http')) {
+              const ret = await this.oicq.callApi('download_file', { url: 'file://' + url });
+              url = ret.file;
+              tempFiles.push({
+                path: url,
+                fd: 0,
+                cleanup: () => fsP.unlink(url),
+              });
+            }
             try {
               if (elem.type === 'image' && elem.asface
                 && !(elem.file as string).toLowerCase().endsWith('.gif')
@@ -920,7 +931,6 @@ export default class ForwardService {
       let source: Quotable;
       if (message.replyToMsgId || message.replyTo) {
         try {
-          console.log(message.replyTo);
           const quote = message.replyToMsgId && await db.message.findFirst({
             where: {
               tgChatId: Number(pair.tg.id),
