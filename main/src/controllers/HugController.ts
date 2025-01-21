@@ -96,6 +96,9 @@ export default class {
       if (sourceMember instanceof OicqMember) {
         memberInfo = sourceMember.info;
       }
+      else {
+        memberInfo = await sourceMember.renew();
+      }
       to = {
         from: 'qq',
         name: memberInfo.card || memberInfo.nickname,
