@@ -774,7 +774,7 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        const face = this.getFaceByTgFileId(message.sticker.id);
+        const face = this.getFaceByTgFileId(file.id);
         if (face) {
           chain.push(face);
         }
