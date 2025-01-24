@@ -705,17 +705,19 @@ export default class ForwardService {
           event,
           messageToSend,
         }));
-        pbUrl += '.json';
+        if (pbUrl)
+          pbUrl += '.json';
         this.log.info('错误报告', pbUrl);
       }
       catch (e) {
         this.log.error('上传到 Pastebin 失败', e);
       }
       try {
-        await pair.tg.sendMessage({
-          message: '<i>有一条来自 QQ 的消息转发失败</i>',
-          buttons: pbUrl ? [[Button.url('查看详情', pbUrl)]] : [],
-        });
+        if (!((pair.flags | this.instance.flags) & flags.DISABLE_ERROR_NOTIFY))
+          await pair.tg.sendMessage({
+            message: '<i>有一条来自 QQ 的消息转发失败</i>',
+            buttons: pbUrl ? [[Button.url('查看详情', pbUrl)]] : [],
+          });
       }
       catch {
       }

@@ -19,6 +19,7 @@ enum flags {
   NAME_LOCKED = 1 << 17,
   ALWAYS_FORWARD_TG_FILE = 1 << 18,
   QQ_HEADER_IMAGE = 1 << 19,
+  DISABLE_ERROR_NOTIFY = 1 << 20,
 }
 
 export default flags;
