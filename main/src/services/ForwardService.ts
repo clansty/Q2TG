@@ -15,7 +15,7 @@ import helper from '../helpers/forwardHelper';
 import db from '../models/db';
 import { Button } from 'telegram/tl/custom/button';
 import { SendMessageParams } from 'telegram/client/messages';
-import { Api } from 'telegram';
+import { Api, utils } from 'telegram';
 import { file as createTempFileBase, FileResult } from 'tmp-promise';
 // @ts-ignore
 import eviltransform from 'eviltransform';
@@ -48,6 +48,8 @@ import { FaceElemEx } from '../client/NapCatClient/convert';
 import nameColor from '../constants/nameColor';
 import memberRoleCache from '../helpers/memberRoleCache';
 import { GroupRole } from '@icqqjs/icqq/lib/common';
+import path from 'path';
+import { fileTypeFromFile } from 'file-type';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/apng', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon', 'image/avif', 'image/heic', 'image/heif'];
@@ -344,14 +346,27 @@ export default class ForwardService {
               });
             }
             try {
-              if (elem.type === 'image' && elem.asface
-                && !(elem.file as string).toLowerCase().endsWith('.gif')
+              if (elem.type === 'image' && (elem.asface || 'emoji_package_id' in elem)
                 // 同时存在文字消息就不作为 sticker 发送
                 && !event.message.some(it => it.type === 'text')
                 // 防止在 TG 中一起发送多个 sticker 失败
                 && event.message.filter(it => it.type === 'image').length === 1
               ) {
-                useSticker(await convert.webp(elem.file as string, () => fetchFile(elem.url)));
+                const res = await convert.webpOrWebm(elem.file as string, () => fetchFile(elem.url));
+                const stat = await fsP.stat(res);
+                const upload = await pair.tg.parent.uploadFile({
+                  file: new CustomFile(path.basename(res), stat.size, res),
+                  workers: 2,
+                });
+                const fileType = await fileTypeFromFile(res);
+                useSticker(new Api.InputMediaUploadedDocument({
+                  file: upload,
+                  mimeType: fileType.mime,
+                  attributes: [new Api.DocumentAttributeSticker({
+                    alt: '猫',
+                    stickerset: new Api.InputStickerSetEmpty(),
+                  })],
+                }));
               }
               else {
                 const file = await helper.downloadToCustomFile(url, !(message || messageHeader));
@@ -774,6 +789,7 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
+        console.log(file);
         const face = this.getFaceByTgFileId(file.id);
         if (face) {
           chain.push(face);

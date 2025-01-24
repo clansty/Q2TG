@@ -266,4 +266,8 @@ export default class Telegram {
       stickerset: new Api.InputStickerSetShortName({ shortName: handle }),
     })) as Api.messages.StickerSet;
   }
+
+  public async uploadFile(fileParams: Parameters<typeof this.client.uploadFile>[0]) {
+    return await this.client.uploadFile(fileParams);
+  }
 }

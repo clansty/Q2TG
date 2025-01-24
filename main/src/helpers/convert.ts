@@ -6,7 +6,7 @@ import fsP from 'fs/promises';
 import convertWithFfmpeg from '../encoding/convertWithFfmpeg';
 import tgsToGif from '../encoding/tgsToGif';
 import env from '../models/env';
-import { fileTypeFromBuffer } from 'file-type';
+import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
 
 const CACHE_PATH = env.CACHE_DIR;
 fs.mkdirSync(CACHE_PATH, { recursive: true });
@@ -49,6 +49,20 @@ const convert = {
     cachedConvert(key + '.webp', async (convertedPath) => {
       await sharp(await imageData()).webp().toFile(convertedPath);
     }),
+  webm: (key: string, filePath: string) =>
+    cachedConvert(key + '.webm', async (convertedPath) => {
+      await convertWithFfmpeg(filePath, convertedPath, 'webm', 'libvpx-vp9');
+    }),
+  webpOrWebm: async (key: string, imageData: () => Promise<Buffer | Uint8Array>) => {
+    const filePath = await convert.cachedBuffer(key, imageData);
+    const fileType = await fileTypeFromFile(filePath);
+    if (fileType.mime === 'image/gif') {
+      return await convert.webm(key, filePath);
+    }
+    else {
+      return await convert.webp(key, async () => filePath);
+    }
+  },
   customEmoji: async (key: string, imageData: () => Promise<Buffer | Uint8Array | string>, useSmallSize: boolean) => {
     if (useSmallSize) {
       const pathPng = path.join(CACHE_PATH, key + '@50.png');
