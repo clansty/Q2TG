@@ -11,7 +11,7 @@ import { md5Hex } from '../utils/hashing';
 import posthog from '../models/posthog';
 import fs from 'fs';
 import { format } from 'date-fns';
-import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
+import { fileTypeFromBuffer, fileTypeFromFile, FileTypeResult } from 'file-type';
 import { GroupRole } from '@icqqjs/icqq/lib/common';
 import { createCanvas, loadImage } from 'canvas';
 import path from 'path';
@@ -26,6 +26,7 @@ const htmlEscape = (text: string) =>
     .replace(/>/g, '&gt;');
 
 const bufferOrPathCustomFile = (filename: string, bufferOrPath: Buffer | string) => {
+  if (!bufferOrPath) throw new Error('[bufferOrPathCustomFile] bufferOrPath is empty');
   const isBuffer = Buffer.isBuffer(bufferOrPath);
   let size: number;
   if (isBuffer) {
@@ -296,5 +297,21 @@ export default {
     const emojis = sticker.attributes.find((attr) => attr instanceof Api.DocumentAttributeSticker)?.alt || '';
     if (!emojis) return '[贴纸]';
     return `[贴纸 ${emojis}]`;
+  },
+
+  async fileTypeFromCustomFile(file: CustomFile | string) {
+    let fileType: FileTypeResult;
+    if (typeof file === 'object') {
+      if (file.buffer) {
+        fileType = await fileTypeFromBuffer(file.buffer);
+      }
+      else {
+        fileType = await fileTypeFromFile(file.path);
+      }
+    }
+    else {
+      fileType = await fileTypeFromFile(file);
+    }
+    return fileType;
   },
 };

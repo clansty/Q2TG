@@ -49,7 +49,7 @@ import nameColor from '../constants/nameColor';
 import memberRoleCache from '../helpers/memberRoleCache';
 import { GroupRole } from '@icqqjs/icqq/lib/common';
 import path from 'path';
-import { fileTypeFromFile } from 'file-type';
+import { fileTypeFromBuffer, fileTypeFromFile, FileTypeResult } from 'file-type';
 
 const NOT_CHAINABLE_ELEMENTS = ['flash', 'record', 'video', 'location', 'share', 'json', 'xml', 'poke'];
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/apng', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon', 'image/avif', 'image/heic', 'image/heif'];
@@ -415,7 +415,8 @@ export default class ForwardService {
                 this.log.info('正在发送媒体，长度', helper.hSize(elem.size));
                 try {
                   const file = await helper.downloadToCustomFile(url, !(message || messageHeader), elem.name);
-                  if (file instanceof CustomFile && file.size > 10 * 1024 * 1024) {
+                  const type = await helper.fileTypeFromCustomFile(file);
+                  if (file instanceof CustomFile && type.mime.startsWith('image/') && file.size > 10 * 1024 * 1024) {
                     this.log.info('强制使用文件发送');
                     forceDocument = true;
                   }
@@ -705,12 +706,13 @@ export default class ForwardService {
           messageToSend,
         }));
         pbUrl += '.json';
+        this.log.info('错误报告', pbUrl);
       }
       catch (e) {
         this.log.error('上传到 Pastebin 失败', e);
       }
       try {
-        this.instance.workMode === 'personal' && await pair.tg.sendMessage({
+        await pair.tg.sendMessage({
           message: '<i>有一条来自 QQ 的消息转发失败</i>',
           buttons: pbUrl ? [[Button.url('查看详情', pbUrl)]] : [],
         });
@@ -789,7 +791,6 @@ export default class ForwardService {
       }
       else if (message.video || message.videoNote || message.gif) {
         const file = message.video || message.videoNote || message.gif;
-        console.log(file);
         const face = this.getFaceByTgFileId(file.id);
         if (face) {
           chain.push(face);
