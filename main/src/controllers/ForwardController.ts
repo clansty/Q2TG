@@ -150,9 +150,12 @@ export default class ForwardController {
       if (!pair) return false;
       if ((pair?.flags | this.instance.flags) & flags.DISABLE_JOIN_NOTICE) return false;
       const hideAllQqNumber = (pair.flags | this.instance.flags) & flags.HIDE_ALL_QQ_NUMBER;
-      const avatar = await getAvatar(event.userId);
       await pair.tg.sendMessage({
-        file: new CustomFile('avatar.png', avatar.length, '', avatar),
+        file: new Api.InputMediaWebPage({
+          url: helper.generateRichHeaderUrl(pair.apiKey, event.userId),
+          forceSmallMedia: true,
+          optional: true,
+        }),
         message: `<b>${event.nickname}</b>${hideAllQqNumber ? '' : ` (<code>${event.userId}</code>)`} <i>加入了本群</i>`,
         silent: true,
       });
