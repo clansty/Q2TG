@@ -109,6 +109,7 @@ export default class ForwardService {
   }
 
   private getStickerByQQFaceId(id: number | string, resultId?: number | string) {
+    if (!id) return;
     for (const [pack, ids] of Object.entries(lottie.packInfo)) {
       if (resultId && ids.includes(`${id}_${resultId}`)) {
         if (this.stickerPackMap[pack])
@@ -299,6 +300,7 @@ export default class ForwardService {
               isContainAtOrChannelFace = true;
               break;
             }
+            // 如果不是，接下来会处理并且把 text 放在 [] 里
           }
           case 'face':
             // 判断 tgs 表情
