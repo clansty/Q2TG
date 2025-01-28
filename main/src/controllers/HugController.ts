@@ -223,6 +223,7 @@ export default class {
     const tgMessage = await pair.tg.sendMessage({
       message: tgText,
       formattingEntities: tgEntities,
+      linkPreview: false,
     });
     const qqMessage = await pair.qq.sendMsg(qqMessageContent);
 
