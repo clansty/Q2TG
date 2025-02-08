@@ -7,6 +7,7 @@ import flags from '../constants/flags';
 import { editFlags } from '../utils/flagControl';
 import { QQClient } from '../client/QQClient';
 import { Group } from '@icqqjs/icqq';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
 
 export default class InChatCommandsController {
   private readonly service: InChatCommandsService;
@@ -34,7 +35,7 @@ export default class InChatCommandsController {
       [command, target] = command.split('@');
       if (target !== this.tgBot.me.username) return false;
     }
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return false;
     switch (command) {
       case '/info':

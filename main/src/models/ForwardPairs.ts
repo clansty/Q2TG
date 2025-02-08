@@ -65,7 +65,7 @@ export default class ForwardPairs {
     });
   }
 
-  public find(target: Friend | Group | TelegramChat | Entity | number | BigInteger) {
+  public find(target: Friend | Group | TelegramChat | Entity | number | BigInteger, topicId?: number) {
     if (!target) return null;
     if (typeof target === 'object' && 'uin' in target) {
       return this.pairs.find(e => 'uin' in e.qq && e.qq.uin === target.uin && e.qq.dm);
@@ -73,8 +73,14 @@ export default class ForwardPairs {
     else if (typeof target === 'object' && 'gid' in target) {
       return this.pairs.find(e => 'gid' in e.qq && e.qq.gid === target.gid && !e.qq.dm);
     }
+    else if ((typeof target === 'number' || 'eq' in target) && topicId) {
+      return this.pairs.find(e => e.qqRoomId === target || (e.tg.id.eq(target) && e.forumId === topicId));
+    }
     else if (typeof target === 'number' || 'eq' in target) {
       return this.pairs.find(e => e.qqRoomId === target || e.tg.id.eq(target));
+    }
+    else if (topicId) {
+      return this.pairs.find(e => e.tg.id.eq(target.id) && e.forumId === topicId);
     }
     else {
       return this.pairs.find(e => e.tg.id.eq(target.id));

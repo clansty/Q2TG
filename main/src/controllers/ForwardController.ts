@@ -21,6 +21,7 @@ import {
 import posthog from '../models/posthog';
 import env from '../models/env';
 import memberRoleCache from '../helpers/memberRoleCache';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
 
 export default class ForwardController {
   private readonly forwardService: ForwardService;
@@ -101,13 +102,13 @@ export default class ForwardController {
   private onTelegramUserMessage = async (message: Api.Message) => {
     if (!message.sender) return;
     if (!('bot' in message.sender) || !message.sender.bot) return;
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return;
     if ((pair.flags | this.instance.flags) & flags.DISABLE_FORWARD_OTHER_BOT) return;
     await this.onTelegramMessage(message, pair);
   };
 
-  private onTelegramMessage = async (message: Api.Message, pair = this.instance.forwardPairs.find(message.chat)) => {
+  private onTelegramMessage = async (message: Api.Message, pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo))) => {
     try {
       if (message.senderId?.eq(this.instance.botMe.id)) return true;
       if (!pair) return false;

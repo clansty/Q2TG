@@ -104,7 +104,7 @@ model ForwardPair {
   forumId         Int?
 
   @@unique([qqRoomId, instanceId])
-  @@unique([tgChatId, instanceId])
+  @@unique([tgChatId, instanceId, forumId])
 }
 
 model File {

@@ -156,10 +156,11 @@ export default class ConfigController {
       event.prevParticipant.userId.eq(this.tgBot.me.id) &&
       !event.newParticipant) {
       this.log.warn(`群 ${event.channelId.toString()} 删除了`);
-      const pair = this.instance.forwardPairs.find(event.channelId);
-      if (pair) {
+      let pair = this.instance.forwardPairs.find(event.channelId);
+      while (pair) {
         await this.instance.forwardPairs.remove(pair);
         this.log.info(`已删除关联 ID: ${pair.dbId}`);
+        pair = this.instance.forwardPairs.find(event.channelId);
       }
     }
   };

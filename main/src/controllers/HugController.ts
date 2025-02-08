@@ -12,6 +12,7 @@ import { MessageEvent, QQClient, Group, GroupMemberInfo, Sendable } from '../cli
 import { Member as OicqMember } from '@icqqjs/icqq/lib/member';
 import env from '../models/env';
 import forwardHelper from '../helpers/forwardHelper';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
 
 type ActionSubjectTg = {
   name: string;
@@ -119,7 +120,7 @@ export default class {
   };
 
   private onTelegramMessage = async (message: Api.Message) => {
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return;
     if ((pair.flags | this.instance.flags) & flags.DISABLE_SLASH_COMMAND) return;
     const exec = COMMAND_REGEX.exec(message.message);

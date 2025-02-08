@@ -13,6 +13,7 @@ import env from '../models/env';
 import flags from '../constants/flags';
 import { MessageEvent, QQClient } from '../client/QQClient';
 import posthog from '../models/posthog';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
 
 export default class {
   private readonly log: Logger;
@@ -68,7 +69,7 @@ export default class {
 
   private onTelegramMessage = async (message: Api.Message) => {
     if (!['/q', `/q@${this.tgBot.me.username}`].includes(message.message)) return;
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return;
     if (!message.replyTo) {
       await message.reply({

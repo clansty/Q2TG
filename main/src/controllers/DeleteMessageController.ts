@@ -4,6 +4,9 @@ import { Api } from 'telegram';
 import { DeletedMessageEvent } from 'telegram/events/DeletedMessage';
 import Instance from '../models/Instance';
 import { MessageRecallEvent, QQClient } from '../client/QQClient';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
+import db from '../models/db';
+import { bigint } from 'zod';
 
 export default class DeleteMessageController {
   private readonly deleteMessageService: DeleteMessageService;
@@ -20,7 +23,7 @@ export default class DeleteMessageController {
   }
 
   private onTelegramMessage = async (message: Api.Message) => {
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return false;
     if (message.message?.split('@')?.[0] === '/rm') {
       // 撤回消息
@@ -31,7 +34,7 @@ export default class DeleteMessageController {
 
   private onTelegramEditMessage = async (message: Api.Message) => {
     if (message.senderId?.eq(this.instance.botMe.id)) return true;
-    const pair = this.instance.forwardPairs.find(message.chat);
+    const pair = this.instance.forwardPairs.find(message.chat, getTopicIdFromReply(message.replyTo));
     if (!pair) return;
     if (await this.deleteMessageService.isInvalidEdit(message, pair)) {
       return true;
@@ -48,11 +51,19 @@ export default class DeleteMessageController {
 
   private onTgDeletedMessage = async (event: DeletedMessageEvent) => {
     if (!(event.peer instanceof Api.PeerChannel)) return;
-    // group anonymous bot
-    if (event._entities?.get('1087968824')) return;
-    const pair = this.instance.forwardPairs.find(event.peer.channelId);
-    if (!pair) return;
+
     for (const messageId of event.deletedIds) {
+      const messageInfo = await db.message.findFirst({
+        where: {
+          tgChatId: BigInt(event.peer.channelId.toString()),
+          tgMsgId: messageId,
+          instanceId: this.instance.id,
+        },
+      });
+      if (!messageInfo) continue;
+      // 为了话题群能查找唯一的 QQ 群
+      const pair = this.instance.forwardPairs.find(Number(messageInfo.qqRoomId));
+      if (!pair) continue;
       await this.deleteMessageService.telegramDeleteMessage(messageId, pair);
     }
   };
