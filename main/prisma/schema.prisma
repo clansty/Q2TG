@@ -45,6 +45,7 @@ model Instance {
   qqBotId       Int?
   qqBot         QqBot?        @relation(fields: [qqBotId], references: [id], onDelete: Cascade)
   flags         Int           @default(0)
+  pmForum       BigInt?       @db.BigInt
 }
 
 enum QqBotType {
@@ -100,6 +101,7 @@ model ForwardPair {
   flags           Int               @default(0)
   apiKey          String            @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   ForwardMultiple ForwardMultiple[]
+  forumId         Int?
 
   @@unique([qqRoomId, instanceId])
   @@unique([tgChatId, instanceId])

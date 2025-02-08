@@ -35,6 +35,7 @@ export class Pair {
     private _flags: number,
     public readonly apiKey: string,
     public readonly qqClient: QQClient,
+    public readonly forumId: number,
   ) {
     if (apiKey) {
       Pair.apiKeyMap.set(apiKey, this);

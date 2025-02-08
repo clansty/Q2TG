@@ -29,6 +29,7 @@ import LoadingController from '../controllers/LoadingController';
 import { sleep } from 'telegram/Helpers';
 import TypingController from '../controllers/TypingController';
 import GroupNameRefreshController from '../controllers/GroupNameRefreshController';
+import BigInteger from 'big-integer';
 
 export default class Instance {
   public static readonly instances: Instance[] = [];
@@ -40,6 +41,7 @@ export default class Instance {
   private _userSessionId = 0;
   private _qq: QqBot;
   private _flags: number;
+  private _pmForum: BigInteger.BigInteger | null;
 
   private readonly log: Logger;
 
@@ -97,6 +99,7 @@ export default class Instance {
     this._isSetup = dbEntry.isSetup;
     this._workMode = dbEntry.workMode;
     this._flags = dbEntry.flags;
+    this._pmForum = dbEntry.pmForum ? BigInteger(dbEntry.pmForum) : null;
   }
 
   private init(botToken?: string) {
@@ -280,6 +283,10 @@ export default class Instance {
 
   get flags() {
     return this._flags;
+  }
+
+  get pmForum() {
+    return this._pmForum;
   }
 
   set owner(owner: number) {

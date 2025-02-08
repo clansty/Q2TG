@@ -18,7 +18,7 @@ export default class ForwardPairs {
   }
 
   // 在 forwardController 创建时初始化
-  private async init(oicq: QQClient, tgBot: Telegram, tgUser: Telegram) {
+  private async init(oicq: QQClient, tgBot: Telegram, tgUser: Telegram, tgForumId?: number) {
     const dbValues = await db.forwardPair.findMany({
       where: { instanceId: this.instanceId },
     });
@@ -29,7 +29,7 @@ export default class ForwardPairs {
         const tgUserChat = await tgUser.getChat(Number(i.tgChatId));
         if (qq && tg && tgUserChat) {
           this.log.debug('初始化', { qq, tg, tgUserChat });
-          this.pairs.push(new Pair(qq, tg, tgUserChat, i.id, i.flags, i.apiKey, oicq));
+          this.pairs.push(new Pair(qq, tg, tgUserChat, i.id, i.flags, i.apiKey, oicq, tgForumId));
         }
       }
       catch (e) {
@@ -53,7 +53,7 @@ export default class ForwardPairs {
         qqFromGroupId,
       },
     });
-    this.pairs.push(new Pair(qq, tg, tgUser, dbEntry.id, dbEntry.flags, dbEntry.apiKey, qqClient));
+    this.pairs.push(new Pair(qq, tg, tgUser, dbEntry.id, dbEntry.flags, dbEntry.apiKey, qqClient, dbEntry.forumId));
     return dbEntry;
   }
 
