@@ -18,6 +18,8 @@ const DEFAULT_FILTER_ID = 114; // 514
 
 export default class ConfigService {
   private owner: Promise<TelegramChat>;
+  private pmForumBot: Promise<TelegramChat | null> = Promise.resolve(null);
+  private pmForumUser: Promise<TelegramChat | null> = Promise.resolve(null);
   private readonly log: Logger;
 
   constructor(private readonly instance: Instance,
@@ -26,6 +28,10 @@ export default class ConfigService {
               private readonly oicq: QQClient) {
     this.log = getLogger(`ConfigService - ${instance.id}`);
     this.owner = tgBot.getChat(this.instance.owner);
+    if (this.instance.pmForum) {
+      this.pmForumBot = tgBot.getChat(this.instance.pmForum);
+      this.pmForumUser = tgUser.getChat(this.instance.pmForum);
+    }
   }
 
   private getAssociateLink(roomId: number) {
@@ -116,8 +122,10 @@ export default class ConfigService {
    * @param title
    * @param status 传入 false 的话就不显示状态信息，可以传入一条已有消息覆盖
    * @param chat
+   * @param qqFromGroupId
+   * @param forumId 传入 true 为创建新的 forum topic，传输数字指定 topic id，不传直接用本群
    */
-  public async createGroupAndLink(room: number | Friend | Group, title?: string, status: boolean | Api.Message = true, chat?: TelegramChat, qqFromGroupId?: number) {
+  public async createGroupAndLink(room: number | Friend | Group, title?: string, status: boolean | Api.Message = true, chat?: TelegramChat, qqFromGroupId?: number, forumId?: number | true) {
     this.log.info(`创建群组并关联：${room}`);
     if (typeof room === 'number') {
       room = await this.oicq.getChat(room, qqFromGroupId);
@@ -135,6 +143,12 @@ export default class ConfigService {
       // 可能是群临时
       const info = await this.oicq.oicq.getGroupMemberInfo(qqFromGroupId, room.uin);
       title = info.card || info.nickname;
+    }
+    if (!chat && 'uin' in room) {
+      chat = await this.pmForumBot;
+      if (chat) {
+        forumId = true;
+      }
     }
     let isFinish = false;
     try {
@@ -160,65 +174,79 @@ export default class ConfigService {
         status && await status.edit({ text: '正在添加机器人…' });
         await chat.inviteMember(this.tgBot.me.id);
       }
+      if (forumId === true) {
+        forumId = await chat.createTopic(title);
+      }
 
-      // 设置管理员
-      status && await status.edit({ text: '正在设置管理员…' });
-      await chat.setAdmin(this.tgBot.me.username);
+      if (!forumId) {
+        // 设置管理员
+        status && await status.edit({ text: '正在设置管理员…' });
+        await chat.setAdmin(this.tgBot.me.username);
 
-      // 添加到 Filter
-      try {
-        status && await status.edit({ text: '正在将群添加到文件夹…' });
-        const dialogFilters = await this.tgUser.getDialogFilters();
-        const filter = dialogFilters.filters.find(e => e instanceof Api.DialogFilter && e.id === DEFAULT_FILTER_ID) as Api.DialogFilter;
-        if (filter) {
-          filter.includePeers.push(utils.getInputPeer(chat));
-          await this.tgUser.updateDialogFilter({
-            id: DEFAULT_FILTER_ID,
-            filter,
-          });
+        // 添加到 Filter
+        try {
+          status && await status.edit({ text: '正在将群添加到文件夹…' });
+          const dialogFilters = await this.tgUser.getDialogFilters();
+          const filter = dialogFilters.filters.find(e => e instanceof Api.DialogFilter && e.id === DEFAULT_FILTER_ID) as Api.DialogFilter;
+          if (filter) {
+            filter.includePeers.push(utils.getInputPeer(chat));
+            await this.tgUser.updateDialogFilter({
+              id: DEFAULT_FILTER_ID,
+              filter,
+            });
+          }
         }
-      }
-      catch (e) {
-        errorMessage += `\n添加到文件夹失败：${e.message}`;
-        posthog.capture('添加到文件夹失败', { error: e });
-      }
+        catch (e) {
+          errorMessage += `\n添加到文件夹失败：${e.message}`;
+          posthog.capture('添加到文件夹失败', { error: e });
+        }
 
-      // 关闭【添加成员】快捷条
-      try {
-        status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
-        await chat.hidePeerSettingsBar();
-      }
-      catch (e) {
-        errorMessage += `\n关闭【添加成员】快捷条失败：${e.message}`;
-        posthog.capture('关闭【添加成员】快捷条失败', { error: e });
+        // 关闭【添加成员】快捷条
+        try {
+          status && await status.edit({ text: '正在关闭【添加成员】快捷条…' });
+          await chat.hidePeerSettingsBar();
+        }
+        catch (e) {
+          errorMessage += `\n关闭【添加成员】快捷条失败：${e.message}`;
+          posthog.capture('关闭【添加成员】快捷条失败', { error: e });
+        }
       }
 
       // 关联写入数据库
       const chatForBot = await this.tgBot.getChat(chat.id);
       status && await status.edit({ text: '正在写数据库…' });
       this.log.debug('正在写数据库:', room, chatForBot, chat, this.oicq, qqFromGroupId);
-      const dbPair = await this.instance.forwardPairs.add(room, chatForBot, chat, this.oicq, qqFromGroupId);
+      const dbPair = await this.instance.forwardPairs.add(room, chatForBot, chat, this.oicq, qqFromGroupId, forumId);
       isFinish = true;
 
-      // 更新头像
-      try {
-        status && await status.edit({ text: '正在更新头像…' });
-        const avatar = await getAvatar(room);
-        const avatarHash = md5(avatar);
-        await chatForBot.setProfilePhoto(avatar);
-        await db.avatarCache.create({
-          data: { forwardPairId: dbPair.id, hash: avatarHash },
-        });
-      }
-      catch (e) {
-        errorMessage += `\n更新头像失败：${e.message}`;
-        posthog.capture('更新头像失败', { error: e });
+      if (!forumId) {
+        // 更新头像
+        try {
+          status && await status.edit({ text: '正在更新头像…' });
+          const avatar = await getAvatar(room);
+          const avatarHash = md5(avatar);
+          await chatForBot.setProfilePhoto(avatar);
+          await db.avatarCache.create({
+            data: { forwardPairId: dbPair.id, hash: avatarHash },
+          });
+        }
+        catch (e) {
+          errorMessage += `\n更新头像失败：${e.message}`;
+          posthog.capture('更新头像失败', { error: e });
+        }
       }
 
       // 完成
       if (status) {
         await status.edit({ text: '正在获取链接…' });
-        const { link } = await chat.getInviteLink() as Api.ChatInviteExported;
+        let link: string;
+        if (!forumId) {
+          const result = await chatForBot.getInviteLink() as Api.ChatInviteExported;
+          link = result.link;
+        }
+        else {
+          link = `https://t.me/c/${chatForBot.id}/${forumId}`;
+        }
         await status.edit({
           text: '创建完成！' + (errorMessage ? '但发生以下错误' + errorMessage : ''),
           buttons: Button.url('打开', link),
@@ -340,7 +368,7 @@ export default class ConfigService {
         posthog.capture('刷新头像和简介失败', { error: e });
         fail++;
       }
-      try{
+      try {
         await statusMessage.edit({
           text: `正在刷新所有头像和简介…\n成功：${succ}，失败：${fail}，总数：${pairs.length}`,
         });

@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer';
+import BigInteger from 'big-integer';
 import { Api, TelegramClient, utils } from 'telegram';
 import { ButtonLike, Entity, EntityLike, MessageIDLike } from 'telegram/define';
 import WaitForMessageHelper from '../helpers/WaitForMessageHelper';
@@ -11,7 +11,7 @@ import { TelegramImportSession } from './TelegramImportSession';
 
 export default class TelegramChat {
   public readonly inputPeer: Api.TypeInputPeer;
-  public readonly id: BigInteger;
+  public readonly id: BigInteger.BigInteger;
 
   constructor(public readonly parent: Telegram,
               private readonly client: TelegramClient,
@@ -233,6 +233,20 @@ export default class TelegramChat {
         action,
       }),
     );
+  }
+
+  public async createTopic(title: string) {
+    if (!(this.entity instanceof Api.Channel))
+      throw new Error('不是超级群，无法设置话题');
+    const res = await this.client.invoke(
+      new Api.channels.CreateForumTopic({
+        channel: this.entity,
+        title,
+        randomId: BigInteger.randBetween(1, 2 ** 32),
+      }),
+    ) as Api.Updates;
+    const idUpdate = res.updates.find(update => update instanceof Api.UpdateMessageID) as Api.UpdateMessageID;
+    return idUpdate.id;
   }
 
   public async startImportSession(textFile: CustomFile, mediaCount: number) {
