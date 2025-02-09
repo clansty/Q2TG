@@ -134,7 +134,8 @@ export default class ConfigController {
       return false;
     }
     // 有未创建转发群的新私聊消息时自动创建
-    promise = this.configService.createGroupAndLink(chat, chat.remark || chat.nickname, true, undefined, message.tempChatFromGroupId);
+    const refChat = await this.oicq.getChat(chat.uin) as Friend; // 重新获取一次，以获取备注
+    promise = this.configService.createGroupAndLink(refChat, undefined, true, undefined, message.tempChatFromGroupId);
     this.createPrivateMessageGroupBlockList.set(chat.uin, promise);
     await promise;
     return false;
