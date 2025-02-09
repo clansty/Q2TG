@@ -270,4 +270,12 @@ export default class Telegram {
   public async uploadFile(fileParams: Parameters<typeof this.client.uploadFile>[0]) {
     return await this.client.uploadFile(fileParams);
   }
+
+  public async createStickerSet(params: ConstructorParameters<typeof Api.stickers.CreateStickerSet>[0]) {
+    return await this.client.invoke(new Api.stickers.CreateStickerSet(params));
+  }
+
+  public async deleteStickerSet(stickerset: Api.TypeInputStickerSet) {
+    return await this.client.invoke(new Api.stickers.DeleteStickerSet({ stickerset }));
+  }
 }

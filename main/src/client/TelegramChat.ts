@@ -48,6 +48,19 @@ export default class TelegramChat {
     return await this.client.sendMessage(this.entity, params);
   }
 
+  public async uploadMedia(file: CustomFile) {
+    // InputFile -> InputMediaUploadedDocument -> MessageMediaDocument -> InputDocument
+    const uploadFile = await this.client.uploadFile({
+      file,
+      workers: 1,
+    });
+    const inputMedia = utils.getInputMedia(uploadFile);
+    return await this.client.invoke(new Api.messages.UploadMedia({
+      peer: this.inputPeer,
+      media: inputMedia,
+    }));
+  }
+
   public async waitForInput() {
     return this.waitForInputHelper.waitForMessage(this.entity.id);
   }
@@ -123,6 +136,10 @@ export default class TelegramChat {
             addAdmins: true,
             anonymous: true,
             manageCall: true,
+            manageTopics: true,
+            deleteStories: true,
+            editStories: true,
+            postStories: true,
             other: true,
           }),
           rank: '转发姬',
@@ -247,6 +264,18 @@ export default class TelegramChat {
     ) as Api.Updates;
     const idUpdate = res.updates.find(update => update instanceof Api.UpdateMessageID) as Api.UpdateMessageID;
     return idUpdate.id;
+  }
+
+  public async editTopicEmoji(topic: number, emojiDocId: BigInteger.BigInteger) {
+    if (!(this.entity instanceof Api.Channel))
+      throw new Error('不是超级群，无法设置话题');
+    return await this.client.invoke(
+      new Api.channels.EditForumTopic({
+        channel: this.entity,
+        iconEmojiId: emojiDocId,
+        topicId: topic,
+      }),
+    );
   }
 
   public async startImportSession(textFile: CustomFile, mediaCount: number) {
