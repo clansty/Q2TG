@@ -151,11 +151,12 @@ export default class ConfigService {
       }
     }
     let isFinish = false;
+    let avatar: Buffer;
     try {
       let errorMessage = '';
       // 状态信息
       if (status === true) {
-        const avatar = await getAvatar(room);
+        avatar = await getAvatar(room);
         const statusReceiver = chat ? await this.tgBot.getChat(chat.id) : await this.owner;
         status = await statusReceiver.sendMessage({
           message: '正在创建 Telegram 群…',
@@ -223,7 +224,8 @@ export default class ConfigService {
         // 更新头像
         try {
           status && await status.edit({ text: '正在更新头像…' });
-          const avatar = await getAvatar(room);
+          if (!avatar)
+            avatar = await getAvatar(room);
           const avatarHash = md5(avatar);
           await chatForBot.setProfilePhoto(avatar);
           await db.avatarCache.create({
@@ -233,6 +235,23 @@ export default class ConfigService {
         catch (e) {
           errorMessage += `\n更新头像失败：${e.message}`;
           posthog.capture('更新头像失败', { error: e });
+        }
+      }
+      else {
+        try {
+          const uinOrGid = 'uin' in room ? room.uin : -room.gid;
+          if (!avatar)
+            avatar = await getAvatar(room);
+          await chatForBot.sendMessage({
+            replyTo: forumId,
+            message: `${title} (<code>${uinOrGid}</code>)`,
+            parseMode: 'HTML',
+            file: new CustomFile('avatar.png', avatar.length, '', avatar),
+          });
+        }
+        catch (e) {
+          errorMessage += `\n未能发送初始消息：${e.message}`;
+          posthog.capture('未能发送初始消息', { error: e });
         }
       }
 
