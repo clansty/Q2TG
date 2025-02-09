@@ -225,6 +225,7 @@ export default class {
       message: tgText,
       formattingEntities: tgEntities,
       linkPreview: false,
+      replyTo: pair.forumId,
     });
     const qqMessage = await pair.qq.sendMsg(qqMessageContent);
 

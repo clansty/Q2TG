@@ -45,6 +45,7 @@ export default class DeleteMessageService {
           '</i>' +
           (e.message ? '\n' + e.message : ''),
         silent: true,
+        replyTo: pair.forumId,
       });
       this.instance.workMode === 'group' && setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
     }
@@ -124,13 +125,17 @@ export default class DeleteMessageService {
         }
         catch (e) {
           posthog.capture('撤回 TG 消息失败', { error: e });
-          await pair.tg.sendMessage(`<i>删除消息失败</i>：${e.message}`);
+          await pair.tg.sendMessage({
+            message: `<i>删除消息失败</i>：${e.message}`,
+            replyTo: pair.forumId,
+          });
         }
       }
       else {
         const tipMsg = await pair.tg.sendMessage({
           message: '<i>不能撤回别人的消息</i>',
           silent: true,
+          replyTo: pair.forumId,
         });
         setTimeout(async () => await tipMsg.delete({ revoke: true }), 5000);
       }

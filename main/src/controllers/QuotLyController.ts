@@ -317,6 +317,7 @@ export default class {
 
     const tgMessage = await pair.tg.sendMessage({
       file: new CustomFile('quote.webp', image.length, undefined, image),
+      replyTo: pair.forumId,
     });
 
     if (this.instance.workMode === 'personal') return;

@@ -242,7 +242,10 @@ export default class ForwardService {
           }
         }
         else {
-          existed.tgMessage = await pair.tg.sendMessage(message);
+          existed.tgMessage = await pair.tg.sendMessage({
+            message,
+            replyTo: pair.forumId,
+          });
         }
       };
       // filter chain
@@ -642,7 +645,13 @@ export default class ForwardService {
       message && (messageToSend.message = message);
 
       buttons.length && (messageToSend.buttons = _.chunk(buttons, 3));
-      replyTo && (messageToSend.replyTo = replyTo);
+      if (replyTo) {
+        messageToSend.replyTo = replyTo;
+      }
+      else {
+        messageToSend.replyTo = pair.forumId;
+      }
+      messageToSend.topMsgId = pair.forumId;
 
       let tgMessage: Api.Message;
       try {
@@ -719,6 +728,7 @@ export default class ForwardService {
           await pair.tg.sendMessage({
             message: '<i>有一条来自 QQ 的消息转发失败</i>',
             buttons: pbUrl ? [[Button.url('查看详情', pbUrl)]] : [],
+            replyTo: pair.forumId,
           });
       }
       catch {

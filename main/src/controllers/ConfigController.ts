@@ -174,7 +174,10 @@ export default class ConfigController {
     await this.instance.forwardPairs.remove(pair);
     this.log.info(`已删除关联 ID: ${pair.dbId}`);
     if (this.instance.workMode === 'personal') {
-      const message = await pair.tg.sendMessage(event.dismiss ? '<i>群解散了</i>' : '<i>群已被踢出</i>');
+      const message = await pair.tg.sendMessage({
+        message: event.dismiss ? '<i>群解散了</i>' : '<i>群已被踢出</i>',
+        replyTo: pair.forumId,
+      });
       await message.pin();
     }
   };

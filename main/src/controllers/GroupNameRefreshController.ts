@@ -26,7 +26,7 @@ export default class GroupNameRefreshController {
     if ((pair.flags | this.instance.flags) & flags.NAME_LOCKED) return;
     await pair.tg.editTitle(event.newName);
 
-    if(event.operator instanceof NapCatGroupMember) {
+    if (event.operator instanceof NapCatGroupMember) {
       const operatorInfo = await event.operator.renew();
       let operatorName = operatorInfo.card || operatorInfo.nickname;
       if (!((pair.flags | this.instance.flags) & flags.DISABLE_RICH_HEADER) && env.WEB_ENDPOINT) {
@@ -38,7 +38,8 @@ export default class GroupNameRefreshController {
         message: `<i>${operatorName} 修改群名为 <b>${event.newName}</b></i>`,
         parseMode: 'html',
         silent: true,
-      })
+        replyTo: pair.forumId,
+      });
     }
   }
 }

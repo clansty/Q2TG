@@ -159,6 +159,7 @@ export default class ForwardController {
         }),
         message: `<b>${event.nickname}</b>${hideAllQqNumber ? '' : ` (<code>${event.userId}</code>)`} <i>加入了本群</i>`,
         silent: true,
+        replyTo: pair.forumId,
       });
     }
     catch (e) {
@@ -238,6 +239,7 @@ export default class ForwardController {
       message: `<i><b>${operatorName}</b>${event.action || '戳了戳'}<b>${targetName}</b>${event.suffix || ''}</i>`,
       silent: true,
       linkPreview: false,
+      replyTo: pair.forumId,
     });
   };
 }
