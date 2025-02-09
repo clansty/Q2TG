@@ -77,13 +77,13 @@ export default class ForwardPairs {
       return this.pairs.find(e => e.qqRoomId === target || (e.tg.id.eq(target) && e.forumId === topicId));
     }
     else if (typeof target === 'number' || 'eq' in target) {
-      return this.pairs.find(e => e.qqRoomId === target || e.tg.id.eq(target));
+      return this.pairs.find(e => e.qqRoomId === target || (e.tg.id.eq(target) && !e.forumId));
     }
     else if (topicId) {
       return this.pairs.find(e => e.tg.id.eq(target.id) && e.forumId === topicId);
     }
     else {
-      return this.pairs.find(e => e.tg.id.eq(target.id));
+      return this.pairs.find(e => e.tg.id.eq(target.id) && !e.forumId);
     }
   }
 
