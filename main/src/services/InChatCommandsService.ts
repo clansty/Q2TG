@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { QQClient, Group, GroupMemberInfo } from '../client/QQClient';
 import { Member as OicqMember, Group as OicqGroup, Friend as OicqFriend } from '@icqqjs/icqq';
 import posthog from '../models/posthog';
+import getTopicIdFromReply from '../utils/getTopicIdFromReply';
 
 export default class InChatCommandsService {
   private readonly log: Logger;
@@ -23,7 +24,8 @@ export default class InChatCommandsService {
 
   public async info(message: Api.Message, pair: Pair) {
     const replyMessageId = message.replyToMsgId;
-    if (replyMessageId) {
+    const topicId = getTopicIdFromReply(message.replyTo);
+    if (replyMessageId && topicId !== replyMessageId) {
       const messageInfo = await db.message.findFirst({
         where: {
           tgChatId: Number(message.chat.id),
