@@ -789,7 +789,7 @@ export default class ForwardService {
           brief += '[Spoiler 图片]';
         }
         else {
-          useImage(await message.downloadMedia({}) as Buffer, !!message.sticker);
+          useImage(await message.downloadMedia({}) as Buffer, !!message.sticker, message.sticker ? helper.getStickerBrief(message.sticker) : undefined);
           brief += '[图片]';
         }
       }
