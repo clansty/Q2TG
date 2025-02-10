@@ -222,27 +222,10 @@ export default class ConfigService {
         chatForBot = await this.tgBot.getChat(chat.id);
       status && await status.edit({ text: '正在写数据库…' });
       // this.log.debug('正在写数据库:', room, chatForBot, chat, this.oicq, qqFromGroupId);
-      const dbPair = await this.instance.forwardPairs.add(room, chatForBot, chat, this.oicq, qqFromGroupId, forumId);
+      const { dbEntry: dbPair, pair } = await this.instance.forwardPairs.add(room, chatForBot, chat, this.oicq, qqFromGroupId, forumId);
       isFinish = true;
 
-      if (!forumId) {
-        // 更新头像
-        try {
-          status && await status.edit({ text: '正在更新头像…' });
-          if (!avatar)
-            avatar = await getAvatar(room);
-          const avatarHash = md5(avatar);
-          await chatForBot.setProfilePhoto(avatar);
-          await db.avatarCache.create({
-            data: { forwardPairId: dbPair.id, hash: avatarHash },
-          });
-        }
-        catch (e) {
-          errorMessage += `\n更新头像失败：${e.message}`;
-          posthog.capture('更新头像失败', { error: e });
-        }
-      }
-      else {
+      if (forumId) {
         try {
           status && await status.edit({ text: '发送初始消息…' });
           const uinOrGid = 'uin' in room ? room.uin : -room.gid;
@@ -260,24 +243,17 @@ export default class ConfigService {
           errorMessage += `\n未能发送初始消息：${e.message}`;
           posthog.capture('未能发送初始消息', { error: e });
         }
-        if (this.tgUser.me.premium) {
-          status && await status.edit({ text: '设置 Emoji…' });
-          try {
-            const converted = await sharp(avatar).resize(100, 100).webp().toBuffer();
-            const stickerSet = await this.createEmojiSet(converted);
-            const documentId = stickerSet.documents[0].id;
-            await chat.editTopicEmoji(forumId, documentId);
-            await this.tgBot.deleteStickerSet(new InputStickerSetID({
-              id: stickerSet.set.id,
-              accessHash: stickerSet.set.accessHash,
-            }));
-          }
-          catch (e) {
-            this.log.error('设置 Emoji 失败', e);
-            errorMessage += `\n设置 Emoji 失败：${e.message}`;
-            posthog.capture('设置 Emoji 失败', { error: e });
-          }
-        }
+      }
+      // 更新头像
+      try {
+        status && await status.edit({ text: '正在更新头像…' });
+        if (!avatar)
+          avatar = await getAvatar(room);
+        await pair.updateInfo(avatar);
+      }
+      catch (e) {
+        errorMessage += `\n更新头像失败：${e.message}`;
+        posthog.capture('更新头像失败', { error: e });
       }
 
       // 完成
@@ -423,26 +399,5 @@ export default class ConfigService {
     await statusMessage.edit({
       text: `刷新完成\n成功：${succ}，失败：${fail}，总数：${pairs.length}`,
     });
-  }
-
-  private async createEmojiSet(file: Buffer) {
-    const setName = `q2tg_${Date.now()}_by_${this.tgBot.me.username}`;
-    const owner = await this.owner;
-    // InputFile -> InputMediaUploadedDocument -> MessageMediaDocument -> InputDocument -> InputStickerSetItem -> StickerSet -> Document
-    const messageMedia = await owner.uploadMedia(new CustomFile('emoji.webp', file.length, '', file)) as Api.MessageMediaDocument;
-    const inputDocument = utils.getInputDocument(messageMedia);
-    const inputStickerSetItem = new Api.InputStickerSetItem({
-      document: inputDocument,
-      emoji: '🐧',
-    });
-    const stickerSet = await this.tgBot.createStickerSet({
-      title: 'Q2TG 临时头像包',
-      emojis: true,
-      shortName: setName,
-      stickers: [inputStickerSetItem],
-      userId: this.tgUser.me.id,
-      software: 'Q2TG',
-    }) as Api.messages.StickerSet;
-    return stickerSet;
   }
 }

@@ -54,8 +54,9 @@ export default class ForwardPairs {
         forumId,
       },
     });
-    this.pairs.push(new Pair(qq, tg, tgUser, dbEntry.id, dbEntry.flags, dbEntry.apiKey, qqClient, forumId));
-    return dbEntry;
+    const pair = new Pair(qq, tg, tgUser, dbEntry.id, dbEntry.flags, dbEntry.apiKey, qqClient, forumId);
+    this.pairs.push(pair);
+    return { dbEntry, pair };
   }
 
   public async remove(pair: Pair) {
