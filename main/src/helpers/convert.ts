@@ -35,7 +35,7 @@ const convert = {
     cachedConvert(key + '.gif', async (convertedPath) => {
       const temp = await createTempFile();
       await fsP.writeFile(temp.path, await webmData());
-      await convertWithFfmpeg(temp.path, convertedPath, 'gif', 'libvpx-vp9');
+      await convertWithFfmpeg(temp.path, convertedPath, 'gif');
       await temp.cleanup();
     }),
   tgs2gif: (key: string, tgsData: () => Promise<Buffer | Uint8Array | string>) =>
