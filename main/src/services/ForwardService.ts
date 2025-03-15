@@ -804,7 +804,7 @@ export default class ForwardService {
         }
         else if (file.mimeType === 'video/webm' || message.gif) {
           // 把 webm 转换成 gif
-          const convertedPath = await convert.webm2gif(message.document.id.toString(16), () => message.downloadMedia({}));
+          const convertedPath = await convert.video2gif(message.document.id.toString(16), () => message.downloadMedia({}), file.mimeType === 'video/webm');
           useImage(convertedPath, true, helper.getStickerBrief(file));
         }
         else {
