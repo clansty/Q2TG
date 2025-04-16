@@ -67,7 +67,7 @@ export const messageElemToNapCatSendable = async (elem: SendableElem): Promise<{
             file: elem.file,
             summary: ('brief' in elem && elem.brief) || env.IMAGE_SUMMARY || (`[Q2TG ${elem.type}]`),
             name: elem.type,
-            sub_type: ('asface' in elem && elem.asface) ? 7 : 0,
+            sub_type: ('asface' in elem && elem.asface) ? 1 : 0,
           },
         } as any,
         tempFiles,

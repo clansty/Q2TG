@@ -1,9 +1,9 @@
-node_modules
+**/node_modules
 .git
 .gitignore
 *.md
-dist
-build
-data
+**/dist
+**/build
+**/data
 .env
 .github
