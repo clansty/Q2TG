@@ -76,7 +76,7 @@ export default class SetupService {
         await this.informOwner(`请输入你${isCodeViaApp ? ' Telegram APP 中' : '手机上'}收到的验证码\n` +
           '👇请使用下面的按钮输入，不要在文本框输入，<b>否则验证码会发不出去并立即失效</b>',
           Button.text('👆请使用上面的按钮输入', true, true));
-        return await this.owner.inlineDigitInput(5);
+        return await this.owner.inlineDigitInput();
       },
       onError: (err) => this.log.error(err),
     });
