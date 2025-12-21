@@ -10,10 +10,8 @@ export default async function inlineDigitInput(chat: TelegramChat) {
     let input = '';
 
     function getDisplay() {
-      const leftLength = length - input.length;
       let display = Array.from(input);
-      leftLength > 0 && display.push(SYMBOL_INPUT);
-      leftLength > 1 && display.push(...SYMBOL_EMPTY.repeat(leftLength - 1));
+      display.push(SYMBOL_INPUT);
       // 增大一点键盘的大小，方便按
       return `>>>  ${display.join(SYMBOL_SPACE)}  <<<`;
     }
