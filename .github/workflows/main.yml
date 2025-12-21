@@ -9,8 +9,6 @@ jobs:
     name: Publish container image
     runs-on: ubuntu-latest
 
-    permissions: write-all
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +35,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GPR_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
