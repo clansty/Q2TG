@@ -60,8 +60,8 @@ export default class TelegramChat {
     return createPaginatedInlineSelector(this, message, choices);
   }
 
-  public inlineDigitInput(length: number) {
-    return inlineDigitInput(this, length);
+  public inlineDigitInput() {
+    return inlineDigitInput(this);
   }
 
   public async setProfilePhoto(photo: Buffer) {
