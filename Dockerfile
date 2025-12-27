@@ -1,23 +1,21 @@
 # syntax=docker/dockerfile:labs
 
-FROM node:22-slim AS base
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  apt update && apt-get --no-install-recommends install -y \
-    fonts-wqy-microhei gosu \
-    libpixman-1-0 libcairo2 libpango1.0-0 libgif7 libjpeg62-turbo libpng16-16 librsvg2-2 libvips42 ffmpeg librlottie0-1
+FROM node:22-alpine AS base
+RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN --mount=type=cache,target=/var/cache/apk,sharing=locked \
+  apk update && apk add \
+    font-wqy-zenhei pixman cairo pango giflib libjpeg-turbo libpng librsvg vips ffmpeg \
+    gosu@testing rlottie@testing # Currently gosu & rlottie are only packaged in testing repository
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm add -g pnpm@9.13.2
 WORKDIR /app
 
 FROM base AS build
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  apt update && apt-get --no-install-recommends install -y \
-    python3 build-essential pkg-config \
-    libpixman-1-dev libcairo2-dev libpango1.0-dev libgif-dev libjpeg62-turbo-dev libpng-dev librsvg2-dev libvips-dev
+RUN --mount=type=cache,target=/var/cache/apk,sharing=locked \
+  apk update && apk add \
+    python3 build-base \
+    pixman-dev cairo-dev pango-dev giflib-dev libjpeg-turbo-dev libpng-dev librsvg-dev vips-dev
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml .npmrc /app/
 COPY patches /app/patches
 COPY main/package.json /app/main/
@@ -36,11 +34,11 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
     pnpm deploy --filter=q2tg-main --prod deploy
 RUN cd ui && pnpm run build
 
-FROM debian:bookworm-slim AS tgs-to-gif-build
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  apt update && apt-get --no-install-recommends install -y \
-    python3 build-essential pkg-config cmake librlottie-dev zlib1g-dev
+FROM alpine:edge AS tgs-to-gif-build
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN --mount=type=cache,target=/var/cache/apk,sharing=locked \
+  apk update && apk add \
+    python3 build-base cmake rlottie-dev zlib-dev
 
 ADD https://github.com/p-ranav/argparse.git#v3.0 /argparse
 WORKDIR /argparse/build
