@@ -74,7 +74,13 @@ export default class ConfigService {
   private async onSelectChatPersonal(entity: Friend | Group) {
     const roomId = 'uin' in entity ? entity.uin : -entity.gid;
     const name = 'uin' in entity ? entity.remark || entity.nickname : entity.name;
-    const avatar = await getAvatar(roomId);
+    let avatar: Buffer;
+    try {
+      avatar = await getAvatar(roomId);
+    }
+    catch (e) {
+      avatar = null;
+    }
     const message = await (await this.owner).sendMessage({
       message: await getAboutText(entity, true),
       buttons: [
@@ -85,7 +91,7 @@ export default class ConfigService {
           }))],
         [Button.url('手动选择现有群组', this.getAssociateLink(roomId))],
       ],
-      file: new CustomFile('avatar.png', avatar.length, '', avatar),
+      file: avatar ? new CustomFile('avatar.png', avatar.length, '', avatar) : undefined,
     });
   }
 
