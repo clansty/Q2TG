@@ -28,6 +28,7 @@ const httpsAgent = new https.Agent({
 });
 
 export async function fetchFile(url: string): Promise<Buffer> {
+  if (!url) return Buffer.alloc(0);
   const res = await axios.get(url, {
     responseType: 'arraybuffer',
     httpsAgent,

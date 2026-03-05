@@ -216,7 +216,7 @@ export class NapCatClient extends QQClient {
         }
         category.friends.push(NapCatFriend.createExisted(this, {
           nickname: it.nick || it.nickname,
-          uid: parseInt(it.uin),
+          uid: parseInt(it.uin || it.user_id),
           remark: it.remark,
         }));
       }
@@ -225,8 +225,8 @@ export class NapCatClient extends QQClient {
     return data.map(it => ({
       name: it.categoryName || (it as any).categroyName, // typo in API
       friends: it.buddyList.map(friend => NapCatFriend.createExisted(this, {
-        nickname: friend.nick,
-        uid: parseInt(friend.uin),
+        nickname: friend.nick || friend.nickname,
+        uid: parseInt(friend.uin || friend.user_id),
         remark: friend.remark,
       })),
     }));
